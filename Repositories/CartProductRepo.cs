@@ -13,10 +13,10 @@ namespace GreenHiTech.Repositories
             _context = context;
         }
 
-        public IEnumerable<CartProductVM> GetAll(/*int userPkId*/)
+        public IEnumerable<CartProductVM> GetAll(int userPkId)
         {
             IEnumerable<CartProductVM> cartProducts = _context.cartProducts
-                //.Where(cp => cp.FkCartId == userPkId)
+                .Where(cp => cp.FkCartId == userPkId)
                 .Select(cp => new CartProductVM
             {
                 PkId = cp.PkId,
@@ -38,6 +38,18 @@ namespace GreenHiTech.Repositories
             {
                 throw new Exception("Cart Product not found");
             }
+        }
+
+        public void AddToCart (int userPkId, int productId, int quantity)
+        {
+            var cartProduct = new CartProduct
+            {
+                FkCartId = userPkId,
+                FkProductId = productId,
+                Quantity = quantity
+            };
+            _context.cartProducts.Add(cartProduct);
+            _context.SaveChanges();
         }
     }
 }
