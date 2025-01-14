@@ -19,8 +19,6 @@ namespace GreenHiTech.Repositories
                 //.Where(cp => cp.FkCartId == userPkId)
                 .Select(cp => new CartProductVM
             {
-                PkId = cp.PkId,
-                FkCartId = cp.FkCartId,
                 FkProductId = cp.FkProductId,
                 Quantity = cp.Quantity
             }).ToList();
