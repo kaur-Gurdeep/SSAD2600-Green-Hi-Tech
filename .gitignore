@@ -8,3 +8,5 @@ obj/
 # Ignore configuration files
 *.user
 *.suo
+
+appsettings.json
