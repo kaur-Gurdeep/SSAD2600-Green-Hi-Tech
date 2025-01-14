@@ -8,3 +8,6 @@ obj/
 # Ignore configuration files
 *.user
 *.suo
+
+#Ignore gitignore
+appsettings.json
