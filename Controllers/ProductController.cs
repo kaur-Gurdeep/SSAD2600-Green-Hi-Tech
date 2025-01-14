@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
+using GreenHiTech.Models;
 
 namespace GreenHiTech.Controllers
 {
@@ -10,7 +11,7 @@ namespace GreenHiTech.Controllers
 
         private readonly ProductRepository _productRepo;
 
-        public ProductController(ProductRepositories productRepo)
+        public ProductController(ProductRepository productRepo)
         {
             _productRepo = productRepo;
         }
@@ -30,27 +31,78 @@ namespace GreenHiTech.Controllers
             return View(productVMs);
         }
 
+        public IActionResult Details(int id)
+        {
+            var product = _productRepo.GetById(id);
+
+            ProductVM productVM = new ProductVM
+            {
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                Manufacturer = product.Manufacturer,
+            };
+
+            return View(productVM);
+        }
+
         // GET
         public IActionResult Create()
         {
-            return View();
+            return View(new ProductVM());
         }
 
-        // post
+        // POST
         [HttpPost]
         // manager access
         public IActionResult Create(ProductVM productVM)
         {
-            return View();
+            string returnMessage = string.Empty;
+
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    _productRepo.Add(productVM);
+                    returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
+                }
+                catch (Exception ex)
+                {
+                    returnMessage = $"error,Product could not be created: (Name {productVM.Name})";
+                }
+            }
+            else
+            {
+                return View(productVM);
+            }
+
+            return RedirectToAction("Index", new { message = returnMessage});
         }
 
         // GET
         public IActionResult Edit(int id)
         {
-            return View();
+            Product? product = _productRepo.GetById(id);
+
+            if (product == null)
+            {
+                return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
+            }
+            else
+            {
+                ProductVM productVM = new ProductVM
+                {
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    FkCategoryId = product.FkCategoryId,
+                    Manufacturer = product.Manufacturer,
+                };
+                return View(productVM);
+            }
         }
 
-        // post
+        // POST
         [HttpPost]
         // manager access
         public IActionResult Edit(ProductVM productVM)
@@ -64,7 +116,7 @@ namespace GreenHiTech.Controllers
             return View();
         }
 
-        // post
+        // POST
         [HttpPost, ActionName("Delete")]
         // manager access
         public IActionResult DeleteConfirm(int id)

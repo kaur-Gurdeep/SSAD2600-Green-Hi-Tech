@@ -21,7 +21,12 @@ namespace GreenHiTech.ViewModels
 
         [Required]
         [Column(TypeName = "int")]
-        public int StockQuantity { get; set; }
+        public int StockQuantity { get; set; } = 0;
+
+        [Required]
+        [Column(TypeName = "int")]
+        public int FkCategoryId { get; set; }
+
         [Required]
         [StringLength(100)]
         public string Manufacturer { get; set; } = null!;
