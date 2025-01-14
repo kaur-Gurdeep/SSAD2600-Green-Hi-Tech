@@ -1,4 +1,5 @@
 ﻿using GreenHiTech.Data;
+using GreenHiTech.Models;
 using GreenHiTech.ViewModels;
 
 namespace GreenHiTech.Repositories
@@ -22,8 +23,22 @@ namespace GreenHiTech.Repositories
                 FkCartId = cp.FkCartId,
                 FkProductId = cp.FkProductId,
                 Quantity = cp.Quantity
-            });
+            }).ToList();
             return cartProducts;
+        }
+
+        public void Delete(int cartProductId)
+        {
+            var cartProduct = _context.cartProducts.Find(cartProductId);
+            if (cartProduct != null)
+            {
+                _context.cartProducts.Remove(cartProduct);
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Cart Product not found");
+            }
         }
     }
 }
