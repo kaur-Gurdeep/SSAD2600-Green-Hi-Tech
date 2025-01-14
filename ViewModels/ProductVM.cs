@@ -9,7 +9,6 @@ namespace GreenHiTech.ViewModels
     {
         [Required]
         [StringLength(50)]
-
         public string Name { get; set; } = null!;
 
         [Required]
@@ -19,6 +18,10 @@ namespace GreenHiTech.ViewModels
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+
+        [Required]
+        [Column(TypeName = "int")]
+        public int StockQuantity { get; set; }
         [Required]
         [StringLength(100)]
         public string Manufacturer { get; set; } = null!;
