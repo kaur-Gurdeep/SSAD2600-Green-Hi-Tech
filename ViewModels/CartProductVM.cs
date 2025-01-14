@@ -7,9 +7,6 @@ namespace GreenHiTech.ViewModels
     {
         public int PkId { get; set; }
 
-        [Display(Name = "Cart")]
-        public int FkCartId { get; set; }
-
         [Display(Name = "Product")]
         public int FkProductId { get; set; }
 
