@@ -107,19 +107,52 @@ namespace GreenHiTech.Controllers
         // manager access
         public IActionResult Edit(ProductVM productVM)
         {
-            return View();
+            string returnMessage = string.Empty;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _productRepo.Update(productVM);
+                    returnMessage = $"success,Successfully updated Product: (Name {productVM.Name})";
+                }
+                catch (Exception ex) 
+                {
+                    returnMessage = $"error,Product could not be updated: (Name {productVM.Name})";
+                }
+            }
+
+            return RedirectToAction("Index", new {message = returnMessage});
         }
 
         // GET
         public IActionResult Delete(int id)
         {
+            Product? product = _productRepo.GetById(id);
+
+            if (product == null)
+            {
+                return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
+            }
+
+            ProductVM productVM = new ProductVM
+            {
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                FkCategoryId = product.FkCategoryId,
+                Manufacturer = product.Manufacturer,
+            };
+
+            ViewBag.ProductId = id;
+
             return View();
         }
 
         // POST
         [HttpPost, ActionName("Delete")]
         // manager access
-        public IActionResult DeleteConfirm(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             return View();
         }
