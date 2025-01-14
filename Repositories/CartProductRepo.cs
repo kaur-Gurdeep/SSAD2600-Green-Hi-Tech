@@ -12,9 +12,11 @@ namespace GreenHiTech.Repositories
             _context = context;
         }
 
-        public IEnumerable<CartProductVM> GetAll()
+        public IEnumerable<CartProductVM> GetAll(int userPkId)
         {
-            IEnumerable<CartProductVM> cartProducts = _context.cartProducts.Select(cp => new CartProductVM
+            IEnumerable<CartProductVM> cartProducts = _context.cartProducts
+                .Where(cp => cp.FkCartId == userPkId)
+                .Select(cp => new CartProductVM
             {
                 PkId = cp.PkId,
                 FkCartId = cp.FkCartId,
