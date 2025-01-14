@@ -19,7 +19,7 @@ namespace GreenHiTech.Controllers
         public IActionResult Index()
         {
             int userPkId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            IEnumerable<CartProductVM> cartProducts = _cartProductRepo.GetAll();
+            IEnumerable<CartProductVM> cartProducts = _cartProductRepo.GetAll(userPkId);
             return View();
         }
 
