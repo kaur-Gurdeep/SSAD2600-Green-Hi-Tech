@@ -9,4 +9,5 @@ obj/
 *.user
 *.suo
 
+#Ignore gitignore
 appsettings.json
