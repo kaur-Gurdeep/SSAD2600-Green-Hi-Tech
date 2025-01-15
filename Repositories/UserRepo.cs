@@ -2,10 +2,10 @@
 
 namespace GreenHiTech.Repositories
 {
-    public class UserRepository
+    public class UserRepo
     {
-        private GreenHiTechContext _context;
-        public UserRepository(GreenHiTechContext context)
+        private readonly GreenHiTechContext _context;
+        public UserRepo(GreenHiTechContext context)
         {
             _context = context;
         }
