@@ -9,5 +9,7 @@ namespace GreenHiTech.Data
             : base(options)
         {
         }
+
+        public object OrderDetails { get; internal set; }
     }
 }
