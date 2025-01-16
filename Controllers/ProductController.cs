@@ -92,6 +92,7 @@ namespace GreenHiTech.Controllers
             {
                 ProductVM productVM = new ProductVM
                 {
+                    PkId = id,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
@@ -111,14 +112,15 @@ namespace GreenHiTech.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _productRepo.Update(productVM);
-                    returnMessage = $"success,Successfully updated Product: (Name {productVM.Name})";
-                }
-                catch (Exception ex) 
+                Product? product = _productRepo.GetById(productVM.PkId);
+                if (product == null)
                 {
                     returnMessage = $"error,Product could not be updated: (Name {productVM.Name})";
+                } 
+                else
+                {
+                    _productRepo.Update(product);
+                    returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
                 }
             }
 
@@ -137,6 +139,7 @@ namespace GreenHiTech.Controllers
 
             ProductVM productVM = new ProductVM
             {
+                PkId = id,
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
@@ -146,7 +149,7 @@ namespace GreenHiTech.Controllers
 
             ViewBag.ProductId = id;
 
-            return View();
+            return View(productVM);
         }
 
         // POST
@@ -154,7 +157,16 @@ namespace GreenHiTech.Controllers
         // manager access
         public IActionResult DeleteConfirmed(int id)
         {
-            return View();
+            Product? product = _productRepo.GetById(id);
+            if(product == null)
+            {
+                return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
+            }
+            else
+            {
+                string returnMessage = _productRepo.Delete(id);
+                return RedirectToAction("Index", new { message = returnMessage });
+            }
         }
     }
 }
