@@ -7,7 +7,6 @@ namespace GreenHiTech.ViewModels
 {
     public class ProductVM
     {
-        [Required]
         [Column(TypeName = "int")]
         public int PkId { get; set; }
 

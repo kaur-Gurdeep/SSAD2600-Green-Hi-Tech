@@ -20,30 +20,43 @@ namespace GreenHiTech.Controllers
         {
             var products = _productRepo.GetAll();
 
-            var productVMs = products.Where(p => new ProductVM
+            var productVMs = products.Select(p => new ProductVM
             {
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
+                StockQuantity = p.StockQuantity,
+                FkCategoryId = p.FkCategoryId,
                 Manufacturer = p.Manufacturer,
-            });
+            }).ToList();
 
             return View(productVMs);
         }
 
         public IActionResult Details(int id)
         {
-            var product = _productRepo.GetById(id);
+            string returnMessage = string.Empty;
+            Product? product = _productRepo.GetById(id);
 
-            ProductVM productVM = new ProductVM
+            if(product == null) {
+                returnMessage = $"error,Could not find product: (Name {product.Name})";
+                return RedirectToAction("Index");
+            }
+            else
             {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Manufacturer = product.Manufacturer,
-            };
+                ProductVM productVM = new ProductVM
+                {
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity,
+                    FkCategoryId = product.FkCategoryId,
+                    Manufacturer = product.Manufacturer,
+                };
+                return View(productVM);
+            }
 
-            return View(productVM);
+
         }
 
         // GET
@@ -63,7 +76,16 @@ namespace GreenHiTech.Controllers
             {
                 try
                 {
-                    _productRepo.Add(productVM);
+                    Product product = new Product
+                    {
+                        Name = productVM.Name,
+                        Description = productVM.Description,
+                        Price = productVM.Price,
+                        StockQuantity = productVM.StockQuantity,
+                        FkCategoryId = productVM.FkCategoryId,
+                        Manufacturer = productVM.Manufacturer,
+                    };
+                    _productRepo.Add(product);
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
                 }
                 catch (Exception ex)
