@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using GreenHiTech.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreenHiTech.Data
@@ -9,5 +10,7 @@ namespace GreenHiTech.Data
             : base(options)
         {
         }
+
+        public DbSet<CartProduct> cartProducts { get; set; }
     }
 }

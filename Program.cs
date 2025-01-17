@@ -1,5 +1,6 @@
 using GreenHiTech.Data;
 using GreenHiTech.Models;
+using GreenHiTech.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<CartProductRepo>();
 
 
 builder.Services.Configure<IdentityOptions>(options => {
