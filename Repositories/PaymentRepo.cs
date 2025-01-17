@@ -2,10 +2,10 @@
 
 namespace GreenHiTech.Repositories
 {
-    public class PaymentRepository
+    public class PaymentRepo
     {
-        private GreenHiTechContext _context;
-        public PaymentRepository(GreenHiTechContext context)
+        private readonly GreenHiTechContext _context;
+        public PaymentRepo(GreenHiTechContext context)
         {
             _context = context;
         }

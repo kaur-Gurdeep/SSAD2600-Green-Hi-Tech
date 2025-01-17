@@ -20,9 +20,11 @@ builder.Services.AddDbContext<GreenHiTechContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<CartProductRepo>();
+
 
 
 builder.Services.Configure<IdentityOptions>(options => {
@@ -43,6 +45,12 @@ builder.Services.Configure<IdentityOptions>(options => {
     // User settings
     options.User.RequireUniqueEmail = true;
 });
+
+builder.Services.AddScoped<RoleRepo>();
+builder.Services.AddScoped<IdentityUserRepo>();
+builder.Services.AddScoped<UserRoleRepo>();
+
+
 
 var app = builder.Build();
 

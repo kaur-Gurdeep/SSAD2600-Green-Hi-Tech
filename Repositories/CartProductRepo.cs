@@ -1,55 +1,99 @@
-﻿using GreenHiTech.Data;
 using GreenHiTech.Models;
-using GreenHiTech.ViewModels;
 
 namespace GreenHiTech.Repositories
 {
     public class CartProductRepo
     {
-        private readonly ApplicationDbContext _context;
-
-        public CartProductRepo(ApplicationDbContext context)
+        private readonly GreenHiTechContext _context;
+        public CartProductRepo(GreenHiTechContext context)
         {
             _context = context;
         }
 
-        public IEnumerable<CartProductVM> GetAll(int userPkId)
+        // Get all cart products
+        public List<CartProduct> GetAll()
         {
-            IEnumerable<CartProductVM> cartProducts = _context.cartProducts
-                .Where(cp => cp.FkCartId == userPkId)
-                .Select(cp => new CartProductVM
-            {
-                PkId = cp.PkId,
-                FkProductId = cp.FkProductId,
-                Quantity = cp.Quantity
-            }).ToList();
-            return cartProducts;
+            return _context.CartProducts.ToList();
         }
 
-        public void Delete(int cartProductId)
+        // Get cart product by id
+        public CartProduct? GetById(int id)
         {
-            var cartProduct = _context.cartProducts.Find(cartProductId);
-            if (cartProduct != null)
+            if (id == 0)
             {
-                _context.cartProducts.Remove(cartProduct);
+                return null;
+            }
+            else if (!_context.CartProducts.Any(cp => cp.PkId == id))
+            {
+                return null;
+            }
+            return _context.CartProducts.Find(id);
+        }
+
+        // Add cart product
+        public string Add(CartProduct cartProduct)
+        {
+            try
+            {
+                _context.CartProducts.Add(cartProduct);
                 _context.SaveChanges();
+
+                return $"success,Successfully created cart product ID: {cartProduct.PkId}";
+            }
+            catch (Exception e)
+            {
+                return $"error,Failed to create cart product: {e.Message}";
+            }
+        }
+
+        // Update cart product
+        public string Update(CartProduct cartProduct)
+        {
+            if (Any(cartProduct.PkId))
+            {
+                try
+                {
+                    _context.CartProducts.Update(cartProduct);
+                    _context.SaveChanges();
+
+                    return $"success,Successfully updated cart product ID: {cartProduct.PkId}";
+                }
+                catch (Exception ex)
+                {
+                    return $"error,Cart product could not be updated: {ex.Message}";
+                }
             }
             else
             {
-                throw new Exception("Cart Product not found");
+                return $"warning,Unable to find cart product ID: {cartProduct.PkId}";
             }
         }
 
-        public void AddToCart (int userPkId, int productId, int quantity)
+        // Delete cart product
+        public string Delete(int id)
         {
-            var cartProduct = new CartProduct
+            CartProduct? cartProduct = GetById(id);
+            if (cartProduct == null)
             {
-                FkCartId = userPkId,
-                FkProductId = productId,
-                Quantity = quantity
-            };
-            _context.cartProducts.Add(cartProduct);
-            _context.SaveChanges();
+                return $"warning,Unable to find cart product ID: {id}";
+            }
+
+            try
+            {
+                _context.CartProducts.Remove(cartProduct);
+                _context.SaveChanges();
+                return $"success,Successfully deleted cart product ID: {id}";
+            }
+            catch (Exception e)
+            {
+                return $"error,Failed to delete cart product: {e.Message}";
+            }
+        }
+
+        // if cart product exists
+        public bool Any(int id)
+        {
+            return _context.CartProducts.Any(cp => cp.PkId == id);
         }
     }
 }
