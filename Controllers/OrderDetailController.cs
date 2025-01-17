@@ -1,20 +1,30 @@
-﻿using GreenHiTech.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using GreenHiTech.Models;
 
 namespace GreenHiTech.Controllers
 {
-    public class OrderDetailController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OrderDetailController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly GreenHiTechContext _context;
 
-        public OrderDetailController(ApplicationDbContext context)
+        public OrderDetailController(GreenHiTechContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
+        // GET: api/OrderDetail
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetails()
         {
-            return View();
+            return await _context.OrderDetails.ToListAsync();
         }
+
     }
 }
