@@ -2,10 +2,10 @@
 
 namespace GreenHiTech.Repositories
 {
-    public class ProductRepository
+    public class ProductRepo
     {
-        private GreenHiTechContext _context;
-        public ProductRepository(GreenHiTechContext context)
+        private readonly GreenHiTechContext _context;
+        public ProductRepo(GreenHiTechContext context)
         {
             _context = context;
         }
