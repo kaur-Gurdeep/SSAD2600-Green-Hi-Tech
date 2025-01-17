@@ -1,4 +1,4 @@
-﻿using GreenHiTech.Models;
+using GreenHiTech.Models;
 
 namespace GreenHiTech.Repositories
 {

@@ -23,6 +23,8 @@
 
   <ItemGroup>
     <Folder Include="Data\Services\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>
