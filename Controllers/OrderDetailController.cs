@@ -26,5 +26,19 @@ namespace GreenHiTech.Controllers
             return await _context.OrderDetails.ToListAsync();
         }
 
+        // GET: api/OrderDetail/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OrderDetail>> GetOrderDetail(int id)
+        {
+            var orderDetail = await _context.OrderDetails.FindAsync(id);
+
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+
+            return orderDetail;
+        }
+
     }
 }
