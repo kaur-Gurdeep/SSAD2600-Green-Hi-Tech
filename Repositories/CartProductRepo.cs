@@ -1,4 +1,4 @@
-﻿using GreenHiTech.Data;
+using GreenHiTech.Data;
 using GreenHiTech.Models;
 using GreenHiTech.ViewModels;
 
@@ -18,11 +18,11 @@ namespace GreenHiTech.Repositories
             IEnumerable<CartProductVM> cartProducts = _context.cartProducts
                 .Where(cp => cp.FkCartId == userPkId)
                 .Select(cp => new CartProductVM
-            {
-                PkId = cp.PkId,
-                FkProductId = cp.FkProductId,
-                Quantity = cp.Quantity
-            }).ToList();
+                {
+                    PkId = cp.PkId,
+                    FkProductId = cp.FkProductId,
+                    Quantity = cp.Quantity
+                }).ToList();
             return cartProducts;
         }
 
@@ -40,7 +40,7 @@ namespace GreenHiTech.Repositories
             }
         }
 
-        public void AddToCart (int userPkId, int productId, int quantity)
+        public void AddToCart(int userPkId, int productId, int quantity)
         {
             var cartProduct = new CartProduct
             {
@@ -50,6 +50,35 @@ namespace GreenHiTech.Repositories
             };
             _context.cartProducts.Add(cartProduct);
             _context.SaveChanges();
+        }
+
+        // Update cart product
+        public string Update(CartProduct cartProduct)
+        {
+            if (Any(cartProduct.PkId))
+            {
+                try
+                {
+                    _context.cartProducts.Update(cartProduct);
+                    _context.SaveChanges();
+
+                    return $"success,Successfully updated cart product ID: {cartProduct.PkId}";
+                }
+                catch (Exception ex)
+                {
+                    return $"error,Cart product could not be updated: {ex.Message}";
+                }
+            }
+            else
+            {
+                return $"warning,Unable to find cart product ID: {cartProduct.PkId}";
+            }
+        }
+
+        // if cart product exists
+        public bool Any(int id)
+        {
+            return _context.cartProducts.Any(cp => cp.PkId == id);
         }
     }
 }
