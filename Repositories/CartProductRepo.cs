@@ -1,6 +1,7 @@
 using GreenHiTech.Data;
 using GreenHiTech.Models;
 using GreenHiTech.ViewModels;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace GreenHiTech.Repositories
 {
@@ -52,33 +53,39 @@ namespace GreenHiTech.Repositories
             _context.SaveChanges();
         }
 
-        // Update cart product
-        public string Update(CartProduct cartProduct)
+        public void IncreaseQuantity(int cartProductId)
         {
-            if (Any(cartProduct.PkId))
+            var cartProduct = _context.cartProducts.Find(cartProductId);
+            if (cartProduct != null)
             {
-                try
-                {
-                    _context.cartProducts.Update(cartProduct);
-                    _context.SaveChanges();
+                cartProduct.Quantity++;
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Cart Product not found");
+            }
+        }
 
-                    return $"success,Successfully updated cart product ID: {cartProduct.PkId}";
-                }
-                catch (Exception ex)
+        public void DecreaseQuantity(int cartProductId)
+        {
+            var cartProduct = _context.cartProducts.Find(cartProductId);
+            if (cartProduct != null)
+            {
+                if (cartProduct.Quantity > 1)
                 {
-                    return $"error,Cart product could not be updated: {ex.Message}";
+                    cartProduct.Quantity--;
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    Delete(cartProductId);
                 }
             }
             else
             {
-                return $"warning,Unable to find cart product ID: {cartProduct.PkId}";
+                throw new Exception("Cart Product not found");
             }
-        }
-
-        // if cart product exists
-        public bool Any(int id)
-        {
-            return _context.cartProducts.Any(cp => cp.PkId == id);
-        }
+        } 
     }
 }
