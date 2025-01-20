@@ -115,5 +115,26 @@ namespace DeckMaster.Controllers
                 return View();
             }
         }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteRole(string userName, string roleName)
+        {
+            UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);
+
+            var result = await userRoleRepo.RemoveUserRoleAsync(userName, roleName);
+
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Role deleted successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error while deleting the role.";
+            }
+
+            // Return to the same detail page to show the updated list of roles
+            return RedirectToAction("Detail", new { userName });
+        }
     }
 }
