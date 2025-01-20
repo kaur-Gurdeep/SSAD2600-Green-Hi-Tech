@@ -2,6 +2,7 @@
 using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using GreenHiTech.Repositories;
 
 namespace GreenHiTech.Controllers
 {
@@ -9,8 +10,7 @@ namespace GreenHiTech.Controllers
     {
 
         private readonly UserRepo _userRepo;
-        private readonly OrderController _logger;
-
+        private readonly ILogger<UserController> _logger;
 
         public UserController(ILogger<UserController> logger, UserRepo userRepo)
         {
@@ -24,33 +24,23 @@ namespace GreenHiTech.Controllers
             return View();
         }
 
-       public IActionResult Details(int id)
+        public IActionResult Details(int id)
         {
-            User user = _userRepo.GetById(id);
-         
+            var user = _userRepo.GetById(id);
 
             if (user == null)
             {
+                _logger.LogWarning("Unable to find User ID: {Id}", id);
                 return RedirectToAction("Index", new
                 {
                     message = $"warning,Unable to find User Id: {id}"
                 });
             }
 
-            var userView = new UserVM
-            {
-                pkUserId = user.PkId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Role = user.Role,
-                Email = user.Email,
-
-
-            };
-
+            var userView = GetUserView(user);
             return View(userView);
-
         }
+
 
         public IActionResult Edit(int id)
         {
@@ -62,15 +52,25 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
-            
-            var userView = new UserVM
+
+            // Only include Role if the user is ADMIN or STAFF
+            string role = (user.Role == "ADMIN" || user.Role == "STAFF") ? user.Role : null;
+
+            var userView = GetUserView(user, role);
+
+            return View(userView);
+        }
+
+        private static UserVM GetUserView(User user, string? role = null)
+        {
+            return new UserVM
             {
                 PkUserId = user.PkId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Role = _roleRepo.GetAll()
-                        .Select(r => new SelectItem
-            }
+                Role = role ?? user.Role,
+                Email = user.Email
+            };
         }
     }
 }
