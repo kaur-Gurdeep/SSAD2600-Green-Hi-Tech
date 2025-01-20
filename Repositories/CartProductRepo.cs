@@ -1,49 +1,55 @@
+using GreenHiTech.Data;
 using GreenHiTech.Models;
+using GreenHiTech.ViewModels;
 
 namespace GreenHiTech.Repositories
 {
     public class CartProductRepo
     {
-        private readonly GreenHiTechContext _context;
-        public CartProductRepo(GreenHiTechContext context)
+        private readonly ApplicationDbContext _context;
+
+        public CartProductRepo(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // Get all cart products
-        public List<CartProduct> GetAll()
+        public IEnumerable<CartProductVM> GetAll(int userPkId)
         {
-            return _context.CartProducts.ToList();
+            IEnumerable<CartProductVM> cartProducts = _context.cartProducts
+                .Where(cp => cp.FkCartId == userPkId)
+                .Select(cp => new CartProductVM
+                {
+                    PkId = cp.PkId,
+                    FkProductId = cp.FkProductId,
+                    Quantity = cp.Quantity
+                }).ToList();
+            return cartProducts;
         }
 
-        // Get cart product by id
-        public CartProduct? GetById(int id)
+        public void Delete(int cartProductId)
         {
-            if (id == 0)
+            var cartProduct = _context.cartProducts.Find(cartProductId);
+            if (cartProduct != null)
             {
-                return null;
-            }
-            else if (!_context.CartProducts.Any(cp => cp.PkId == id))
-            {
-                return null;
-            }
-            return _context.CartProducts.Find(id);
-        }
-
-        // Add cart product
-        public string Add(CartProduct cartProduct)
-        {
-            try
-            {
-                _context.CartProducts.Add(cartProduct);
+                _context.cartProducts.Remove(cartProduct);
                 _context.SaveChanges();
-
-                return $"success,Successfully created cart product ID: {cartProduct.PkId}";
             }
-            catch (Exception e)
+            else
             {
-                return $"error,Failed to create cart product: {e.Message}";
+                throw new Exception("Cart Product not found");
             }
+        }
+
+        public void AddToCart(int userPkId, int productId, int quantity)
+        {
+            var cartProduct = new CartProduct
+            {
+                FkCartId = userPkId,
+                FkProductId = productId,
+                Quantity = quantity
+            };
+            _context.cartProducts.Add(cartProduct);
+            _context.SaveChanges();
         }
 
         // Update cart product
@@ -53,7 +59,7 @@ namespace GreenHiTech.Repositories
             {
                 try
                 {
-                    _context.CartProducts.Update(cartProduct);
+                    _context.cartProducts.Update(cartProduct);
                     _context.SaveChanges();
 
                     return $"success,Successfully updated cart product ID: {cartProduct.PkId}";
@@ -69,31 +75,10 @@ namespace GreenHiTech.Repositories
             }
         }
 
-        // Delete cart product
-        public string Delete(int id)
-        {
-            CartProduct? cartProduct = GetById(id);
-            if (cartProduct == null)
-            {
-                return $"warning,Unable to find cart product ID: {id}";
-            }
-
-            try
-            {
-                _context.CartProducts.Remove(cartProduct);
-                _context.SaveChanges();
-                return $"success,Successfully deleted cart product ID: {id}";
-            }
-            catch (Exception e)
-            {
-                return $"error,Failed to delete cart product: {e.Message}";
-            }
-        }
-
         // if cart product exists
         public bool Any(int id)
         {
-            return _context.CartProducts.Any(cp => cp.PkId == id);
+            return _context.cartProducts.Any(cp => cp.PkId == id);
         }
     }
 }
