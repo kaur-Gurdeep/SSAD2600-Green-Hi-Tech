@@ -37,5 +37,26 @@ namespace GreenHiTech.Controllers
             _cartProductRepo.Delete(id);
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult IncreaseQuantity(int id)
+        {
+            _cartProductRepo.IncreaseQuantity(id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult DecreaseQuantity(int id)
+        {
+            try
+            {
+                _cartProductRepo.DecreaseQuantity(id);
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index", new { message = e.Message });
+            }
+            return RedirectToAction("Index");
+        }
     }
 }
