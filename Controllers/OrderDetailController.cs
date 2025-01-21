@@ -40,5 +40,15 @@ namespace GreenHiTech.Controllers
             return orderDetail;
         }
 
+        // POST: api/OrderDetail
+        [HttpPost]
+        public async Task<ActionResult<OrderDetail>> PostOrderDetail(OrderDetail orderDetail)
+        {
+            _context.OrderDetails.Add(orderDetail);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetOrderDetail), new { id = orderDetail.PkId }, orderDetail);
+        }
+
     }
 }
