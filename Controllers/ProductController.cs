@@ -9,9 +9,9 @@ namespace GreenHiTech.Controllers
     {
         // Repo methods: Add, GetAll, GetById, Update, Delete
 
-        private readonly ProductRepository _productRepo;
+        private readonly ProductRepo _productRepo;
 
-        public ProductController(ProductRepository productRepo)
+        public ProductController(ProductRepo productRepo)
         {
             _productRepo = productRepo;
         }
@@ -39,7 +39,7 @@ namespace GreenHiTech.Controllers
             Product? product = _productRepo.GetById(id);
 
             if(product == null) {
-                returnMessage = $"error,Could not find product: (Name {product.Name})";
+                returnMessage = $"error,Could not find product ID: {id}";
                 return RedirectToAction("Index");
             }
             else
