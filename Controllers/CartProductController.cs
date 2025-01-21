@@ -20,6 +20,12 @@ namespace GreenHiTech.Controllers
         {
             int userPkId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             IEnumerable<CartProductVM> cartProducts = _cartProductRepo.GetAll(userPkId);
+            decimal totalAmount = _cartProductRepo.GetTotalAmount(userPkId);
+            decimal taxTotal = _cartProductRepo.GetTaxTotal(userPkId);
+            decimal subTotal = _cartProductRepo.GetSubTotal(userPkId);
+            ViewBag.TaxTotal = taxTotal;
+            ViewBag.SubTotal = subTotal;
+            ViewBag.TotalAmount = totalAmount;
             return View();
         }
 
