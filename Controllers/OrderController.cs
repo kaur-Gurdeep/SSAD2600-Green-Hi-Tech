@@ -1,26 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GreenHiTech.Models;
+using GreenHiTech.Repositories;
+using GreenHiTech.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GreenHiTech.Controllers
 {
     public class OrderController: Controller
     {
         private readonly OrderRepo _orderRepo;
-        private readonly OrderController _logger;
 
-        public OrderController(ILogger<OrderController> logger, OrderRepo orderRepo)
+        public OrderController(OrderRepo orderRepo)
         {
-            _logger = logger;
             _orderRepo = orderRepo;
         }
 
         public IActionResult Index()
         {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult Create(payPalConfirmationModel payPalConfirmation) 
-        {
+            var orders = _orderRepo.GetAll();
 
+            var orderList = orders.Select(o => new OrderVM
+            {
+                PkId = o.PkId,
+                FkUserId = o.FkUserId,
+                OrderDate = o.OrderDate,
+                TotalAmount = o.TotalAmount,
+                Status = o.Status,
+                //OrderDetails = o.OrderDetails,
+            }).ToList();
+
+            return View(orderList);
         }
+
+
+        //public IActionResult Create() { 
+        //}
+
+
     }
 }
