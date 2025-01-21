@@ -17,8 +17,6 @@ public partial class User
 
     public string Phone { get; set; } = null!;
 
-    public string IdentityUserId { get; set; } = null!;
-
     public int FkAddressId { get; set; }
 
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();

@@ -87,5 +87,29 @@ namespace GreenHiTech.Repositories
                 throw new Exception("Cart Product not found");
             }
         } 
+
+        public decimal GetSubTotal(int userPkId)
+        {
+            decimal subTotal = _context.cartProducts
+                .Where(cp => cp.FkCartId == userPkId)
+                .Sum(cp => cp.FkProduct.Price * cp.Quantity);
+            return subTotal;
+        }
+
+        public decimal GetTaxTotal(int userPkId)
+        {
+            decimal taxTotal = _context.cartProducts
+                .Where(cp => cp.FkCartId == userPkId)
+                .Sum(cp => cp.FkProduct.Price * cp.Quantity * 0.12M);
+            return taxTotal;
+        }
+
+        public decimal GetTotalAmount(int userPkId)
+        {
+            decimal totalAmount = _context.cartProducts
+                .Where(cp => cp.FkCartId == userPkId)
+                .Sum(cp => (cp.FkProduct.Price * cp.Quantity) + (cp.FkProduct.Price * cp.Quantity * 0.12M));
+            return totalAmount;
+        }
     }
 }
