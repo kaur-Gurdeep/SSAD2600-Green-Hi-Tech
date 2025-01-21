@@ -38,9 +38,8 @@ namespace GreenHiTech.Controllers
             string returnMessage = string.Empty;
             Product? product = _productRepo.GetById(id);
 
-            if (product == null)
-            {
-                returnMessage = $"error,Could not find product: (Name {product.Name})";
+            if(product == null) {
+                returnMessage = $"error,Could not find product ID: {id}";
                 return RedirectToAction("Index");
             }
             else
@@ -56,8 +55,6 @@ namespace GreenHiTech.Controllers
                 };
                 return View(productVM);
             }
-
-
         }
 
         // GET
