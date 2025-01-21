@@ -55,8 +55,6 @@ namespace GreenHiTech.Controllers
                 };
                 return View(productVM);
             }
-
-
         }
 
         // GET
