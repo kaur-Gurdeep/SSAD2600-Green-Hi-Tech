@@ -1,0 +1,57 @@
+﻿@model IEnumerable<GreenHiTech.ViewModels.CartProductVM>
+
+@if (Model != null && Model.Any())
+{
+	<table>
+		<thead>
+			<tr>
+				<th>Product</th>
+				<th>Quantity</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>@item.FkProductId</td>
+					<td>@item.Quantity</td>
+					<td>
+						<form asp-action="IncreaseQuantity" method="post" style="display:inline">
+							<input type="hidden" name="id" value="@item.PkId" />
+							<button type="submit">+</button>
+						</form>
+						<form asp-action="DecreaseQuantity" method="post" style="display:inline">
+							<input type="hidden" name="id" value="@item.PkId" />
+							<button type="submit">-</button>
+						</form>
+						<form asp-action="Delete" method="post" style="display:inline">
+							<input type="hidden" name="id" value="@item.PkId" />
+							<button type="submit">Delete</button
+						</form>
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+		<h4>Subtotal: @ViewBag.SubTotal</h4>
+		<h4>Taxes: @ViewBag.TaxTotal</h4>
+		<h4>Total Amount: @ViewBag.TotalAmount</h4>
+	}
+	else
+	{
+		<p>Your cart is empty.</p>
+	}
+
+	<h3>Add New Product</h3>
+	<form asp-action="AddToCart" method="post">
+		<div>
+			<label>Product ID:</label>
+			<input type="number" name="productId" />
+		</div>
+		<div>
+			<label>Quantity:</label>
+			<input type="number" name="quantity" />
+		</div>
+		<button type="submit">Add to Cart</button>
+	</form>

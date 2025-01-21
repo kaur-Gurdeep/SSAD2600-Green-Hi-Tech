@@ -20,6 +20,12 @@ namespace GreenHiTech.Controllers
         {
             int userPkId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             IEnumerable<CartProductVM> cartProducts = _cartProductRepo.GetAll(userPkId);
+            decimal totalAmount = _cartProductRepo.GetTotalAmount(userPkId);
+            decimal taxTotal = _cartProductRepo.GetTaxTotal(userPkId);
+            decimal subTotal = _cartProductRepo.GetSubTotal(userPkId);
+            ViewBag.TaxTotal = taxTotal;
+            ViewBag.SubTotal = subTotal;
+            ViewBag.TotalAmount = totalAmount;
             return View();
         }
 
@@ -35,6 +41,27 @@ namespace GreenHiTech.Controllers
         public IActionResult Delete(int id)
         {
             _cartProductRepo.Delete(id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult IncreaseQuantity(int id)
+        {
+            _cartProductRepo.IncreaseQuantity(id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult DecreaseQuantity(int id)
+        {
+            try
+            {
+                _cartProductRepo.DecreaseQuantity(id);
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index", new { message = e.Message });
+            }
             return RedirectToAction("Index");
         }
     }

@@ -70,7 +70,7 @@ namespace GreenHiTech.Controllers
         {
             string returnMessage = string.Empty;
 
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -96,7 +96,7 @@ namespace GreenHiTech.Controllers
                 return View(productVM);
             }
 
-            return RedirectToAction("Index", new { message = returnMessage});
+            return RedirectToAction("Index", new { message = returnMessage });
         }
 
         // GET
@@ -136,7 +136,7 @@ namespace GreenHiTech.Controllers
                 if (product == null)
                 {
                     returnMessage = $"error,Product could not be updated: (Name {productVM.Name})";
-                } 
+                }
                 else
                 {
                     _productRepo.Update(product);
@@ -144,7 +144,7 @@ namespace GreenHiTech.Controllers
                 }
             }
 
-            return RedirectToAction("Index", new {message = returnMessage});
+            return RedirectToAction("Index", new { message = returnMessage });
         }
 
         // GET
@@ -178,7 +178,7 @@ namespace GreenHiTech.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             Product? product = _productRepo.GetById(id);
-            if(product == null)
+            if (product == null)
             {
                 return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
             }
