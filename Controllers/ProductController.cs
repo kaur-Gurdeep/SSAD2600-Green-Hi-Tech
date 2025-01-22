@@ -25,6 +25,7 @@ namespace GreenHiTech.Controllers
 
             var productVMs = products.Select(p => new ProductVM
             {
+                PkId = p.PkId,
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
@@ -49,12 +50,14 @@ namespace GreenHiTech.Controllers
             {
                 ProductVM productVM = new ProductVM
                 {
+                    PkId = product.PkId,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
                     StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
+                    ProductImages = product.ProductImages,
                 };
                 return View(productVM);
             }
@@ -131,12 +134,14 @@ namespace GreenHiTech.Controllers
             {
                 ProductVM productVM = new ProductVM
                 {
-                    PkId = id,
+                    PkId = product.PkId,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
+                    StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
+                    ProductImages = product.ProductImages,
                 };
                 return View(productVM);
             }
