@@ -36,8 +36,13 @@ public partial class GreenHiTechContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=SLYTON101\\SQLEXPRESS;Database=GreenHiTech;Trusted_Connection=True;TrustServerCertificate=True; MultipleActiveResultSets=true");
+    {
+        if(!optionsBuilder.IsConfigured)
+        {
+            // Log or throw an error if configuration is missing
+            throw new InvalidOperationException("The context was not configured. Ensure it's set up in Program.cs.");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

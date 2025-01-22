@@ -32,9 +32,12 @@
                 <input asp-for="StockQuantity" class="form-control" />
                 <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div><br />
-            <div class="form-group">
-                <label asp-for="FkCategoryId" class="control-label"></label>
-                <input asp-for="FkCategoryId" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="FkCategoryId" class="control-label">Select User</label>
+                <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList"
+                        class="form-select">
+                    <option value="">-- Select User --</option>
+                </select>
                 <span asp-validation-for="FkCategoryId" class="text-danger"></span>
             </div><br />
             <div class="form-group">
