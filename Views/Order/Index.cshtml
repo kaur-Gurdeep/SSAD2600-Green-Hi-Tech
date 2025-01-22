@@ -1,0 +1,43 @@
+﻿@model IEnumerable<GreenHiTech.ViewModels.OrderVM>
+
+@{
+    ViewData["Title"] = "Order";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Orders</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Order Id</th>
+                <th>User Id</th>
+                <th>Order Date</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>OrderDetails</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.PkId</td>
+                        <td>@order.FkUserId</td>
+                        <td>@order.OrderDate</td>
+                        <td>@order.TotalAmount</td>
+                        <td>@order.Status</td>
+                        <td>order Details</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No orderDetails exist.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
