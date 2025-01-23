@@ -35,11 +35,15 @@ public partial class GreenHiTechContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=SLYTON101\\SQLEXPRESS;Database=GreenHiTech;Trusted_Connection=True;TrustServerCertificate=True; MultipleActiveResultSets=true");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AddressDetail>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__AddressD__A7C03E1891DE1E57");
+            entity.HasKey(e => e.PkId).HasName("PK__AddressD__A7C03E18B775225D");
 
             entity.Property(e => e.PkId).HasColumnName("PkID");
             entity.Property(e => e.City)
@@ -67,7 +71,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<Cart>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__Cart__A7C03E18831B1B6F");
+            entity.HasKey(e => e.PkId).HasName("PK__Cart__A7C03E1877B52D70");
 
             entity.ToTable("Cart");
 
@@ -83,7 +87,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<CartProduct>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__CartProd__A7C03E18B076E77D");
+            entity.HasKey(e => e.PkId).HasName("PK__CartProd__A7C03E188434383B");
 
             entity.ToTable("CartProduct");
 
@@ -104,7 +108,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__Category__A7C03E182497B186");
+            entity.HasKey(e => e.PkId).HasName("PK__Category__A7C03E183DBBDE88");
 
             entity.ToTable("Category");
 
@@ -119,7 +123,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__Order__A7C03E18508B0348");
+            entity.HasKey(e => e.PkId).HasName("PK__Order__A7C03E18DFEDDD55");
 
             entity.ToTable("Order");
 
@@ -138,7 +142,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__OrderDet__A7C03E1840D1E2A8");
+            entity.HasKey(e => e.PkId).HasName("PK__OrderDet__A7C03E1842399867");
 
             entity.Property(e => e.PkId).HasColumnName("PkID");
             entity.Property(e => e.FkOrderId).HasColumnName("FkOrderID");
@@ -157,7 +161,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__Payment__A7C03E18151948A4");
+            entity.HasKey(e => e.PkId).HasName("PK__Payment__A7C03E18DCD08483");
 
             entity.ToTable("Payment");
 
@@ -174,7 +178,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__Product__A7C03E18D1ABC323");
+            entity.HasKey(e => e.PkId).HasName("PK__Product__A7C03E185AF044F3");
 
             entity.ToTable("Product");
 
@@ -199,7 +203,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<ProductImage>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__ProductI__A7C03E1879D38D53");
+            entity.HasKey(e => e.PkId).HasName("PK__ProductI__A7C03E18C7186903");
 
             entity.ToTable("ProductImage");
 
@@ -221,7 +225,7 @@ public partial class GreenHiTechContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.PkId).HasName("PK__User__A7C03E18AAC968C6");
+            entity.HasKey(e => e.PkId).HasName("PK__User__A7C03E180177EC3E");
 
             entity.ToTable("User");
 

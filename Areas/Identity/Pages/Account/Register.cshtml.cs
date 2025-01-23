@@ -10,6 +10,8 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GreenHiTech.Repositories;
+using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using static GreenHiTech.Data.Services.ReCAPTCHA;
 
 namespace GreenHiTech.Areas.Identity.Pages.Account
 {
@@ -28,14 +31,18 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
+        private readonly IdentityUserRepo _identityUserRepo;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IConfiguration config,
+            IdentityUserRepo identityUserRepo)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +50,9 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _config = config;
+            _identityUserRepo = identityUserRepo;
+
         }
 
         /// <summary>
@@ -70,6 +80,15 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -102,6 +121,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            ViewData["SiteKey"] = _config["Recaptcha:SiteKey"];
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -110,6 +131,20 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            string captchaResponse = Request.Form["g-Recaptcha-Response"];
+            string secret = _config["Recaptcha:SecretKey"];
+            ReCaptchaValidationResult resultCaptcha =
+                ReCaptchaValidator.IsValid(secret, captchaResponse);
+
+            // Invalidate the form if the captcha is invalid.
+            if (!resultCaptcha.Success)
+            {
+                ViewData["SiteKey"] = _config["Recaptcha:SiteKey"];
+                ModelState.AddModelError(string.Empty,
+                    "The ReCaptcha is invalid.");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -121,6 +156,24 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    // Get identityUser object after creation
+                    var createdUser = await _userManager.GetUserAsync(User);
+
+                    // Save user details into the custom User table
+                    var newUser = new Models.User
+                    {
+                        FirstName = Input.FirstName,
+                        LastName = Input.LastName,
+                        Role = "User", //default role
+                        Email = Input.Email,
+                        Phone = "", 
+                        IdentityUserId = createdUser?.Id, 
+                        FkAddressId = 0 // set this later or default it
+                    };
+
+                    // Save to the database using IdentityUserRepo
+                    _identityUserRepo.AddUser(newUser);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
