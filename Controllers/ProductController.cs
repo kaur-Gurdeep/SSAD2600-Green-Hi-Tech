@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using GreenHiTech.Models;
@@ -10,10 +11,12 @@ namespace GreenHiTech.Controllers
         // Repo methods: Add, GetAll, GetById, Update, Delete
 
         private readonly ProductRepo _productRepo;
+        private readonly CategoryRepo _categoryRepo;
 
-        public ProductController(ProductRepo productRepo)
+        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo)
         {
             _productRepo = productRepo;
+            _categoryRepo = categoryRepo;
         }
 
         public IActionResult Index()
@@ -22,6 +25,7 @@ namespace GreenHiTech.Controllers
 
             var productVMs = products.Select(p => new ProductVM
             {
+                PkId = p.PkId,
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
@@ -46,12 +50,14 @@ namespace GreenHiTech.Controllers
             {
                 ProductVM productVM = new ProductVM
                 {
+                    PkId = product.PkId,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
                     StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
+                    ProductImages = product.ProductImages,
                 };
                 return View(productVM);
             }
@@ -60,7 +66,23 @@ namespace GreenHiTech.Controllers
         // GET
         public IActionResult Create()
         {
-            return View(new ProductVM());
+            string returnMessage = string.Empty;
+            var categoryItems = _categoryRepo.GetAll().Select(c =>  new SelectListItem
+            {
+                Value = c.Name,
+                Text = c.Name
+            }).ToList();
+            if(categoryItems == null)
+            {
+                returnMessage = "cannot find caterories";
+                return RedirectToAction("Index", new { message = returnMessage });
+            }
+            else
+            {
+                SelectList categorySelectList = new SelectList(categoryItems, "Value", "Text");
+                ViewBag.CategorySelectList = categorySelectList;
+                return View(new ProductVM());
+            }
         }
 
         // POST
@@ -112,12 +134,14 @@ namespace GreenHiTech.Controllers
             {
                 ProductVM productVM = new ProductVM
                 {
-                    PkId = id,
+                    PkId = product.PkId,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
+                    StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
+                    ProductImages = product.ProductImages,
                 };
                 return View(productVM);
             }
