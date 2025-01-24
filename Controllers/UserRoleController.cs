@@ -13,23 +13,28 @@ namespace DeckMaster.Controllers
 
     public class UserRoleController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IdentityUserRepo _userRepo;
+        private readonly RoleRepo _roleRepo;
 
-        public UserRoleController(ApplicationDbContext context
+
+        public UserRoleController(IdentityUserRepo userRepo
+                                 , RoleRepo roleRepo
                                  , UserManager<IdentityUser> userManager
                                  , RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _userRepo = userRepo;
             _userManager = userManager;
             _roleManager = roleManager;
+            _roleRepo = roleRepo;
         }
 
         public ActionResult Index()
         {
-            IdentityUserRepo userRepo = new IdentityUserRepo(_context);
-            var users = userRepo.GetUsers();
+            //IdentityUserRepo userRepo = new IdentityUserRepo(_context);
+            var users = _userRepo.GetUsers();
 
             return View(users);
         }
@@ -56,8 +61,8 @@ namespace DeckMaster.Controllers
             ViewBag.SelectedUser = userName;
 
             // Build SelectList with role data and store in ViewBag.
-            RoleRepo roleRepo = new RoleRepo(_context);
-            var roles = roleRepo.GetAllRoles().ToList();
+            //RoleRepo roleRepo = new RoleRepo(_context);
+            var roles = _roleRepo.GetAllRoles().ToList();
 
             // There might be a better way but I have always found using the 
             // .NET dropdown lists to be a challenge. Here is a way to make 
@@ -79,11 +84,13 @@ namespace DeckMaster.Controllers
             // 2. Preparation for 'Users' drop down list. 
             //    a) Build a list of SelectListItem objects which have 'Value' and 
             //       'Text' properties.
-            var userList = _context.Users.ToList();
+            var users = _userRepo.GetUsers();
+
+            //var userList = _context.Users.ToList();
 
             //    b) Store the SelectListItem objects in a SelectList object 
             //       with 'Value' and 'Text' properties set specifically.
-            var preUserList = userList.Select(u =>
+            var preUserList = users.Select(u =>
                 new SelectListItem { Value = u.Email, Text = u.Email }).ToList();
             SelectList userSelectList = new SelectList(preUserList
                                                         , "Value"

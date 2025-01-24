@@ -7,9 +7,9 @@ namespace GreenHiTech.Repositories
 {
     public class IdentityUserRepo
     {
-        private readonly ApplicationDbContext _context;
+        private readonly GreenHiTechContext _context;
 
-        public IdentityUserRepo(ApplicationDbContext context)
+        public IdentityUserRepo(GreenHiTechContext context)
         {
             this._context = context;
         }
@@ -22,7 +22,7 @@ namespace GreenHiTech.Repositories
 
         public void AddUser(User user)
         {
-            _context.Users.Add(user);
+            _context.Users.Add(user ?? new User());
             _context.SaveChanges();
         }
     }
