@@ -33,10 +33,10 @@
                 <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div><br />
             <div class="form-group mb-3">
-                <label asp-for="FkCategoryId" class="control-label">Select User</label>
+                <label asp-for="FkCategoryId" class="control-label">Select Category</label>
                 <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList"
                         class="form-select">
-                    <option value="">-- Select User --</option>
+                    <option value="">-- Select Category --</option>
                 </select>
                 <span asp-validation-for="FkCategoryId" class="text-danger"></span>
             </div><br />

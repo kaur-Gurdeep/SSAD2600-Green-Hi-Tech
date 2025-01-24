@@ -5,6 +5,7 @@ using GreenHiTech.Data;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using GreenHiTech.Models;
 
 namespace DeckMaster.Controllers
 {
@@ -16,21 +17,26 @@ namespace DeckMaster.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IdentityUserRepo _identityUserRepo;
 
         public UserRoleController(ApplicationDbContext context
                                  , UserManager<IdentityUser> userManager
-                                 , RoleManager<IdentityRole> roleManager)
+                                 , RoleManager<IdentityRole> roleManager,
+                                   GreenHiTechContext greenHiTechContext)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _identityUserRepo = new IdentityUserRepo(userManager, greenHiTechContext);
         }
 
         public ActionResult Index()
         {
-            IdentityUserRepo userRepo = new IdentityUserRepo(_context);
-            var users = userRepo.GetUsers();
+            //IdentityUserRepo userRepo = new IdentityUserRepo(_context);
+            //var users = userRepo.GetUsers();
 
+            //return View(users);
+            var users = _identityUserRepo.GetUsers(); 
             return View(users);
         }
 

@@ -7,16 +7,16 @@ namespace GreenHiTech.Repositories
 {
     public class CartProductRepo
     {
-        private readonly ApplicationDbContext _context;
+        private readonly GreenHiTechContext _context;
 
-        public CartProductRepo(ApplicationDbContext context)
+        public CartProductRepo(GreenHiTechContext context)
         {
             _context = context;
         }
 
         public IEnumerable<CartProductVM> GetAll(int userPkId)
         {
-            IEnumerable<CartProductVM> cartProducts = _context.cartProducts
+            IEnumerable<CartProductVM> cartProducts = _context.CartProducts
                 .Where(cp => cp.FkCartId == userPkId)
                 .Select(cp => new CartProductVM
                 {
@@ -29,10 +29,10 @@ namespace GreenHiTech.Repositories
 
         public void Delete(int cartProductId)
         {
-            var cartProduct = _context.cartProducts.Find(cartProductId);
+            var cartProduct = _context.CartProducts.Find(cartProductId);
             if (cartProduct != null)
             {
-                _context.cartProducts.Remove(cartProduct);
+                _context.CartProducts.Remove(cartProduct);
                 _context.SaveChanges();
             }
             else
@@ -49,13 +49,13 @@ namespace GreenHiTech.Repositories
                 FkProductId = productId,
                 Quantity = quantity
             };
-            _context.cartProducts.Add(cartProduct);
+            _context.CartProducts.Add(cartProduct);
             _context.SaveChanges();
         }
 
         public void IncreaseQuantity(int cartProductId)
         {
-            var cartProduct = _context.cartProducts.Find(cartProductId);
+            var cartProduct = _context.CartProducts.Find(cartProductId);
             if (cartProduct != null)
             {
                 cartProduct.Quantity++;
@@ -69,7 +69,7 @@ namespace GreenHiTech.Repositories
 
         public void DecreaseQuantity(int cartProductId)
         {
-            var cartProduct = _context.cartProducts.Find(cartProductId);
+            var cartProduct = _context.CartProducts.Find(cartProductId);
             if (cartProduct != null)
             {
                 if (cartProduct.Quantity > 1)
@@ -90,7 +90,7 @@ namespace GreenHiTech.Repositories
 
         public decimal GetSubTotal(int userPkId)
         {
-            decimal subTotal = _context.cartProducts
+            decimal subTotal = _context.CartProducts
                 .Where(cp => cp.FkCartId == userPkId)
                 .Sum(cp => cp.FkProduct.Price * cp.Quantity);
             return subTotal;
@@ -98,7 +98,7 @@ namespace GreenHiTech.Repositories
 
         public decimal GetTaxTotal(int userPkId)
         {
-            decimal taxTotal = _context.cartProducts
+            decimal taxTotal = _context.CartProducts
                 .Where(cp => cp.FkCartId == userPkId)
                 .Sum(cp => cp.FkProduct.Price * cp.Quantity * 0.12M);
             return taxTotal;
@@ -106,7 +106,7 @@ namespace GreenHiTech.Repositories
 
         public decimal GetTotalAmount(int userPkId)
         {
-            decimal totalAmount = _context.cartProducts
+            decimal totalAmount = _context.CartProducts
                 .Where(cp => cp.FkCartId == userPkId)
                 .Sum(cp => (cp.FkProduct.Price * cp.Quantity) + (cp.FkProduct.Price * cp.Quantity * 0.12M));
             return totalAmount;
