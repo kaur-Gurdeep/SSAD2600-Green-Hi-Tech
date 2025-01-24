@@ -27,42 +27,46 @@ namespace GreenHiTech.Controllers
             return View();
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Detail(int id)
         {
-            var user = _userRepo.GetById(id);
+            User? user = _userRepo.GetById(id);
 
             if (user == null)
             {
-                _logger.LogWarning("Unable to find User ID: {Id}", id);
                 return RedirectToAction("Index", new
                 {
-                    message = $"warning,Unable to find User Id: {id}"
+                    message = $"warning, Unable to find User Id: {id}"
                 });
             }
-            var address = _addressDetailRepo.GetById(user.FkAddressId);
-            var userVM = new UserVM
+            else
             {
-                PkUserId = user.PkId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Role = user.Role,
-                //Phone = user.Phone,
-                AddressDetail = address != null ? new AddressDetailVM
-                {
-                    PkId = address.PkId,
-                    Unit = address.Unit,
-                    HouseNumber = address.HouseNumber,
-                    Street = address.Street,
-                    City = address.City,
-                    PostalCode = address.PostalCode,
-                    Country = address.Country,
-                    Province = address.Province
-                } : null,
-            };
+                var address = _addressDetailRepo.GetById(user.FkAddressId);
 
-            return View(userVM);
+                var userVM = new UserVM
+                {
+                    PkUserId = user.PkId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Role = user.Role,
+                    Phone = user.Phone,
+                    AddressDetail = address != null ? new AddressDetailVM
+                    {
+                        PkId = address.PkId,
+                        Unit = address.Unit,
+                        HouseNumber = address.HouseNumber,
+                        Street = address.Street,
+                        City = address.City,
+                        PostalCode = address.PostalCode,
+                        Country = address.Country,
+                        Province = address.Province
+                    } : null,
+                };
+
+                return View(userVM);
+            }
         }
+
 
         public IActionResult Edit(int id)
         {
