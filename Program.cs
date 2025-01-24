@@ -55,6 +55,7 @@ builder.Services.Configure<IdentityOptions>(options => {
 builder.Services.AddScoped<RoleRepo>();
 builder.Services.AddScoped<IdentityUserRepo>();
 builder.Services.AddScoped<UserRoleRepo>();
+builder.Services.AddScoped<UserRepo>();
 
 
 

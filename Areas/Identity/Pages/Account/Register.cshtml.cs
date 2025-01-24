@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -34,6 +35,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
         private readonly IdentityUserRepo _identityUserRepo;
+        private readonly UserRepo _userRepo;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +44,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             IConfiguration config,
-            IdentityUserRepo identityUserRepo)
+            IdentityUserRepo identityUserRepo,
+            UserRepo userRepo)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -52,7 +55,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _config = config;
             _identityUserRepo = identityUserRepo;
-
+            _userRepo = userRepo;
         }
 
         /// <summary>
@@ -158,7 +161,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     /// Save custom user details in the custom table
-                    var newUser = new GreenHiTech.Models.User
+                    var newUser = new User
                     {
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
@@ -169,7 +172,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                         FkAddressId = null
                     };
 
-                    await _identityUserRepo.AddUser(newUser);
+                    _userRepo.Add(newUser);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
