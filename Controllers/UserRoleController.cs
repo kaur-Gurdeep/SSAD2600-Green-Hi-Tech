@@ -21,13 +21,13 @@ namespace DeckMaster.Controllers
 
         public UserRoleController(ApplicationDbContext context
                                  , UserManager<IdentityUser> userManager
-                                 , RoleManager<IdentityRole> roleManager,
-                                   GreenHiTechContext greenHiTechContext)
+                                 , RoleManager<IdentityRole> roleManager
+                                 )
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
-            _identityUserRepo = new IdentityUserRepo(userManager, greenHiTechContext);
+            _identityUserRepo = new IdentityUserRepo(userManager);
         }
 
         public ActionResult Index()
