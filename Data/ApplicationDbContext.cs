@@ -11,6 +11,6 @@ namespace GreenHiTech.Data
         {
         }
 
-        public DbSet<CartProduct> cartProducts { get; set; }
+        //public DbSet<CartProduct> cartProducts { get; set; }
     }
 }
