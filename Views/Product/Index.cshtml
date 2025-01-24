@@ -1,0 +1,36 @@
+﻿@model IEnumerable<GreenHiTech.ViewModels.ProductVM>
+
+@{
+	ViewData["Title"] = "Products";
+}
+
+<br />
+<h1>All the Products</h1>
+<br />
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+}
+<table class="table table-striped table-bordered table-hover"
+       style="width:500px;">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>$ @product.Price</td>
+                <td>@product.StockQuantity</td>
+                <td><a asp-action="Details" asp-route-id=@product.PkId>Details</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,68 @@
+﻿@model GreenHiTech.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Detail";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Product</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PkId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PkId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FkCategoryId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FkCategoryId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Manufacturer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Manufacturer)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProductImages)
+        </dt>
+        <dd class="product-images">
+            @if (Model.ProductImages != null)
+            {
+                int i = 0;
+                foreach (var image in Model.ProductImages)
+                {
+                    string altId = "image_" + i.ToString();
+                    < src=@image.ImageUrl alt=@altId />
+                    i++;                     
+                }
+            }
+            else
+            {
+                <div>No images</div>
+            }
+        </dd>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.PkId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
