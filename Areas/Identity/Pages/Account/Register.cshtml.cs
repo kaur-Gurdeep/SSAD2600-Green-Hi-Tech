@@ -157,23 +157,19 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Get identityUser object after creation
-                    var createdUser = await _userManager.GetUserAsync(User);
-
-                    // Save user details into the custom User table
-                    var newUser = new Models.User
+                    /// Save custom user details in the custom table
+                    var newUser = new GreenHiTech.Models.User
                     {
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
-                        Role = "User", //default role
                         Email = Input.Email,
-                        Phone = "", 
-                        IdentityUserId = createdUser?.Id, 
-                        FkAddressId = 0 // set this later or default it
+                        IdentityUserId = user.Id, // Link to IdentityUser
+                        Role = "User", // Default role
+                        Phone = "",
+                        FkAddressId = null
                     };
 
-                    // Save to the database using IdentityUserRepo
-                    _identityUserRepo.AddUser(newUser);
+                    await _identityUserRepo.AddUser(newUser);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
