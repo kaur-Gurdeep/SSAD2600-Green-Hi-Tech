@@ -8,8 +8,6 @@ namespace GreenHiTech.Controllers
 {
     public class ProductController : Controller
     {
-        // Repo methods: Add, GetAll, GetById, Update, Delete
-
         private readonly ProductRepo _productRepo;
         private readonly CategoryRepo _categoryRepo;
 
@@ -96,6 +94,17 @@ namespace GreenHiTech.Controllers
             {
                 try
                 {
+                    var images = productVM.ProductImages.ToList();
+                    List<ProductImage> productImages = new List<ProductImage>();
+                    foreach(var image in images)
+                    {
+                        ProductImage productImage = new ProductImage
+                        {
+                            AltText = productVM.Name + "_",
+                            FkProductId = productVM.PkId,
+                            ImageUrl = image.ImageUrl,
+                        };
+                    }
                     Product product = new Product
                     {
                         Name = productVM.Name,

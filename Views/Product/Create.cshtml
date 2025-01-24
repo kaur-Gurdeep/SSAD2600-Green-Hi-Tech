@@ -4,6 +4,16 @@
     ViewData["Title"] = "Create";
 }
 
+<script>
+    document.addEventListener('dragover', (e) => {
+        e.preventDefault()
+    });
+    document.addEventListener('drop', (e) => {
+        document.getElementById('file').files = e.dataTransfer.files;
+        e.preventDefault()
+    });
+</script>
+
 <h1>Create</h1>
 
 <h4>Product</h4>
@@ -47,7 +57,7 @@
             </div><br />
             <div class="form-group">
                 <label asp-for="ProductImages" class="control-label"></label>
-                <input asp-for="ProductImages" class="form-control" />
+                <input type="file" name="file" id="file">
                 <span asp-validation-for="ProductImages" class="text-danger"></span>
             </div><br />
             <div class="form-group">
