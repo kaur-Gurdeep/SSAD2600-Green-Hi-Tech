@@ -38,7 +38,12 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
+<<<<<<< HEAD
             else
+=======
+            var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
+            var userVM = new UserVM
+>>>>>>> master
             {
                 var address = _addressDetailRepo.GetById(user.FkAddressId);
 
@@ -78,7 +83,7 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
-            var address = _addressDetailRepo.GetById(user.FkAddressId);
+            var address = _addressDetailRepo.GetById(user.FkAddressId?? 0);
             var userVM = new UserVM
             {
                 PkUserId = user.PkId,
@@ -128,7 +133,7 @@ namespace GreenHiTech.Controllers
 
                 if (userVM.AddressDetail != null)
                 {
-                    var address = _addressDetailRepo.GetById(user.FkAddressId) ?? new AddressDetail();
+                    var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0) ?? new AddressDetail();
 
                     //address.PkId = 0;
                     address.Unit = userVM.AddressDetail.Unit;

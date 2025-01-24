@@ -10,11 +10,15 @@ namespace GreenHiTech.Data
             : base(options)
         {
         }
+<<<<<<< HEAD
        
         public DbSet<User> Users { get; set; }
         public DbSet<CartProduct> cartProducts { get; set; }
         
          public object OrderDetails { get; internal set; }
+=======
+>>>>>>> master
 
+        //public DbSet<CartProduct> cartProducts { get; set; }
     }
 }
