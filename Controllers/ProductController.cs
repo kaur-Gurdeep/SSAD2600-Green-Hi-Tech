@@ -10,11 +10,13 @@ namespace GreenHiTech.Controllers
     {
         private readonly ProductRepo _productRepo;
         private readonly CategoryRepo _categoryRepo;
+        private readonly ProductImageRepo _productImageRepo;
 
-        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo)
+        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo, ProductImageRepo productImageRepo)
         {
             _productRepo = productRepo;
             _categoryRepo = categoryRepo;
+            _productImageRepo = productImageRepo;
         }
 
         public IActionResult Index()
@@ -104,6 +106,8 @@ namespace GreenHiTech.Controllers
                             FkProductId = productVM.PkId,
                             ImageUrl = image.ImageUrl,
                         };
+                        _productImageRepo.Add(productImage);
+                        productImages.Add(productImage);
                     }
                     Product product = new Product
                     {
@@ -113,6 +117,7 @@ namespace GreenHiTech.Controllers
                         StockQuantity = productVM.StockQuantity,
                         FkCategoryId = productVM.FkCategoryId,
                         Manufacturer = productVM.Manufacturer,
+                        ProductImages = productImages
                     };
                     _productRepo.Add(product);
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";

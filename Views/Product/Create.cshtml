@@ -2,15 +2,21 @@
 
 @{
     ViewData["Title"] = "Create";
+
+    List<Object> PackImages() {
+        return null;
+    }
 }
 
 <script>
+    var selectedFiles = [];
     document.addEventListener('dragover', (e) => {
-        e.preventDefault()
+        e.preventDefault();
     });
     document.addEventListener('drop', (e) => {
-        document.getElementById('file').files = e.dataTransfer.files;
-        e.preventDefault()
+        // document.getElementById('file').files = e.dataTransfer.files;
+        document.getElementById('file').files = selectedFiles.push(dataTransfer.files);
+        e.preventDefault();
     });
 </script>
 
@@ -57,11 +63,11 @@
             </div><br />
             <div class="form-group">
                 <label asp-for="ProductImages" class="control-label"></label>
-                <input type="file" name="file" id="file">
+                <input asp-for="ProductImages" type="file" name="file" id="file">
                 <span asp-validation-for="ProductImages" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" onclick=@PackImages()/>
             </div>
         </form>
     </div>
