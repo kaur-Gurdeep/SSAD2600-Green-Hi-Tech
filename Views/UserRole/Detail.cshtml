@@ -11,15 +11,108 @@
 <table class="table">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+            <th>Role Name</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var role in Model)
+
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
+                <td>@role.RoleName</td>
+                @* @if (User.IsInRole("Admin"))
+                { *@
+                <td>
+                    <form asp-action="Delete" method="post" style="display:inline;" id="deleteForm_@role.RoleName">
+                        <input type="hidden" name="userName" value="@ViewBag.UserName" />
+                        <input type="hidden" name="roleName" value="@role.RoleName" />
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete('@role.RoleName')">Delete</button>
+                    </form>
+                </td>
+        @* } *@
             </tr>
         }
     </tbody>
 </table>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p id="modalMessage">Are you sure you want to delete this role?</p>
+        <button id="confirmDeleteBtn" class="btn btn-danger">Yes</button>
+        <button id="cancelDeleteBtn" class="btn btn-secondary">No</button>
+    </div>
+</div>
+<script>
+    function confirmDelete(roleName) {
+        // Set the message to display in the modal
+        document.getElementById('modalMessage').textContent = "Are you sure you want to delete the role: " + roleName + "?";
+
+        // Show the modal
+        document.getElementById('deleteModal').style.display = "flex";
+
+        // If user confirms, submit the form
+        document.getElementById('confirmDeleteBtn').onclick = function () {
+            document.getElementById('deleteForm_' + roleName).submit();
+        };
+
+        // If user cancels, close the modal
+        document.getElementById('cancelDeleteBtn').onclick = function () {
+            document.getElementById('deleteModal').style.display = "none";
+        };
+    }
+
+    // Close the modal if clicked outside
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('deleteModal')) {
+            document.getElementById('deleteModal').style.display = "none";
+        }
+    }
+</script>
+
+<!-- CSS -->
+<style>
+    /* Modal styles */
+    .modal {
+        display: none; 
+        position: fixed;
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        background-color: rgba(0, 0, 0, 0.4); 
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px; 
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .modal-content button {
+            margin: 10px;
+            width: 80px;
+        }
+
+    .btn {
+        padding: 8px 15px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .btn-danger {
+        background-color: red;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: gray;
+        color: white;
+    }
+</style>

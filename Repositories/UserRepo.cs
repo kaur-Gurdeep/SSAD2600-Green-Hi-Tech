@@ -5,6 +5,7 @@ namespace GreenHiTech.Repositories
     public class UserRepo
     {
         private readonly GreenHiTechContext _context;
+
         public UserRepo(GreenHiTechContext context)
         {
             _context = context;
@@ -90,5 +91,6 @@ namespace GreenHiTech.Repositories
         {
             return _context.Users.Any(u => u.PkId == id);
         }
+
     }
 }

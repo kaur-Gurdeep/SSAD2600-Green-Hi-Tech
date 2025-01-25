@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -34,6 +35,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
         private readonly IdentityUserRepo _identityUserRepo;
+        private readonly UserRepo _userRepo;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +44,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             IConfiguration config,
-            IdentityUserRepo identityUserRepo)
+            IdentityUserRepo identityUserRepo,
+            UserRepo userRepo)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -52,7 +55,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _config = config;
             _identityUserRepo = identityUserRepo;
-
+            _userRepo = userRepo;
         }
 
         /// <summary>
@@ -157,23 +160,19 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Get identityUser object after creation
-                    var createdUser = await _userManager.GetUserAsync(User);
-
-                    // Save user details into the custom User table
-                    var newUser = new Models.User
+                    /// Save custom user details in the custom table
+                    var newUser = new User
                     {
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
-                        Role = "User", //default role
                         Email = Input.Email,
-                        Phone = "", 
-                        IdentityUserId = createdUser?.Id, 
-                        FkAddressId = 0 // set this later or default it
+                        IdentityUserId = user.Id, // Link to IdentityUser
+                        Role = "User", // Default role
+                        Phone = "",
+                        FkAddressId = null
                     };
 
-                    // Save to the database using IdentityUserRepo
-                    _identityUserRepo.AddUser(newUser);
+                    _userRepo.Add(newUser);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

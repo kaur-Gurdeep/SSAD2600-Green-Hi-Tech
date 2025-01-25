@@ -5,6 +5,7 @@ using GreenHiTech.Data;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using GreenHiTech.Models;
 
 namespace DeckMaster.Controllers
 {
@@ -16,24 +17,29 @@ namespace DeckMaster.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IdentityUserRepo _identityUserRepo;
 
         public UserRoleController(ApplicationDbContext context
                                  , UserManager<IdentityUser> userManager
-                                 , RoleManager<IdentityRole> roleManager)
+                                 , RoleManager<IdentityRole> roleManager
+                                 )
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _identityUserRepo = new IdentityUserRepo(userManager);
         }
 
+        // Available to both Admins and Staff
+        //[Authorize(Roles = "Admin,Staff")]
         public ActionResult Index()
         {
-            IdentityUserRepo userRepo = new IdentityUserRepo(_context);
-            var users = userRepo.GetUsers();
-
+            var users = _identityUserRepo.GetUsers(); 
             return View(users);
         }
 
+
+        //[Authorize(Roles = "Admin")]
         // Show all roles for a specific user.
         public async Task<IActionResult> Detail(string userName)
         {
@@ -49,6 +55,8 @@ namespace DeckMaster.Controllers
         // It gives two drop downs - the first contains the user names with
         // the requested user selected. The second drop down contains all
         // possible roles.
+
+        //[Authorize(Roles = "Admin")]
         public ActionResult Create(string userName)
         {
             // Store the email address of the Identity user
@@ -94,8 +102,10 @@ namespace DeckMaster.Controllers
             return View();
         }
 
+        
         // Assigns role to user.
         [HttpPost]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(UserRoleVM userRoleVM)
         {
             UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);
@@ -118,6 +128,7 @@ namespace DeckMaster.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRole(string userName, string roleName)
         {
             UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);

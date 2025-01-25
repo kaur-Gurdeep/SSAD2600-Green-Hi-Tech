@@ -9,12 +9,12 @@
     <table class="table table-bordered table-striped">
         <thead class="thead-dark">
             <tr>
-                <th>Order Id</th>
-                <th>User Id</th>
-                <th>Order Date</th>
-                <th>Total Amount</th>
-                <th>Status</th>
-                <th>OrderDetails</th>
+                <th>@Html.DisplayNameFor(model => model.PkId)</th>
+                <th>@Html.DisplayNameFor(model => model.FkUserId)</th>
+                <th>@Html.DisplayNameFor(model => model.OrderDate)</th>
+                <th>@Html.DisplayNameFor(model => model.TotalAmount)</th>
+                <th>@Html.DisplayNameFor(model => model.Status)</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -28,7 +28,10 @@
                         <td>@order.OrderDate</td>
                         <td>@order.TotalAmount</td>
                         <td>@order.Status</td>
-                        <td>order Details</td>
+                        <td>
+                            <a asp-action="ViewOrderDetails" asp-route-id="@order.PkId">Order Details </a>
+                           
+                        </td>
                     </tr>
                 }
             }

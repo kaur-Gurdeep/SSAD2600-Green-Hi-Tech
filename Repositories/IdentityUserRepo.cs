@@ -2,28 +2,32 @@ using Microsoft.AspNetCore.Identity;
 using GreenHiTech.Data;
 using GreenHiTech.ViewModels;
 using GreenHiTech.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreenHiTech.Repositories
 {
     public class IdentityUserRepo
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public IdentityUserRepo(ApplicationDbContext context)
+        public IdentityUserRepo(UserManager<IdentityUser> userManager)
         {
-            this._context = context;
+            this._userManager = userManager;
         }
 
         public List<IdentityUserVM> GetUsers()
         {
-            var users = _context.Users.Select(u => new IdentityUserVM { Email = u.Email }).ToList();
+            var users = _userManager.Users.Select(u => new IdentityUserVM { Email = u.Email }).ToList();
             return users;
         }
 
-        public void AddUser(User user)
-        {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-        }
+        //public async Task AddUser(User customUser)
+        //{
+        //    if (customUser != null)
+        //    {
+        //        _context.Users.Add(customUser);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //}
     }
 }
