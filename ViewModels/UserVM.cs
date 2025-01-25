@@ -20,7 +20,7 @@ namespace GreenHiTech.ViewModels
         public string? Role { get; set; }
 
         public string Phone { get; set; } = null!;
-        public AddressDetailVM AddressDetail { get; set; }
+        public AddressDetailVM? AddressDetail { get; set; }
     }
 
 }
