@@ -18,6 +18,9 @@
         document.getElementById('file').files = selectedFiles.push(dataTransfer.files);
         e.preventDefault();
     });
+    function dropHandler() {
+
+    }
 </script>
 
 <h1>Create</h1>
@@ -63,7 +66,10 @@
             </div><br />
             <div class="form-group">
                 <label asp-for="ProductImages" class="control-label"></label>
-                <input class="file" type="file" name="file" id="file">
+                <div id="drop_zone" class="drop-zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+                    <p>This is a drop zone.</p>
+                </div>
+                @* <input class="file" type="file" name="file" id="file"> *@
                 <span asp-validation-for="ProductImages" class="text-danger"></span>
             </div><br />
             <div class="form-group">
