@@ -50,7 +50,5 @@ namespace GreenHiTech.Controllers
             }
             return View(roleVM);
         }
-
-
     }
 }
