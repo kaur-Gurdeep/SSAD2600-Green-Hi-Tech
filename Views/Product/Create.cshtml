@@ -10,16 +10,44 @@
 
 <script>
     var selectedFiles = [];
-    document.addEventListener('dragover', (e) => {
+    // Handles the drop event, adds files to list of selected images
+    function dropHandler(e) {
         e.preventDefault();
-    });
-    document.addEventListener('drop', (e) => {
-        // document.getElementById('file').files = e.dataTransfer.files;
-        document.getElementById('file').files = selectedFiles.push(dataTransfer.files);
+        document.getElementById('drop_zone').style.backgroundColor = 'white';
+        console.log("File(s) dropped.")
+        if(e.dataTransfer.items) {
+            [...e.dataTransfer.items].forEach((item, i) => {
+                if(item.kind === "file") {
+                    const file = item.getAsFile();
+                    selectedFiles.push(file);
+                }
+            });
+        } else {
+            [...e.dataTransfer.files].forEach((file, i) => {
+                    selectedFiles.push(file);
+                    console.log(item.kind);
+                    console.log(item.type);
+            });
+        }
+        selectedFiles.forEach((file) => {
+            console.log(file.name);
+        });
+    }
+    function dragEndHandler(e) {
         e.preventDefault();
-    });
-    function dropHandler() {
-
+        document.getElementById('drop_zone').style.backgroundColor = 'white';
+    }
+    function dragOverHandler(e) {
+        document.getElementById('drop_zone').style.backgroundColor = 'pink';
+        e.preventDefault();
+    }
+    function dragEnterHandler(e) {
+        e.preventDefault();
+        document.getElementById('drop_zone').style.backgroundColor = 'pink';
+    }
+    function dragLeaveHandler(e) {
+        e.preventDefault();
+        document.getElementById('drop_zone').style.backgroundColor = 'white';
     }
 </script>
 
@@ -66,10 +94,16 @@
             </div><br />
             <div class="form-group">
                 <label asp-for="ProductImages" class="control-label"></label>
-                <div id="drop_zone" class="drop-zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-                    <p>This is a drop zone.</p>
+                <div 
+                    id="drop_zone" 
+                    class="drop-zone" 
+                    ondrop="dropHandler(event);"
+                     ondragover="dragOverHandler(event);"
+                     ondragend="dragEndHandler(event);"
+                     ondragenter="dragEnterHandler(event);"
+                     ondragleave="dragLeaveHandler(event);">
+                    Drag and drop your images here.
                 </div>
-                @* <input class="file" type="file" name="file" id="file"> *@
                 <span asp-validation-for="ProductImages" class="text-danger"></span>
             </div><br />
             <div class="form-group">
