@@ -41,7 +41,7 @@ namespace GreenHiTech.Controllers
             else
 
             {
-                var address = _addressDetailRepo.GetById(user.FkAddressId);
+                var address = _addressDetailRepo.GetById(user.FkAddressId?? 0);
 
                 var userVM = new UserVM
                 {

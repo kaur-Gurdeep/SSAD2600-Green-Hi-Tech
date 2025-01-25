@@ -39,16 +39,7 @@ namespace GreenHiTech.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                User? user = _userRepo.GetByEmail(payerEmail); 
-
-                if (user == null)
-                {
-                    return BadRequest("User not found for the provided email.");
-                }
-
-                // Get userId (PkId) for the found user
-                int userId = user.PkId;  
+                int userId = _userRepo.GetAll().Where(u => u.Email == payerEmail).FirstOrDefault().PkId;
 
                 OrderVM newOrder = new OrderVM
                 {
