@@ -41,7 +41,6 @@ namespace GreenHiTech.Controllers
             {
                 int userId = _userRepo.GetAll().Where(u => u.Email == payerEmail).FirstOrDefault().PkId;
 
-
                 OrderVM newOrder = new OrderVM
                 {
                     FkUserId = userId,
