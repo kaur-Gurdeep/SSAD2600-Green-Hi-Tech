@@ -63,6 +63,41 @@ namespace GreenHiTech.Repositories
             return isSuccess;
         }
 
+        public bool DeleteRole(string roleId, out string errorMessage)
+        {
+            bool isSuccess = true;
+            errorMessage = string.Empty;
+
+            try
+            {
+                // Get the number of users assigned to this role
+                var roleAssignedToUsersCount = _context.UserRoles.Count(ur => ur.RoleId == roleId);
+
+                if (roleAssignedToUsersCount > 0)
+                {
+                    errorMessage = $"This role cannot be deleted because it is assigned to {roleAssignedToUsersCount} user(s).";
+                    return false;
+                }
+
+                var role = _context.Roles.FirstOrDefault(r => r.Id == roleId);
+
+                if (role != null)
+                {
+                    _context.Roles.Remove(role);
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting role: {ex.Message}");
+                isSuccess = false;
+            }
+
+            return isSuccess;
+        }
+
+
+
         public void CreateInitialRole()
         {
              const string ADMIN = "Admin";
