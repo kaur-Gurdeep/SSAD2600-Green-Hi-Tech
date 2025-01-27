@@ -49,6 +49,12 @@
                                    asp-area="" asp-controller="UserRole" asp-action="Index">UserRoles</a>
                             </li>
                         @* } *@
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="CartProduct" asp-action="Index">Cart</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
