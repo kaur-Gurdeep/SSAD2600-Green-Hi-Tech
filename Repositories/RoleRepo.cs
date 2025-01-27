@@ -25,18 +25,31 @@ namespace GreenHiTech.Repositories
             return roles;
         }
 
-        public RoleVM GetRole(string roleName)
+        public RoleVM GetRole(string roleId)
         {
-            var role =
-                _context.Roles.Where(r => r.Name == roleName)
-                              .FirstOrDefault();
+            var role = _context.Roles
+                .FirstOrDefault(r => r.Id == roleId); // Find the role by its ID
 
-            if (role != null) {
-                return new RoleVM() { RoleName = role.Name
-                                    , Id = role.Id };
+            if (role != null)
+            {
+                // Get a list of user emails assigned to this role
+                var userEmails = _context.UserRoles
+                    .Where(ur => ur.RoleId == role.Id)
+                    .Join(_context.Users, ur => ur.UserId, u => u.Id, (ur, u) => u.Email) // Join to get the user's email
+                    .ToList();
+
+                // Return role details with users' emails
+                return new RoleVM
+                {
+                    Id = role.Id,
+                    RoleName = role.Name,
+                    UsersCount = userEmails.Count, // Count of users assigned to this role
+                    UserEmails = userEmails // List of user emails
+                };
             }
-            return null;
+            return null; // Return null if role not found
         }
+
 
         public bool CreateRole(string roleName)
         {

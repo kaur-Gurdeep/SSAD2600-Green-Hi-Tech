@@ -25,6 +25,16 @@ namespace GreenHiTech.Controllers
             return View(roleVM);
         }
 
+        public IActionResult Detail(string roleId)
+        {
+            var role = _roleRepo.GetRole(roleId); 
+            if (role == null)
+            {
+                return NotFound(); 
+            }
+            return View(role); 
+        }
+
         [HttpGet]
         public ActionResult Create()
         {

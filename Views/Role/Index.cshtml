@@ -34,6 +34,8 @@
                         <input type="hidden" name="roleId" value="@item.Id" />
                         <button type="button" class="btn btn-danger" onclick="confirmDelete('@item.RoleName', '@item.Id')">Delete</button>
                     </form>
+
+                    <a href="@Url.Action("Detail", "Role", new { roleId = item.Id })" class="btn btn-info">Details</a>
                 </td>
             </tr>
         }
