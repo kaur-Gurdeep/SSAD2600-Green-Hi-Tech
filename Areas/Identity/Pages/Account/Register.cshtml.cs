@@ -166,7 +166,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
                         Email = Input.Email,
-                        IdentityUserId = user.Id, // Link to IdentityUser
+                        
                         Role = "User", // Default role
                         Phone = "",
                         FkAddressId = null

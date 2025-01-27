@@ -18,7 +18,7 @@ namespace GreenHiTech.Controllers
         }
         public IActionResult Index()
         {
-            int userPkId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            string userPkId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             IEnumerable<CartProductVM> cartProducts = _cartProductRepo.GetAll(userPkId);
             decimal totalAmount = _cartProductRepo.GetTotalAmount(userPkId);
             decimal taxTotal = _cartProductRepo.GetTaxTotal(userPkId);
@@ -32,7 +32,7 @@ namespace GreenHiTech.Controllers
         [HttpPost]
         public IActionResult AddToCart(int productId, int quantity)
         {
-            int userPkId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            string userPkId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _cartProductRepo.AddToCart(userPkId, productId, quantity);
             return RedirectToAction("Index");
         }
