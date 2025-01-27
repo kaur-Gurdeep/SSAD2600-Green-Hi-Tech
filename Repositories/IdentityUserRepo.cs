@@ -21,13 +21,14 @@ namespace GreenHiTech.Repositories
             return users;
         }
 
-        //public async Task AddUser(User customUser)
+        //public async Task<IdentityUser> GetByEmailAsync(string email)
         //{
-        //    if (customUser != null)
+        //    if (string.IsNullOrEmpty(email))
         //    {
-        //        _context.Users.Add(customUser);
-        //        await _context.SaveChangesAsync();
+        //        return null;
         //    }
+
+        //    return await _userManager.FindByEmailAsync(email);
         //}
     }
 }

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using GreenHiTech.Repositories;
 using System.Net;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Data;
 
 namespace GreenHiTech.Controllers
 {
@@ -24,7 +26,24 @@ namespace GreenHiTech.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            //if (User.IsInRole("Admin"))
+            //{
+            var users = _userRepo.GetAll();
+            var userVMs = users.Select(user => new UserVM
+            {
+                PkUserId = user.PkId,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role,
+                Phone = user.Phone
+            }).ToList();
+            return View("Index", userVMs);
+            //}
+            //else
+            //{
+            //    return View();
+            //}
         }
 
         public IActionResult Detail(int id)
@@ -41,7 +60,7 @@ namespace GreenHiTech.Controllers
             else
 
             {
-                var address = _addressDetailRepo.GetById(user.FkAddressId?? 0);
+                var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
 
                 var userVM = new UserVM
                 {
@@ -67,8 +86,6 @@ namespace GreenHiTech.Controllers
                 return View(userVM);
             }
         }
-
-
         public IActionResult Edit(int id)
         {
             var user = _userRepo.GetById(id);
@@ -79,7 +96,7 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
-            var address = _addressDetailRepo.GetById(user.FkAddressId?? 0);
+            var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
             var userVM = new UserVM
             {
                 PkUserId = user.PkId,
@@ -108,7 +125,7 @@ namespace GreenHiTech.Controllers
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetById(userVM.PkUserId);
-                if (user == null) 
+                if (user == null)
                 {
                     string returnMessage = $"error,User could not be updated: (Email {userVM.Email})";
                     return RedirectToAction("Index", new { message = returnMessage });
@@ -152,13 +169,13 @@ namespace GreenHiTech.Controllers
 
                     //user.FkAddressID = address.PkId;
                     //_userRepo.Update(user);
-                }  
+                }
 
             }
             return View(userVM);
 
         }
-        
+
 
         private static UserVM GetUserView(User user, string? role = null)
         {

@@ -1,4 +1,5 @@
 ﻿using GreenHiTech.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreenHiTech.Repositories
 {
@@ -10,14 +11,13 @@ namespace GreenHiTech.Repositories
         {
             _context = context;
         }
-
         // Get all users
         public List<User> GetAll()
         {
             return _context.Users.ToList();
         }
 
-        // Get user by id
+        //Get user by id
         public User? GetById(int id)
         {
             if (id == 0)
@@ -29,6 +29,16 @@ namespace GreenHiTech.Repositories
                 return null;
             }
             return _context.Users.Find(id);
+        }
+
+        public User? GetByEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return null;
+            }
+
+            return _context.Users.FirstOrDefault(u => u.Email == email);
         }
 
         // Add user
