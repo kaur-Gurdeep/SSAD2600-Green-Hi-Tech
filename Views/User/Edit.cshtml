@@ -45,6 +45,14 @@
                     </div>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
+                <div class="mb-3">
+                    <label asp-for="Role" class="form-label">Role</label>
+                    <div class="input-group">
+                        <input asp-for="Role" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
 
                 <div class="mb-3">
                     <label asp-for="AddressDetail.Unit" class="form-label">Unit</label>
@@ -108,13 +116,60 @@
                     </div>
                     <span asp-validation-for="AddressDetail.PostalCode" class="text-danger"></span>
                 </div>
-
+                <input type="hidden" asp-for="PkUserId" />
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary" >Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+
+<!-- Success Modal -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="bi bi-check-circle" style="font-size: 3rem; color: green;"></i>
+                    <p class="mt-3" style="font-size: 1.25rem; font-weight:bold; color: black;">@TempData["SuccessMessage"]</p>
+                </div>
+                  
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Show the success modal if there's a success message in TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+            </text>
+        }
+
+        // Close the modal if clicked outside of it, and then redirect to Index page
+        var successModalElement = document.getElementById('successModal');
+        successModalElement.addEventListener('hidden.bs.modal', function () {
+            window.location.href = '@Url.Action("Index", "User")'; // Redirect to the Index page
+        });
+    </script>
+}
+
+<style>
+    .modal-header{
+        border:none;
+    }
+</style>
+
 
 
