@@ -10,7 +10,5 @@ namespace GreenHiTech.Data
             : base(options)
         {
         }
-
-        //public DbSet<CartProduct> cartProducts { get; set; }
     }
 }

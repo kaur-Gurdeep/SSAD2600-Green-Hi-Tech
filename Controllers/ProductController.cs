@@ -8,15 +8,15 @@ namespace GreenHiTech.Controllers
 {
     public class ProductController : Controller
     {
-        // Repo methods: Add, GetAll, GetById, Update, Delete
-
         private readonly ProductRepo _productRepo;
         private readonly CategoryRepo _categoryRepo;
+        private readonly ProductImageRepo _productImageRepo;
 
-        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo)
+        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo, ProductImageRepo productImageRepo)
         {
             _productRepo = productRepo;
             _categoryRepo = categoryRepo;
+            _productImageRepo = productImageRepo;
         }
 
         public IActionResult Index()
@@ -96,6 +96,19 @@ namespace GreenHiTech.Controllers
             {
                 try
                 {
+                    var images = productVM.ProductImages.ToList();
+                    List<ProductImage> productImages = new List<ProductImage>();
+                    foreach(var image in images)
+                    {
+                        ProductImage productImage = new ProductImage
+                        {
+                            AltText = productVM.Name + "_",
+                            FkProductId = productVM.PkId,
+                            ImageUrl = image.ImageUrl,
+                        };
+                        _productImageRepo.Add(productImage);
+                        productImages.Add(productImage);
+                    }
                     Product product = new Product
                     {
                         Name = productVM.Name,
@@ -104,6 +117,7 @@ namespace GreenHiTech.Controllers
                         StockQuantity = productVM.StockQuantity,
                         FkCategoryId = productVM.FkCategoryId,
                         Manufacturer = productVM.Manufacturer,
+                        ProductImages = productImages
                     };
                     _productRepo.Add(product);
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
