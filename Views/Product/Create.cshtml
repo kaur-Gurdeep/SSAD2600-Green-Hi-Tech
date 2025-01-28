@@ -2,10 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-
-    List<Object> PackImages() {
-        return null;
-    }
 }
 
 <script>
@@ -25,8 +21,8 @@
         } else {
             [...e.dataTransfer.files].forEach((file, i) => {
                     selectedFiles.push(file);
-                    console.log(item.kind);
-                    console.log(item.type);
+                    console.log(file.kind);
+                    console.log(file.type);
             });
         }
         selectedFiles.forEach((file) => {
@@ -49,6 +45,32 @@
         e.preventDefault();
         document.getElementById('drop_zone').style.backgroundColor = 'white';
     }
+    function sendFilesToController(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('input-form');
+        const formData = new FormData(form);
+
+        // Append each file to the FormData
+        selectedFiles.forEach((file, i) => {
+            formData.append('fileImages', file);
+        });
+
+        // Send the data to the server via fetch
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if(response.ok) {
+                    console.log("Form submitted successfully!");
+                    window.location.href = '/Product';
+                } else {
+                    console.error('Failed to submit the form');
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
 </script>
 
 <h1>Create</h1>
@@ -57,7 +79,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data" id="input-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -107,7 +129,7 @@
                 <span asp-validation-for="ProductImages" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" onclick=@PackImages()/>
+                <input type="submit" value="Create" class="btn btn-primary" onclick="sendFilesToController(event)" />
             </div>
         </form>
     </div>
