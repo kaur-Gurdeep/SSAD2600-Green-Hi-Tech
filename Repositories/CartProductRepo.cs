@@ -14,9 +14,9 @@ namespace GreenHiTech.Repositories
             _context = context;
         }
 
-        public IEnumerable<CartProductVM> GetAll(string userPkId)
+        public IEnumerable<CartProductVM> GetAll(int userPkId)
         {
-            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId.ToString() == userPkId);
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
             if (cart == null)
             {
                 return Enumerable.Empty<CartProductVM>();
@@ -46,12 +46,12 @@ namespace GreenHiTech.Repositories
             }
         }
 
-        public void AddToCart(string userPkId, int productId, int quantity)
+        public void AddToCart(int userPkId, int productId, int quantity)
         {
-            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId.ToString() == userPkId);
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
             if (cart == null)
             {
-                cart = new Cart { FkUserId = int.Parse(userPkId) };
+                cart = new Cart { FkUserId = userPkId };
                 _context.Carts.Add(cart);
                 _context.SaveChanges();
             }
@@ -100,9 +100,9 @@ namespace GreenHiTech.Repositories
             }
         } 
 
-        public decimal GetSubTotal(string userPkId)
+        public decimal GetSubTotal(int userPkId)
         {
-            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId.ToString() == userPkId);
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
             if (cart == null)
             {
                 return 0;
@@ -113,9 +113,9 @@ namespace GreenHiTech.Repositories
             return subTotal;
         }
 
-        public decimal GetTaxTotal(string userPkId)
+        public decimal GetTaxTotal(int userPkId)
         {
-            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId.ToString() == userPkId);
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
             if (cart == null)
             {
                 return 0;
@@ -126,9 +126,9 @@ namespace GreenHiTech.Repositories
             return taxTotal;
         }
 
-        public decimal GetTotalAmount(string userPkId)
+        public decimal GetTotalAmount(int userPkId)
         {
-            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId.ToString() == userPkId);
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
             if (cart == null)
             {
                 return 0;
