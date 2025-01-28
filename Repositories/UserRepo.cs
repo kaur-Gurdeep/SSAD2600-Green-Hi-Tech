@@ -42,7 +42,7 @@ namespace GreenHiTech.Repositories
         }
 
         // Add user
-        public string Add(User user)
+        public string Add(GreenHiTech.Models.User user)
         {
             try
             {
