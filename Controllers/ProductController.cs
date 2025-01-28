@@ -69,7 +69,7 @@ namespace GreenHiTech.Controllers
             string returnMessage = string.Empty;
             var categoryItems = _categoryRepo.GetAll().Select(c =>  new SelectListItem
             {
-                Value = c.Name,
+                Value = c.PkId.ToString(),
                 Text = c.Name
             }).ToList();
             if(categoryItems == null)
@@ -88,7 +88,7 @@ namespace GreenHiTech.Controllers
         // POST
         [HttpPost]
         // manager access
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Create(ProductVM productVM, List<IFormFile> fileImages)
         {
             string returnMessage = string.Empty;
 
@@ -96,18 +96,21 @@ namespace GreenHiTech.Controllers
             {
                 try
                 {
-                    var images = productVM.ProductImages.ToList();
                     List<ProductImage> productImages = new List<ProductImage>();
-                    foreach(var image in images)
+                    if(fileImages.Count > 0)
                     {
-                        ProductImage productImage = new ProductImage
+                        const string filepath = "./wwwroot/images/";
+                        foreach(var fileImage in fileImages)
                         {
-                            AltText = productVM.Name + "_",
-                            FkProductId = productVM.PkId,
-                            ImageUrl = image.ImageUrl,
-                        };
-                        _productImageRepo.Add(productImage);
-                        productImages.Add(productImage);
+                            ProductImage productImage = new ProductImage
+                            {
+                                AltText = productVM.PkId + "_",
+                                FkProductId = productVM.PkId,
+                                ImageUrl = filepath + productVM.PkId + '/' + fileImage.FileName,
+                            };
+                            _productImageRepo.Add(productImage);
+                            productImages.Add(productImage);
+                        }
                     }
                     Product product = new Product
                     {

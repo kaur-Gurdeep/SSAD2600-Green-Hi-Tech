@@ -1,0 +1,23 @@
+﻿@model GreenHiTech.ViewModels.RoleVM
+
+@{
+    ViewData["Title"] = "Role Details";
+}
+
+<h1>Role Details</h1>
+
+<div>
+    <h3>@Model.RoleName</h3>
+    <p><strong>Role ID:</strong> @Model.Id</p>
+    <p><strong>Users Assigned:</strong> @Model.UsersCount</p>
+
+    <h4>User Emails:</h4>
+    <ul>
+        @foreach (var email in Model.UserEmails)
+        {
+            <li>@email</li> <!-- Display each user's email -->
+        }
+    </ul>
+</div>
+
+<p><a asp-action="Index" class="btn btn-primary">Back to Role List</a></p>
