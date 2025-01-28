@@ -36,6 +36,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly IdentityUserRepo _identityUserRepo;
         private readonly UserRepo _userRepo;
+        private readonly AddressDetailRepo _addressDetailRepo;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -45,7 +46,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             IConfiguration config,
             IdentityUserRepo identityUserRepo,
-            UserRepo userRepo)
+            UserRepo userRepo,
+            AddressDetailRepo addressDetailRepo)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -56,6 +58,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             _config = config;
             _identityUserRepo = identityUserRepo;
             _userRepo = userRepo;
+            _addressDetailRepo = addressDetailRepo;
         }
 
         /// <summary>
@@ -161,6 +164,19 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    AddressDetail emptyAddress = new AddressDetail
+                    {
+                        Unit = "",
+                        HouseNumber = "",
+                        Street = "",
+                        City = "",
+                        Province = "",
+                        PostalCode = "",
+                        Country = "",
+                    };
+
+                    _addressDetailRepo.Add(emptyAddress);
+                    int addressId = _addressDetailRepo.GetAll().Max(a => a.PkId);
 
                     // If no user exists, create a new custom user entry
                     var newUser = new User
@@ -170,7 +186,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                         Email = Input.Email,
                         Role = "User", // Default role
                         Phone = "",
-                        FkAddressId = null
+                        FkAddressId = addressId,
                     };
 
                     _userRepo.Add(newUser);
