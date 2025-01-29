@@ -15,6 +15,7 @@
        style="width:500px;">
     <thead>
         <tr>
+            <th>Image</th>
             <th>@Html.DisplayNameFor(model => model.Name)</th>
             <th>@Html.DisplayNameFor(model => model.Price)</th>
             <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
@@ -25,6 +26,13 @@
         @foreach (var product in Model)
         {
             <tr>
+                <td>
+                    <img src="@(product.ProductImages != null && product.ProductImages.Any()
+                                ? product.ProductImages.First().ImageUrl
+                                : "/images/bigWilly.png")"
+                         alt="Product Image"
+                         style="max-width: 100px; max-height: 100px;" />
+                </td>
                 <td>@product.Name</td>
                 <td>$ @product.Price</td>
                 <td>@product.StockQuantity</td>

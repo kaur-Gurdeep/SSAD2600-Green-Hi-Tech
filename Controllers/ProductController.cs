@@ -32,6 +32,7 @@ namespace GreenHiTech.Controllers
                 StockQuantity = p.StockQuantity,
                 FkCategoryId = p.FkCategoryId,
                 Manufacturer = p.Manufacturer,
+                ProductImages = p.ProductImages,
             }).ToList();
 
             return View(productVMs);
@@ -96,22 +97,6 @@ namespace GreenHiTech.Controllers
             {
                 try
                 {
-                    List<ProductImage> productImages = new List<ProductImage>();
-                    if(fileImages.Count > 0)
-                    {
-                        const string filepath = "./wwwroot/images/";
-                        foreach(var fileImage in fileImages)
-                        {
-                            ProductImage productImage = new ProductImage
-                            {
-                                AltText = productVM.PkId + "_",
-                                FkProductId = productVM.PkId,
-                                ImageUrl = filepath + productVM.PkId + '/' + fileImage.FileName,
-                            };
-                            _productImageRepo.Add(productImage);
-                            productImages.Add(productImage);
-                        }
-                    }
                     Product product = new Product
                     {
                         Name = productVM.Name,
@@ -120,9 +105,35 @@ namespace GreenHiTech.Controllers
                         StockQuantity = productVM.StockQuantity,
                         FkCategoryId = productVM.FkCategoryId,
                         Manufacturer = productVM.Manufacturer,
-                        ProductImages = productImages
+                        //ProductImages = productImages
                     };
+
                     _productRepo.Add(product);
+                    int productId = _productRepo.GetAll().Max(p => p.PkId);
+
+                    List<ProductImage> productImages = new List<ProductImage>();
+                    if(fileImages.Count > 0)
+                    {
+                        const string filepath = "/images/";
+                        foreach(var fileImage in fileImages)
+                        {
+                            ProductImage productImage = new ProductImage
+                            {
+                                AltText = productId.ToString() + "_",
+                                FkProductId = productId,
+                                ImageUrl = filepath + productVM.PkId + '/' + fileImage.FileName,
+                                CreateDate = DateOnly.FromDateTime(DateTime.Now),
+                            };
+                            _productImageRepo.Add(productImage);
+                            productImages.Add(productImage);
+                        }
+                    }
+
+                    Product updatedProduct = _productRepo.GetById(productId);
+
+                    updatedProduct.ProductImages = productImages;
+                    _productRepo.Update(updatedProduct);
+
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
                 }
                 catch (Exception ex)

@@ -43,13 +43,13 @@
             @Html.DisplayNameFor(model => model.ProductImages)
         </dt>
         <dd class="product-images">
-            @if (Model.ProductImages != null)
+            @if (Model.ProductImages != null && Model.ProductImages.Any())
             {
                 int i = 0;
                 foreach (var image in Model.ProductImages)
                 {
                     string altId = "image_" + i.ToString();
-                    < src=@image.ImageUrl alt=@altId />
+                    <img src=@image.ImageUrl alt=@altId />
                     i++;                     
                 }
             }
