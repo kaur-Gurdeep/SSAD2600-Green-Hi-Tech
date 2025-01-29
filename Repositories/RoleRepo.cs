@@ -28,7 +28,7 @@ namespace GreenHiTech.Repositories
         public RoleVM GetRole(string roleId)
         {
             var role = _context.Roles
-                .FirstOrDefault(r => r.Id == roleId); // Find the role by its ID
+                .FirstOrDefault(r => r.Id == roleId); 
 
             if (role != null)
             {
@@ -43,8 +43,8 @@ namespace GreenHiTech.Repositories
                 {
                     Id = role.Id,
                     RoleName = role.Name,
-                    UsersCount = userEmails.Count, // Count of users assigned to this role
-                    UserEmails = userEmails // List of user emails
+                    UsersCount = userEmails.Count,
+                    UserEmails = userEmails 
                 };
             }
             return null; // Return null if role not found
