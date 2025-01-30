@@ -16,8 +16,13 @@ namespace GreenHiTech.Repositories
 
         public IEnumerable<CartProductVM> GetAll(int userPkId)
         {
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
+            if (cart == null)
+            {
+                return Enumerable.Empty<CartProductVM>();
+            }
             IEnumerable<CartProductVM> cartProducts = _context.CartProducts
-                .Where(cp => cp.FkCartId == userPkId)
+                .Where(cp => cp.FkCartId == cart.PkId)
                 .Select(cp => new CartProductVM
                 {
                     PkId = cp.PkId,
@@ -43,9 +48,16 @@ namespace GreenHiTech.Repositories
 
         public void AddToCart(int userPkId, int productId, int quantity)
         {
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
+            if (cart == null)
+            {
+                cart = new Cart { FkUserId = userPkId };
+                _context.Carts.Add(cart);
+                _context.SaveChanges();
+            }
             var cartProduct = new CartProduct
             {
-                FkCartId = userPkId,
+                FkCartId = cart.PkId,
                 FkProductId = productId,
                 Quantity = quantity
             };
@@ -90,24 +102,39 @@ namespace GreenHiTech.Repositories
 
         public decimal GetSubTotal(int userPkId)
         {
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
+            if (cart == null)
+            {
+                return 0;
+            }
             decimal subTotal = _context.CartProducts
-                .Where(cp => cp.FkCartId == userPkId)
+                .Where(cp => cp.FkCartId == cart.PkId)
                 .Sum(cp => cp.FkProduct.Price * cp.Quantity);
             return subTotal;
         }
 
         public decimal GetTaxTotal(int userPkId)
         {
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
+            if (cart == null)
+            {
+                return 0;
+            }
             decimal taxTotal = _context.CartProducts
-                .Where(cp => cp.FkCartId == userPkId)
+                .Where(cp => cp.FkCartId == cart.PkId)
                 .Sum(cp => cp.FkProduct.Price * cp.Quantity * 0.12M);
             return taxTotal;
         }
 
         public decimal GetTotalAmount(int userPkId)
         {
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
+            if (cart == null)
+            {
+                return 0;
+            }
             decimal totalAmount = _context.CartProducts
-                .Where(cp => cp.FkCartId == userPkId)
+                .Where(cp => cp.FkCartId == cart.PkId)
                 .Sum(cp => (cp.FkProduct.Price * cp.Quantity) + (cp.FkProduct.Price * cp.Quantity * 0.12M));
             return totalAmount;
         }

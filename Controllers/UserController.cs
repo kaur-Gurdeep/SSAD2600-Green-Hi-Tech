@@ -104,6 +104,7 @@ namespace GreenHiTech.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
+                Phone= user.Phone,
                 AddressDetail = address != null ? new AddressDetailVM
                 {
                     PkId = address.PkId,
@@ -122,25 +123,26 @@ namespace GreenHiTech.Controllers
         [HttpPost]
         public IActionResult Edit(UserVM userVM)
         {
+            string returnMessage = string.Empty;
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetById(userVM.PkUserId);
                 if (user == null)
                 {
-                    string returnMessage = $"error,User could not be updated: (Email {userVM.Email})";
+                    returnMessage = $"error,User could not be updated: (Email {userVM.Email})";
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
                 user.Email = userVM.Email;
                 user.FirstName = userVM.FirstName;
                 user.LastName = userVM.LastName;
-                //user.Phone = userVM.Phone;
+                user.Phone = userVM.Phone;
                 user.Role = userVM.Role;
 
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))
                 {
-                    string returnMessage = $"error,Failed to update User: (Email {user.Email})";
+                    returnMessage = $"error,Failed to update User: (Email {user.Email})";
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
@@ -148,7 +150,6 @@ namespace GreenHiTech.Controllers
                 {
                     var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0) ?? new AddressDetail();
 
-                    //address.PkId = 0;
                     address.Unit = userVM.AddressDetail.Unit;
                     address.HouseNumber = userVM.AddressDetail.HouseNumber;
                     address.Street = userVM.AddressDetail.Street;
@@ -157,22 +158,32 @@ namespace GreenHiTech.Controllers
                     address.PostalCode = userVM.AddressDetail.PostalCode;
                     address.Country = userVM.AddressDetail.Country;
 
-                    //string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
-                    string addressResult = _addressDetailRepo.Add(address);
+                    string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
 
 
                     if (addressResult.StartsWith("error"))
                     {
-                        string returnMessage = $"error,Failed to update Address: (User Email {user.Email})";
+                        returnMessage = $"error,Failed to update Address: (User Email {user.Email})";
                         return RedirectToAction("Index", new { message = returnMessage });
                     }
 
-                    //user.FkAddressID = address.PkId;
-                    //_userRepo.Update(user);
+                    user.FkAddressId = address.PkId;
+                    _userRepo.Update(user);
+                    returnMessage = $"success,Successfully updated User: (User Email {user.Email})";
+
+                    // Set success message in TempData
+                    TempData["SuccessMessage"] = "Edited Successfully";
                 }
 
             }
-            return View(userVM);
+            else
+            {
+                // If there was a validation error
+                returnMessage = "error,An unexpected error occurred while updating the user.";
+                return RedirectToAction("Index", new { message = returnMessage });
+            }
+
+            return RedirectToAction("Edit", new { id = userVM.PkUserId });
 
         }
 

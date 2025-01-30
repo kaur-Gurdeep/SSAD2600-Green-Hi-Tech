@@ -19,10 +19,7 @@ public partial class User
     public string Email { get; set; } = null!;
 
     public string Phone { get; set; } = null!;
-
-    public string IdentityUserId { get; set; } = null!;
-    public virtual IdentityUser IdentityUser { get; set; }
-
+  
     public int? FkAddressId { get; set; }
 
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();

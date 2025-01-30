@@ -8,15 +8,15 @@ namespace GreenHiTech.Controllers
 {
     public class ProductController : Controller
     {
-        // Repo methods: Add, GetAll, GetById, Update, Delete
-
         private readonly ProductRepo _productRepo;
         private readonly CategoryRepo _categoryRepo;
+        private readonly ProductImageRepo _productImageRepo;
 
-        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo)
+        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo, ProductImageRepo productImageRepo)
         {
             _productRepo = productRepo;
             _categoryRepo = categoryRepo;
+            _productImageRepo = productImageRepo;
         }
 
         public IActionResult Index()
@@ -69,7 +69,7 @@ namespace GreenHiTech.Controllers
             string returnMessage = string.Empty;
             var categoryItems = _categoryRepo.GetAll().Select(c =>  new SelectListItem
             {
-                Value = c.Name,
+                Value = c.PkId.ToString(),
                 Text = c.Name
             }).ToList();
             if(categoryItems == null)
@@ -88,7 +88,7 @@ namespace GreenHiTech.Controllers
         // POST
         [HttpPost]
         // manager access
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Create(ProductVM productVM, List<IFormFile> fileImages)
         {
             string returnMessage = string.Empty;
 
@@ -96,6 +96,22 @@ namespace GreenHiTech.Controllers
             {
                 try
                 {
+                    List<ProductImage> productImages = new List<ProductImage>();
+                    if(fileImages.Count > 0)
+                    {
+                        const string filepath = "./wwwroot/images/";
+                        foreach(var fileImage in fileImages)
+                        {
+                            ProductImage productImage = new ProductImage
+                            {
+                                AltText = productVM.PkId + "_",
+                                FkProductId = productVM.PkId,
+                                ImageUrl = filepath + productVM.PkId + '/' + fileImage.FileName,
+                            };
+                            _productImageRepo.Add(productImage);
+                            productImages.Add(productImage);
+                        }
+                    }
                     Product product = new Product
                     {
                         Name = productVM.Name,
@@ -104,6 +120,7 @@ namespace GreenHiTech.Controllers
                         StockQuantity = productVM.StockQuantity,
                         FkCategoryId = productVM.FkCategoryId,
                         Manufacturer = productVM.Manufacturer,
+                        ProductImages = productImages
                     };
                     _productRepo.Add(product);
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
