@@ -53,6 +53,15 @@
                                asp-area="" asp-controller="UserRole" asp-action="Index">UserRoles</a>
                         </li>
                         @* } *@
+
+                        <!-- Users Tab -->
+                        @*  @if (User.IsInRole("Admin"))
+                        { *@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                        </li>
+                        @* } *@
+
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
@@ -82,3 +91,5 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

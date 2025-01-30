@@ -20,15 +20,5 @@ namespace GreenHiTech.Repositories
             var users = _userManager.Users.Select(u => new IdentityUserVM { Email = u.Email }).ToList();
             return users;
         }
-
-        //public async Task<IdentityUser> GetByEmailAsync(string email)
-        //{
-        //    if (string.IsNullOrEmpty(email))
-        //    {
-        //        return null;
-        //    }
-
-        //    return await _userManager.FindByEmailAsync(email);
-        //}
     }
 }
