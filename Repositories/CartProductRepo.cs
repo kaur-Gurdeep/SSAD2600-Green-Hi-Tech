@@ -27,7 +27,9 @@ namespace GreenHiTech.Repositories
                 {
                     PkId = cp.PkId,
                     FkProductId = cp.FkProductId,
-                    Quantity = cp.Quantity
+                    Quantity = cp.Quantity,
+                    Image = _context.ProductImages.FirstOrDefault(p => p.FkProductId == cp.FkProductId).ImageUrl,
+                    ProductName = cp.FkProduct.Name,
                 }).ToList();
             return cartProducts;
         }
@@ -55,13 +57,21 @@ namespace GreenHiTech.Repositories
                 _context.Carts.Add(cart);
                 _context.SaveChanges();
             }
-            var cartProduct = new CartProduct
+            var cartProduct = _context.CartProducts.FirstOrDefault(cp => cp.FkCartId == cart.PkId && cp.FkProductId == productId);
+            if (cartProduct != null)
             {
-                FkCartId = cart.PkId,
-                FkProductId = productId,
-                Quantity = quantity
+                cartProduct.Quantity += quantity;
+            } 
+            else 
+            {
+                cartProduct = new CartProduct
+                {
+                    FkCartId = cart.PkId,
+                    FkProductId = productId,
+                    Quantity = quantity
+                };
+                _context.CartProducts.Add(cartProduct);
             };
-            _context.CartProducts.Add(cartProduct);
             _context.SaveChanges();
         }
 

@@ -5,7 +5,9 @@
 	<table>
 		<thead>
 			<tr>
-				<th>Product</th>
+				<th>Product ID</th>
+				<th>Name</th>
+				<th>Image</th>
 				<th>Quantity</th>
 				<th>Actions</th>
 			</tr>
@@ -15,6 +17,8 @@
 			{
 				<tr>
 					<td>@item.FkProductId</td>
+					<td>@item.ProductName</td>
+					<td><img src="@item.Image" alt="@item.FkProductId" style="width: 100px; height:auto" /></td>
 					<td>@item.Quantity</td>
 					<td>
 						<form asp-action="IncreaseQuantity" method="post" style="display:inline">
