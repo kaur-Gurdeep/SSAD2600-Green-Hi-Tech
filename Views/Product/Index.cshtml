@@ -27,9 +27,9 @@
         {
             <tr>
                 <td>
-                    <img src="@(product.ProductImages != null && product.ProductImages.Any()
-                                ? product.ProductImages.First().ImageUrl
-                                : "/images/bigWilly.png")"
+                    <img src="@(product.ProductImageVMs != null && product.ProductImageVMs.Any()
+                                ? product.ProductImageVMs.First().ImageUrl
+                                : "/images/no-image-available.jpg")"
                          alt="Product Image"
                          style="max-width: 100px; max-height: 100px;" />
                 </td>
