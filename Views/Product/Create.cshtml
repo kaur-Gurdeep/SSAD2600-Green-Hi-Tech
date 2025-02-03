@@ -115,7 +115,7 @@
                 <span asp-validation-for="Manufacturer" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <label asp-for="ProductImages" class="control-label"></label>
+                <label asp-for="ProductImageVMs" class="control-label"></label>
                 <div 
                     id="drop_zone" 
                     class="drop-zone" 
@@ -126,7 +126,7 @@
                      ondragleave="dragLeaveHandler(event);">
                     Drag and drop your images here.
                 </div>
-                <span asp-validation-for="ProductImages" class="text-danger"></span>
+                <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
             </div><br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" onclick="sendFilesToController(event)" />

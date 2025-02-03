@@ -30,3 +30,8 @@ body {
     border: 2px solid darkgray;
     border-radius: 5px;
 }
+
+.detail-image {
+    width: 5rem;
+    height: 5rem;
+}
