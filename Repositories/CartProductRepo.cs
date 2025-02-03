@@ -8,9 +8,11 @@ namespace GreenHiTech.Repositories
     public class CartProductRepo
     {
         private readonly GreenHiTechContext _context;
+        private readonly ProductImageRepo _productImageRepo;
 
-        public CartProductRepo(GreenHiTechContext context)
+        public CartProductRepo(GreenHiTechContext context, ProductImageRepo productImageRepo)
         {
+            _productImageRepo = productImageRepo;
             _context = context;
         }
 
