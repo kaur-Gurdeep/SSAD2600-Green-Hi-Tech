@@ -1,4 +1,5 @@
 ﻿using GreenHiTech.Models;
+using GreenHiTech.ViewModels;
 
 namespace GreenHiTech.Repositories
 {
@@ -16,17 +17,33 @@ namespace GreenHiTech.Repositories
             return _context.Products.ToList();
         }
 
+        // Get all products with ProductImages filled
+        public List<Product> GetAll(List<ProductImage> allProductImages)
+        {
+            List<ProductVM> productVMs = new List<ProductVM>();
+            List<ProductImage> productImages = new List<ProductImage>();
+            List<Product> products = _context.Products.ToList();
+
+            foreach(var product in products)
+            {
+                productImages = allProductImages.Where(pi => pi.FkProductId == product.PkId).ToList();
+                product.ProductImages = productImages;
+            }
+
+            return products;
+        }
+
         // Get product by id
         public Product? GetById(int id)
         {
-            if (id == 0)
-            {
-                return null;
-            } else if (!_context.Products.Any(p => p.PkId == id))
+            if(id == 0 || !_context.Products.Any(p => p.PkId == id))
             {
                 return null;
             }
-            return _context.Products.Find(id);
+            else
+            {
+                return GetAll().Where(p => p.PkId == id).FirstOrDefault();
+            }
         }
 
         // Add product

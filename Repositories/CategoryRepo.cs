@@ -1,4 +1,6 @@
 ﻿using GreenHiTech.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace GreenHiTech.Repositories
 {
@@ -19,11 +21,11 @@ namespace GreenHiTech.Repositories
         // Get category by id
         public Category? GetById(int id)
         {
-            if (id == 0)
+            if(id == 0)
             {
                 return null;
             }
-            else if (!_context.Categories.Any(c => c.PkId == id))
+            else if(!_context.Categories.Any(c => c.PkId == id))
             {
                 return null;
             }
@@ -40,7 +42,7 @@ namespace GreenHiTech.Repositories
 
                 return $"success,Successfully created category ID: {category.PkId}";
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return $"error,Failed to create category: {e.Message}";
             }
@@ -49,7 +51,7 @@ namespace GreenHiTech.Repositories
         // Update category
         public string Update(Category category)
         {
-            if (Any(category.PkId))
+            if(Any(category.PkId))
             {
                 try
                 {
@@ -58,7 +60,7 @@ namespace GreenHiTech.Repositories
 
                     return $"success,Successfully updated category ID: {category.PkId}";
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     return $"error,Category could not be updated: {ex.Message}";
                 }
@@ -73,7 +75,7 @@ namespace GreenHiTech.Repositories
         public string Delete(int id)
         {
             Category? category = GetById(id);
-            if (category == null)
+            if(category == null)
             {
                 return $"warning,Unable to find category ID: {id}";
             }
@@ -84,16 +86,28 @@ namespace GreenHiTech.Repositories
                 _context.SaveChanges();
                 return $"success,Successfully deleted category ID: {id}";
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return $"error,Failed to delete category: {e.Message}";
             }
         }
 
-        // if category exists
+        // If category exists
         public bool Any(int id)
         {
             return _context.Categories.Any(c => c.PkId == id);
+        }
+
+        // return a list of all available Categories as a SelectListItem
+        public List<SelectListItem> GetSelectListItems()
+        {
+            List<SelectListItem>? categoryItems = GetAll().Select(c => new SelectListItem
+            {
+                Value = c.PkId.ToString(),
+                Text = c.Name
+            }).ToList();
+
+            return categoryItems;
         }
     }
 }

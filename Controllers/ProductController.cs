@@ -4,6 +4,7 @@ using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using GreenHiTech.Models;
 using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
 
 namespace GreenHiTech.Controllers
 {
@@ -24,28 +25,24 @@ namespace GreenHiTech.Controllers
 
         public IActionResult Index()
         {
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
+            List<Product> products = _productRepo.GetAll(allProductImages);
             List<ProductVM> productVMs = new List<ProductVM>();
-            var products = _productRepo.GetAll();
 
-            foreach(var product in products)
+            foreach(Product product in products)
             {
                 List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
-
-                List<ProductImage>  productImages = _productImageRepo.GetAll().Where(pi => pi.FkProductId == product.PkId).ToList();
-                //if(productImages.Count > 0)
-                //{
-                    foreach(var productImage in productImages)
+                foreach(var productImage in product.ProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
                     {
-                        ProductImageVM productImageVM = new ProductImageVM
-                        {
-                            AltText = productImage.AltText,
-                            FkProductId = productImage.FkProductId,
-                            ImageUrl = productImage.ImageUrl,
-                            CreateDate = productImage.CreateDate,
-                        };
-                        productImageVMs.Add(productImageVM);
-                    }
-                //}
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
 
                 ProductVM productVM = new ProductVM
                 {
@@ -63,11 +60,46 @@ namespace GreenHiTech.Controllers
             }
 
             return View(productVMs);
+
+            /*
+            foreach(var product in products)
+            {
+                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
+
+                allProductImages = _productImageRepo.GetAll().Where(pi => pi.FkProductId == product.PkId).ToList();
+                foreach(var productImage in allProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
+                    {
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
+
+                ProductVM productVM = new ProductVM
+                {
+                    PkId = product.PkId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity,
+                    FkCategoryId = product.FkCategoryId,
+                    Manufacturer = product.Manufacturer,
+                    ProductImageVMs = productImageVMs,
+                };
+
+                productVMs.Add(productVM);
+            }
+            */
         }
 
         public IActionResult Details(int id)
         {
             string returnMessage = string.Empty;
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
             Product? product = _productRepo.GetById(id);
 
             if(product == null) {
@@ -76,11 +108,11 @@ namespace GreenHiTech.Controllers
             }
             else
             {
-                List<ProductImage> productImages = new List<ProductImage>();
-                productImages = _productImageRepo.GetAll().Where(pi => pi.FkProductId == product.PkId).ToList();
+                //List<ProductImage> allProductImages = new List<ProductImage>();
+                //productImages = _productImageRepo.GetAll().Where(pi => pi.FkProductId == product.PkId).ToList();
 
                 List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
-                foreach(var productImage in productImages)
+                foreach(var productImage in product.ProductImages)
                 {
                     ProductImageVM productImageVM = new ProductImageVM
                     {
@@ -111,11 +143,7 @@ namespace GreenHiTech.Controllers
         public IActionResult Create()
         {
             string returnMessage = string.Empty;
-            var categoryItems = _categoryRepo.GetAll().Select(c =>  new SelectListItem
-            {
-                Value = c.PkId.ToString(),
-                Text = c.Name
-            }).ToList();
+            List<SelectListItem> categoryItems = _categoryRepo.GetSelectListItems();
             if(categoryItems == null)
             {
                 returnMessage = "cannot find caterories";
@@ -135,6 +163,7 @@ namespace GreenHiTech.Controllers
         public IActionResult Create(ProductVM productVM, List<IFormFile> fileImages)
         {
             string returnMessage = string.Empty;
+            List<ProductImage> productImages = _productImageRepo.GetAll();
 
             if (ModelState.IsValid)
             {
@@ -151,7 +180,7 @@ namespace GreenHiTech.Controllers
                     };
 
                     _productRepo.Add(product);
-                    int productId = _productRepo.GetAll().Max(p => p.PkId);
+                    int productId = _productRepo.GetAll(productImages).Max(p => p.PkId);
 
                     if(fileImages.Count > 0)
                     {
