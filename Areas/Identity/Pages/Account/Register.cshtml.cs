@@ -164,7 +164,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    AddressDetail emptyAddress = new AddressDetail
+                    AddressDetail emptyAddress = new()
                     {
                         Unit = "",
                         HouseNumber = "",
