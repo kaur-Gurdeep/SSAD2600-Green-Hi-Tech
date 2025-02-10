@@ -20,7 +20,7 @@ namespace GreenHiTech.ViewModels
         public string ImageUrl { get; set; } = null!;
 
         [Required]
-        [Column(TypeName = "DateTime")]
+        [Column(TypeName = "DateOnly")]
         public DateOnly CreateDate { get; set; }
 
         [Required]

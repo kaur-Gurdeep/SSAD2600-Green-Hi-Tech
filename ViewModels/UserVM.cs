@@ -21,6 +21,8 @@ namespace GreenHiTech.ViewModels
 
         public string Phone { get; set; } = null!;
         public AddressDetailVM? AddressDetail { get; set; }
-    }
 
+        public List<RoleVM> RoleList {get; set;}
+
+}
 }
