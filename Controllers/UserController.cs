@@ -6,6 +6,7 @@ using GreenHiTech.Repositories;
 using System.Net;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace GreenHiTech.Controllers
 {
@@ -15,12 +16,14 @@ namespace GreenHiTech.Controllers
         private readonly UserRepo _userRepo;
         private readonly ILogger<UserController> _logger;
         private readonly AddressDetailRepo _addressDetailRepo;
+        private readonly UserRoleRepo _userRoleRepo;
 
-        public UserController(ILogger<UserController> logger, UserRepo userRepo, AddressDetailRepo addressDetailRepo)
+        public UserController(ILogger<UserController> logger, UserRepo userRepo, AddressDetailRepo addressDetailRepo,UserRoleRepo userRoleRepo)
         {
             _logger = logger;
             _userRepo = userRepo;
             _addressDetailRepo = addressDetailRepo;
+            _userRoleRepo = userRoleRepo;
         }
 
 
@@ -46,7 +49,7 @@ namespace GreenHiTech.Controllers
             //}
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
             User? user = _userRepo.GetById(id);
 
@@ -62,6 +65,7 @@ namespace GreenHiTech.Controllers
             {
                 var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
 
+                var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
                 var userVM = new UserVM
                 {
                     PkUserId = user.PkId,
@@ -81,6 +85,7 @@ namespace GreenHiTech.Controllers
                         Country = address.Country,
                         Province = address.Province
                     } : null,
+                    RoleList = roles.ToList(),
                 };
 
                 return View(userVM);
@@ -104,7 +109,7 @@ namespace GreenHiTech.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
-                Phone= user.Phone,
+                Phone = user.Phone,
                 AddressDetail = address != null ? new AddressDetailVM
                 {
                     PkId = address.PkId,
@@ -124,6 +129,10 @@ namespace GreenHiTech.Controllers
         public IActionResult Edit(UserVM userVM)
         {
             string returnMessage = string.Empty;
+
+            
+            ModelState.Remove("RoleList");//will remove this field when fixed the rolefunctionality
+
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetById(userVM.PkUserId);
