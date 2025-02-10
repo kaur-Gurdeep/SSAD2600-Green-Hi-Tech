@@ -41,6 +41,7 @@
 		<h4>Subtotal: @ViewBag.SubTotal</h4>
 		<h4>Taxes: @ViewBag.TaxTotal</h4>
 		<h4>Total Amount: @ViewBag.TotalAmount</h4>
+		<a asp-area="" asp-controller="CartProduct" asp-action="Checkout" class="btn btn-primary">Checkout</a>
 	}
 	else
 	{
