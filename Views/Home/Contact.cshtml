@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="container my-5">
+    <div class="px-3 py-2  mb-3" style="background-color:#EDEDED">
+        <i class="bi bi-arrow-left me-3"></i>
+        How can we help you?
+    </div>
+    <h3 style="color:#355C22">Message us</h3>
+    <p class="text-justify" style="color:#7ABC74">At Green Hi-Tech, we're committed to empowering your tech journey. Whether you're exploring new solutions, require expert guidance, or wish to share your thoughts, our team is here to offer responsive and reliable support every step of the way.</p>
+    <div class="d-flex flex-column gap-2 mb-3 align-items-center">
+        <input type="text" placeholder="Name" class="form-control mb-2" aria-label="Your name">
+        <input type="email" placeholder="Email" class="form-control mb-2" aria-label="Your email">
+        <textarea placeholder="Message" class="form-control mb-2" aria-label="Your message"></textarea>
+        <button class="btn text-white px-3" style="max-width: 250px; background-color:#4E9648">Submit</button>
+    </div>
+
+    <div class="row d-flex flex-wrap text-center">
+        <div class="col-4 p-2 contact-info">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <p>Office</p>
+            <small>121St, Surrey, BC, V8T-1K8</small>
+        </div>
+        <div class="col-4 p-2 contact-info">
+            <i class="fa-solid fa-at" aria-hidden="true"></i>
+            <p>Email</p>
+            <small>contactus@greenhitech.com</small>
+        </div>
+        <div class="col-4 p-2 contact-info">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            <p>Phone</p>
+            <small>[1]-500-438-9749</small>
+        </div>
+    </div>
+</div>
+
+<style>
+    .contact-info {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+        .contact-info i {
+            color: #14AE5C;
+            font-size: 18px;
+        }
+
+        .contact-info p {
+            color: #7ABC74;
+        }
+
+        .contact-info small {
+            color: #14AE5C;
+        }
+
+</style>
