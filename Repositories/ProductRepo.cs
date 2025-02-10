@@ -46,6 +46,28 @@ namespace GreenHiTech.Repositories
             }
         }
 
+        // Get product by id with ProductImages filled
+        public Product? GetById(int id, List<ProductImage> allProductImages)
+        {
+            if(id == 0 || !_context.Products.Any(p => p.PkId == id))
+            {
+                return null;
+            }
+            else
+            {
+                Product? product = GetAll().Where(p => p.PkId == id).FirstOrDefault();
+                if(product == null)
+                {
+                    return null;
+                } else
+                {
+                    product.ProductImages = allProductImages.Where(pi => pi.FkProductId == id).ToList();
+                    return product;
+                }
+
+            }
+        }
+
         // Add product
         public string Add(Product product)
         {

@@ -33,10 +33,10 @@
                 <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div><br />
             <div class="form-group mb-3">
-                <label asp-for="FkCategoryId" class="control-label">Select User</label>
+                <label asp-for="FkCategoryId" class="control-label">Select Category</label>
                 <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList"
                         class="form-select">
-                    <option value="">-- Select User --</option>
+                    @* <option value="">-- Select Category --</option> *@
                 </select>
                 <span asp-validation-for="FkCategoryId" class="text-danger"></span>
             </div><br />
@@ -47,11 +47,30 @@
             </div><br />
             <div class="form-group">
                 <label asp-for="ProductImageVMs" class="control-label"></label>
-                <input asp-for="ProductImageVMs" class="form-control" />
+                <div id="drop_zone"
+                     class="drop-zone"
+                     ondrop="dropHandler(event);"
+                     ondragover="dragOverHandler(event);"
+                     ondragend="dragEndHandler(event);"
+                     ondragenter="dragEnterHandler(event);"
+                     ondragleave="dragLeaveHandler(event);">
+                    Drag and drop your images here.
+                </div>
+
+                @if (Model.ProductImageVMs.Count > 0) {
+                    @foreach (var productImageVM in Model.ProductImageVMs)
+                    {
+                        <img src="@productImageVM.ImageUrl"
+                             alt="Product Image"
+                             style="max-width: 100px; max-height: 100px;" />
+                    }
+                }
+
+                @* <input asp-for="ProductImageVMs" class="form-control" /> *@
                 <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <input type="submit" value="Edit" class="btn btn-primary" />
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -64,6 +83,7 @@
 
 @section Scripts {
     @{
+        <script src="~/js/productForm.js"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

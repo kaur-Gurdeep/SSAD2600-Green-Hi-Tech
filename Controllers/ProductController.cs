@@ -32,7 +32,7 @@ namespace GreenHiTech.Controllers
             foreach(Product product in products)
             {
                 List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
-                foreach(var productImage in product.ProductImages)
+                foreach(ProductImage productImage in product.ProductImages)
                 {
                     ProductImageVM productImageVM = new ProductImageVM
                     {
@@ -60,40 +60,6 @@ namespace GreenHiTech.Controllers
             }
 
             return View(productVMs);
-
-            /*
-            foreach(var product in products)
-            {
-                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
-
-                allProductImages = _productImageRepo.GetAll().Where(pi => pi.FkProductId == product.PkId).ToList();
-                foreach(var productImage in allProductImages)
-                {
-                    ProductImageVM productImageVM = new ProductImageVM
-                    {
-                        AltText = productImage.AltText,
-                        FkProductId = productImage.FkProductId,
-                        ImageUrl = productImage.ImageUrl,
-                        CreateDate = productImage.CreateDate,
-                    };
-                    productImageVMs.Add(productImageVM);
-                }
-
-                ProductVM productVM = new ProductVM
-                {
-                    PkId = product.PkId,
-                    Name = product.Name,
-                    Description = product.Description,
-                    Price = product.Price,
-                    StockQuantity = product.StockQuantity,
-                    FkCategoryId = product.FkCategoryId,
-                    Manufacturer = product.Manufacturer,
-                    ProductImageVMs = productImageVMs,
-                };
-
-                productVMs.Add(productVM);
-            }
-            */
         }
 
         public IActionResult Details(int id)
@@ -108,9 +74,6 @@ namespace GreenHiTech.Controllers
             }
             else
             {
-                //List<ProductImage> allProductImages = new List<ProductImage>();
-                //productImages = _productImageRepo.GetAll().Where(pi => pi.FkProductId == product.PkId).ToList();
-
                 List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
                 foreach(var productImage in product.ProductImages)
                 {
@@ -146,7 +109,7 @@ namespace GreenHiTech.Controllers
             List<SelectListItem> categoryItems = _categoryRepo.GetSelectListItems();
             if(categoryItems == null)
             {
-                returnMessage = "cannot find caterories";
+                returnMessage = "cannot find categories";
                 return RedirectToAction("Index", new { message = returnMessage });
             }
             else
@@ -231,14 +194,44 @@ namespace GreenHiTech.Controllers
         // GET
         public IActionResult Edit(int id)
         {
-            Product? product = _productRepo.GetById(id);
+            string returnMessage = String.Empty;
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
+            Product? product = _productRepo.GetById(id, allProductImages);
 
-            if (product == null)
+            if(product == null)
             {
                 return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
             }
             else
             {
+                List<SelectListItem> categoryItems = _categoryRepo.GetSelectListItems();
+                if(categoryItems == null)
+                {
+                    returnMessage = "cannot find categories";
+                    return RedirectToAction("Index", new
+                    {
+                        message = returnMessage
+                    });
+                }
+                else
+                {
+                    SelectList categorySelectList = new SelectList(categoryItems, "Value", "Text");
+                    ViewBag.CategorySelectList = categorySelectList;
+                }
+
+                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
+                foreach(ProductImage productImage in product.ProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
+                    {
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
+
                 ProductVM productVM = new ProductVM
                 {
                     PkId = product.PkId,
@@ -248,8 +241,9 @@ namespace GreenHiTech.Controllers
                     StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
-                    //ProductImages = product.ProductImages,
+                    ProductImageVMs = productImageVMs,
                 };
+
                 return View(productVM);
             }
         }
