@@ -1,4 +1,6 @@
 ﻿var selectedFiles = [];
+let deletedImageIds = "";
+
 // Handles the drop event, adds files to list of selected images
 function dropHandler(e) {
     e.preventDefault();
@@ -63,4 +65,17 @@ function sendFilesToController(e) {
             }
         })
         .catch(error => console.error("Error:", error));
+}
+function removeImage(imageId) {
+    if (confirm("Are you sure you want to remove this image?")) {
+        // Add the ID to deletedImageIds
+
+        deletedImageIds += ',' + imageId;
+
+        // Update the hidden input field
+        document.getElementById('DeletedImageIds').value = deletedImageIds;
+
+        // Remove the image preview from the DOM
+        document.querySelector(`div[data-image-id='${imageId}']`).remove();
+    }
 }

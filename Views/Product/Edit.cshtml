@@ -10,7 +10,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data" id="input-form">
+            <input type="hidden" name="PkId" value="@Model.PkId" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -56,22 +57,30 @@
                      ondragleave="dragLeaveHandler(event);">
                     Drag and drop your images here.
                 </div>
-
-                @if (Model.ProductImageVMs.Count > 0) {
-                    @foreach (var productImageVM in Model.ProductImageVMs)
+                <div class="thumbnails">
+                @if (ViewBag.ProductImageVMs.Count > 0)
+                {
+                    @foreach (var productImageVM in ViewBag.ProductImageVMs)
                     {
-                        <img src="@productImageVM.ImageUrl"
-                             alt="Product Image"
-                             style="max-width: 100px; max-height: 100px;" />
+                        <div class="thumbnail-item" data-image-id="@productImageVM.PkId">
+                            <img src="@productImageVM.ImageUrl" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
+                            <button type="button" class="delete-icon" onclick="removeImage(@productImageVM.PkId)">X</button>
+                        </div>
                     }
                 }
+                else 
+                {
+                        <div>No images</div>
+                }
+                </div>
 
-                @* <input asp-for="ProductImageVMs" class="form-control" /> *@
                 <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                @* <input type="submit" value="Save Changes" class="btn btn-primary" /> *@
+                <input type="submit" value="Save Changes" class="btn btn-primary" onclick="sendFilesToController(event)" />
             </div>
+            <input type="hidden" name="DeletedImageIds" id="DeletedImageIds" value="" />
         </form>
     </div>
 </div>

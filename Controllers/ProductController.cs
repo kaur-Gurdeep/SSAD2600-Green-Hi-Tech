@@ -5,6 +5,8 @@ using GreenHiTech.ViewModels;
 using GreenHiTech.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 
 namespace GreenHiTech.Controllers
 {
@@ -36,6 +38,7 @@ namespace GreenHiTech.Controllers
                 {
                     ProductImageVM productImageVM = new ProductImageVM
                     {
+                        PkId = productImage.PkId,
                         AltText = productImage.AltText,
                         FkProductId = productImage.FkProductId,
                         ImageUrl = productImage.ImageUrl,
@@ -79,6 +82,8 @@ namespace GreenHiTech.Controllers
                 {
                     ProductImageVM productImageVM = new ProductImageVM
                     {
+                        PkId = productImage.PkId,
+
                         AltText = productImage.AltText,
                         FkProductId = productImage.FkProductId,
                         ImageUrl = productImage.ImageUrl,
@@ -224,6 +229,7 @@ namespace GreenHiTech.Controllers
                 {
                     ProductImageVM productImageVM = new ProductImageVM
                     {
+                        PkId = productImage.PkId,
                         AltText = productImage.AltText,
                         FkProductId = productImage.FkProductId,
                         ImageUrl = productImage.ImageUrl,
@@ -243,6 +249,7 @@ namespace GreenHiTech.Controllers
                     Manufacturer = product.Manufacturer,
                     ProductImageVMs = productImageVMs,
                 };
+                ViewBag.ProductImageVMs = productImageVMs;
 
                 return View(productVM);
             }
@@ -251,24 +258,100 @@ namespace GreenHiTech.Controllers
         // POST
         [HttpPost]
         // manager access
-        public IActionResult Edit(ProductVM productVM)
+        public IActionResult Edit(ProductVM productVM, List<IFormFile> fileImages, string DeletedImageIds = "")
         {
             string returnMessage = string.Empty;
+            List<ProductImage> productImages = _productImageRepo.GetAll();
 
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
-                Product? product = _productRepo.GetById(productVM.PkId);
-                if (product == null)
+                Product? product = _productRepo.GetById(productVM.PkId, productImages);
+                if(product == null)
                 {
                     returnMessage = $"error,Product could not be updated: (Name {productVM.Name})";
                 }
                 else
                 {
-                    _productRepo.Update(product);
-                    returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
-                }
-            }
+                    // Update Product information
+                    product.Name = productVM.Name;
+                    product.Description = productVM.Description;
+                    product.Price = productVM.Price;
+                    product.StockQuantity = productVM.StockQuantity;
+                    product.FkCategoryId = productVM.FkCategoryId;
+                    product.Manufacturer = productVM.Manufacturer;
+                    product.Name = productVM.Name;
 
+                    _productRepo.Update(product);
+
+                    // DOnt need this, ProductImages does not persist
+                    List<ProductImage>? newProductImages = product.ProductImages.ToList();
+
+                    // Handle ProductImage removal
+                    if(!string.IsNullOrEmpty(DeletedImageIds))
+                    {
+                        List<string> imagesToDelete = DeletedImageIds.Split(",").ToList();
+                        foreach(string imageId in imagesToDelete)
+                        {
+                            if(int.TryParse(imageId, out int parsedImageId))
+                            {
+                                ProductImage? productImage = _productImageRepo.GetById(parsedImageId);
+
+                                if(productImage != null)
+                                {
+                                    // Delete the physical file (optional)
+                                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, productImage.ImageUrl.TrimStart('/'));
+                                    if(System.IO.File.Exists(filePath))
+                                    {
+                                        System.IO.File.Delete(filePath);
+                                    }
+
+                                    _productImageRepo.Delete(parsedImageId);
+                                }
+                            }
+                        }
+                    }
+
+                        // Handle ProductImage addition
+                        if(fileImages.Count > 0)
+                        {
+                            string webRootPath = _webHostEnvironment.WebRootPath;
+                            string imageFolderPath = Path.Combine(webRootPath, "images", productVM.PkId.ToString());
+
+                            if(!Directory.Exists(imageFolderPath))
+                            {
+                                Directory.CreateDirectory(imageFolderPath);
+                            }
+
+                            //const string filepath = "/images/";
+                            foreach(var fileImage in fileImages)
+                            {
+                                string fileName = Path.GetFileName(fileImage.FileName);
+                                string filePath = Path.Combine(imageFolderPath, fileName);
+                                using(var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    fileImage.CopyTo(stream);
+                                }
+
+                                ProductImage productImage = new ProductImage
+                                {
+                                    AltText = $"{productVM.PkId}_{product.Name}_",
+                                    FkProductId = productVM.PkId,
+                                    ImageUrl = $"/images/{productVM.PkId}/{fileName}",
+                                    CreateDate = DateOnly.FromDateTime(DateTime.Now),
+                                };
+                                _productImageRepo.Add(productImage);
+                            }
+                        }
+
+                        product.ProductImages = newProductImages;
+                        returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
+                }
+
+            }
+            else
+            {
+                returnMessage = $"success,Successfully updated Product: (Name {productVM.Name})";
+            }
             return RedirectToAction("Index", new { message = returnMessage });
         }
 
