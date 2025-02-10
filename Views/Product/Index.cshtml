@@ -20,6 +20,8 @@
             <th>@Html.DisplayNameFor(model => model.Price)</th>
             <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
             <th></th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -37,6 +39,9 @@
                 <td>$ @product.Price</td>
                 <td>@product.StockQuantity</td>
                 <td><a asp-action="Details" asp-route-id=@product.PkId>Details</a></td>
+                @* manager access only below *@
+                <td><a asp-action="Edit" asp-route-id=@product.PkId>Edit</a></td>
+                <td><a asp-action="Delete" asp-route-id=@product.PkId>Delete</a></td>
             </tr>
         }
     </tbody>
