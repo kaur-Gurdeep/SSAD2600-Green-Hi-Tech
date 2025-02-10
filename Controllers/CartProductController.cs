@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using GreenHiTech.Models;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreenHiTech.Controllers
 {
@@ -50,6 +51,11 @@ namespace GreenHiTech.Controllers
             return userPkId.PkId;
         }
 
+        private User GetUser(int userPkId)
+        {
+            return _context.Users.Include(u => u.FkAddress).FirstOrDefault(u => u.PkId == userPkId);
+        }
+
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -76,6 +82,22 @@ namespace GreenHiTech.Controllers
                 return RedirectToAction("Index", new { message = e.Message });
             }
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Checkout()
+        {
+            int userPkId = GetUserPkId();
+            var user = GetUser(userPkId);
+            ViewBag.Name = $"{user.FirstName} {user.LastName}";
+            ViewBag.Address = $"{user.FkAddress.HouseNumber} {user.FkAddress.Street}, {user.FkAddress.City}, {user.FkAddress.Province}, {user.FkAddress.Country}";
+            IEnumerable<CartProductVM> cartProducts = _cartProductRepo.GetAll(userPkId);
+            decimal totalAmount = _cartProductRepo.GetTotalAmount(userPkId);
+            decimal taxTotal = _cartProductRepo.GetTaxTotal(userPkId);
+            decimal subTotal = _cartProductRepo.GetSubTotal(userPkId);
+            ViewBag.TaxTotal = taxTotal.ToString("f2");
+            ViewBag.SubTotal = subTotal.ToString("f2");
+            ViewBag.TotalAmount = totalAmount.ToString("f2");
+            return View(cartProducts);
         }
     }
 }
