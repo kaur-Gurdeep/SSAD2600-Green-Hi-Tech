@@ -43,7 +43,7 @@ namespace GreenHiTech.ViewModels
 
         [Required]
         [Display(Name = "Product Images")]
-        public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+        public virtual ICollection<ProductImageVM> ProductImageVMs { get; set; } = new List<ProductImageVM>();
 
         //public ICollection<Category> Categories { get; set; } = null!;
 

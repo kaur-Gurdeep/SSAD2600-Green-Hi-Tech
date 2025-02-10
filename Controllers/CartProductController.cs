@@ -29,10 +29,10 @@ namespace GreenHiTech.Controllers
             decimal totalAmount = _cartProductRepo.GetTotalAmount(userPkId);
             decimal taxTotal = _cartProductRepo.GetTaxTotal(userPkId);
             decimal subTotal = _cartProductRepo.GetSubTotal(userPkId);
-            ViewBag.TaxTotal = taxTotal;
-            ViewBag.SubTotal = subTotal;
-            ViewBag.TotalAmount = totalAmount;
-            return View();
+            ViewBag.TaxTotal = taxTotal.ToString("f2");
+            ViewBag.SubTotal = subTotal.ToString("f2");
+            ViewBag.TotalAmount = totalAmount.ToString("f2");
+            return View(cartProducts);
         }
 
         [HttpPost]
@@ -47,22 +47,6 @@ namespace GreenHiTech.Controllers
         {
             var userEmail = User.Identity.Name;
             var userPkId = _context.Users.FirstOrDefault(u => u.Email == userEmail);
-            //var userIdentifier = _context.Users.FirstOrDefault(u => u.PkId == userPkId.PkId);
-            //if (string.IsNullOrEmpty(userIdentifier))
-            //{
-            //    throw new Exception("User ID not found in claims");
-            //}
-
-            //string numericPart = Regex.Replace(userIdentifier, @"\D", "");
-            //int userPkId = int.Parse(numericPart);
-            //if (string.IsNullOrEmpty(numericPart) || !int.TryParse(numericPart, out int userPkId))
-            //{
-            //    throw new Exception("Invalid user ID format");
-            //}
-            //if (user == null)
-            //{
-            //    throw new Exception("User not found");
-            //}
             return userPkId.PkId;
         }
 

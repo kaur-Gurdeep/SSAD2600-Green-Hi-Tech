@@ -30,6 +30,7 @@ body {
     border: 2px solid darkgray;
     border-radius: 5px;
 }
+
 html, body {
     height: 100%;
     margin: 0;
@@ -46,4 +47,8 @@ html, body {
     padding: 15px;
     text-align: center;
     width: 100%;
+
+.detail-image {
+    width: 5rem;
+    height: 5rem;
 }
