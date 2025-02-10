@@ -31,6 +31,23 @@ body {
     border-radius: 5px;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+.footer {
+    background-color: #7d856d;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+
 .detail-image {
     width: 5rem;
     height: 5rem;
