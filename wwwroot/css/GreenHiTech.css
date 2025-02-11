@@ -74,7 +74,40 @@
 
 .container {
     flex: 1;
+    background: #f1f1f1;
 }
+
+/*Search Box(Landing-Page)*/
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    background: #f1f1f1;
+}
+
+.search-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: -35px;
+    font-size: 18px;
+    color: #494949;
+}
+
+/*Login Page*/
+/*Registeration Page*/
 
 /* Footer */
 .footer {
@@ -115,15 +148,11 @@
         display: none;
     }
 
-    /*.logo {
-        flex: none; 
-    }*/
     .navbarNav {
         display: flex;
         flex-direction: row;
         list-style-type: none;
         justify-content: flex-start;
-/*        width: 70%;*/
     }
         .navbarNav .nav-item{
             margin: 0;
@@ -134,6 +163,139 @@
         }
 
     .nav-icons i {
-        font-size: 28px; /* Increased icon size on larger screens */
+        font-size: 28px; 
+    }
+
+    /*Search Container*/
+    .search-container {
+        padding: 15px;
+    }
+    .search-box {
+        max-width: 500px;
     }
 }
+
+
+
+
+
+
+/*.auth-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}*/
+
+/* Tabs */
+/*.tabs {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab-link {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    background: none;
+    border: none;
+    color: #494949;
+}
+
+    .tab-link.active {
+        border-bottom: 3px solid #4e9648;
+        font-weight: bold;
+    }*/
+
+/* Forms */
+/*.form-section {
+    display: block;
+}
+
+.btn-green {
+    background: #4e9648;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #494949;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.checkbox label {
+    font-size: 14px;
+}*/
+
+
+.authContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+    .authContainer h2 {
+        text-align: center;
+        color: #494949;
+    }
+
+    .authContainer form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .authContainer .form-floating {
+        margin-bottom: 15px;
+    }
+
+    .authContainer button {
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .authContainer p {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .authContainer a {
+        color: #494949;
+        text-decoration: none;
+    }
+
+    .authContainer a:hover {
+        text-decoration: underline;
+    }
+.btn-custom {
+    background-color: #4e9648;
+    border-color: #4e9648;
+    
+}
+    .btn-custom:hover {
+        background-color: #417e41;
+        border-color: #417e41;
+        color: white;
+    }
+
+
