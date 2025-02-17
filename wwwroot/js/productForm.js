@@ -2,41 +2,43 @@
 let deletedImageIds = "";
 
 // Handles the drop event, adds files to list of selected images
-function dropHandler(e) {
+function handleDrop(e) {
     e.preventDefault();
     document.getElementById('drop_zone').style.backgroundColor = 'white';
-    console.log("File(s) dropped.")
+    console.log("File(s) dropped:")
     if (e.dataTransfer.items) {
         [...e.dataTransfer.items].forEach((item, i) => {
-            if (item.kind === "file") {
+            if (item.kind === "file" && item.type.match("^image/")) {
                 const file = item.getAsFile();
                 selectedFiles.push(file);
+                displayImage(file);
             }
         });
-    } else {
-        [...e.dataTransfer.files].forEach((file, i) => {
-            selectedFiles.push(file);
-            console.log(file.kind);
-            console.log(file.type);
-        });
     }
-    selectedFiles.forEach((file) => {
-        console.log(file.name);
-    });
+    //selectedFiles.forEach((file) => {
+    //    console.log(file.name);
+    //});
+    const imageCount = document.getElementsByClassName('thumbnail-item').length;
+    const noImagesDiv = document.getElementById('no-images');
+    if ((selectedFiles.length > 0 || imageCount > 0) && noImagesDiv) {
+        document.getElementById('no-images').remove();
+    //} else {
+    //    document.getElementById('no-images').style.display = 'block';
+    }
 }
-function dragEndHandler(e) {
+function handleDragEnd(e) {
     e.preventDefault();
     document.getElementById('drop_zone').style.backgroundColor = 'white';
 }
-function dragOverHandler(e) {
+function handleDragOver(e) {
     document.getElementById('drop_zone').style.backgroundColor = 'pink';
     e.preventDefault();
 }
-function dragEnterHandler(e) {
+function handleDragEnter(e) {
     e.preventDefault();
     document.getElementById('drop_zone').style.backgroundColor = 'pink';
 }
-function dragLeaveHandler(e) {
+function handleDragLeave(e) {
     e.preventDefault();
     document.getElementById('drop_zone').style.backgroundColor = 'white';
 }
@@ -69,7 +71,6 @@ function sendFilesToController(e) {
 function removeImage(imageId) {
     if (confirm("Are you sure you want to remove this image?")) {
         // Add the ID to deletedImageIds
-
         deletedImageIds += ',' + imageId;
 
         // Update the hidden input field
@@ -77,5 +78,50 @@ function removeImage(imageId) {
 
         // Remove the image preview from the DOM
         document.querySelector(`div[data-image-id='${imageId}']`).remove();
+
+        const imageCount = document.getElementsByClassName('thumbnail-item').length;
+        if (selectedFiles.length == 0 && imageCount == 0) {
+            const noImagesDiv = document.createElement('div');
+            noImagesDiv.id = 'no-images';
+            noImagesDiv.innerHTML = 'No images';
+            document.querySelector('.thumbnails').appendChild(noImagesDiv);
+        }
     }
+}
+function displayImage(file) {
+    const thumbnails = document.querySelector('.thumbnails');
+
+    const fileReader = new FileReader();
+
+    // this needs to run when an image loads
+    fileReader.onload = function (e) {
+        // create new image div container
+        const newImage = document.createElement('div');
+        newImage.classList.add('thumbnail-item');
+
+        // create the img
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.maxWidth = '100px';
+        img.style.maxHeight = '100px';
+
+        // create the button
+        const button = document.createElement('button');
+        button.innerHTML = 'X';
+        button.classList.add('delete-icon');
+        button.onclick = function () {
+            newImage.remove();
+            selectedFiles = selectedFiles.filter(f => f !== file);
+        };
+
+        // append the img and button to the container
+        newImage.appendChild(img);
+        newImage.appendChild(button);
+
+        // append the container to the thumbnails
+        thumbnails.appendChild(newImage);
+    };
+
+    // read as url?? what does that do?
+    fileReader.readAsDataURL(file);
 }

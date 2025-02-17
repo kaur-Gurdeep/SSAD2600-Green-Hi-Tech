@@ -50,28 +50,28 @@
                 <label asp-for="ProductImageVMs" class="control-label"></label>
                 <div id="drop_zone"
                      class="drop-zone"
-                     ondrop="dropHandler(event);"
-                     ondragover="dragOverHandler(event);"
-                     ondragend="dragEndHandler(event);"
-                     ondragenter="dragEnterHandler(event);"
-                     ondragleave="dragLeaveHandler(event);">
+                     ondrop="handleDrop(event);"
+                     ondragover="handleDragOver(event);"
+                     ondragend="handleDragEnd(event);"
+                     ondragenter="handleDragEnter(event);"
+                     ondragleave="handleDragLeave(event);">
                     Drag and drop your images here.
                 </div>
                 <div class="thumbnails">
-                @if (ViewBag.ProductImageVMs.Count > 0)
-                {
-                    @foreach (var productImageVM in ViewBag.ProductImageVMs)
+                    @if (ViewBag.ProductImageVMs.Count > 0)
                     {
-                        <div class="thumbnail-item" data-image-id="@productImageVM.PkId">
-                            <img src="@productImageVM.ImageUrl" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
-                            <button type="button" class="delete-icon" onclick="removeImage(@productImageVM.PkId)">X</button>
-                        </div>
+                        @foreach (var productImageVM in ViewBag.ProductImageVMs)
+                        {
+                            <div class="thumbnail-item" data-image-id="@productImageVM.PkId">
+                                <img src="@productImageVM.ImageUrl" alt="Product Image" style="max-width: 100px; max-height: 100px;" />
+                                <button type="button" class="delete-icon" onclick="removeImage(@productImageVM.PkId)">X</button>
+                            </div>
+                        }
                     }
-                }
-                else 
-                {
-                        <div>No images</div>
-                }
+                    else 
+                    {
+                        <div id="no-images">No images</div>
+                    }
                 </div>
 
                 <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
