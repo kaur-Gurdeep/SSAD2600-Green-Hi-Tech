@@ -4,8 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-<p><a asp-action="Create">Create New</a></p>
+<h1 class="text-center">Roles</h1>
+<div class="text-center mb-3">
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</div>
 
 <!-- Show error message if the role cannot be deleted -->
 @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
@@ -14,33 +16,38 @@
         @error.ErrorMessage
     </div>
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Id)</th>
-            <th>@Html.DisplayNameFor(model => model.RoleName)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
-                <td>
-                    <!-- Create a form for each delete action -->
-                    <form id="deleteForm_@item.Id" method="post" asp-action="Delete">
-                        <input type="hidden" name="roleId" value="@item.Id" />
-                        <button type="button" class="btn btn-danger" onclick="confirmDelete('@item.RoleName', '@item.Id')">Delete</button>
-                    </form>
-
-                    <a href="@Url.Action("Detail", "Role", new { roleId = item.Id })" class="btn btn-info">Details</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="d-flex justify-content-center">
+    <div class="w-75">
+        <table class="table table-bordered table-hover text-center border-dark">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Id)</th>
+                    <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+                    <th>Delete</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
+                        <td>
+                            <form id="deleteForm_@item.Id" method="post" asp-action="Delete">
+                                <input type="hidden" name="roleId" value="@item.Id" />
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@item.RoleName', '@item.Id')">Delete</button>
+                            </form>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Detail", "Role", new { roleId = item.Id })" class="btn btn-info btn-sm">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <!-- Modal -->
 <div id="deleteModal" class="modal">
