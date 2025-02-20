@@ -27,6 +27,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<CartProductRepo>();
 builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddScoped<CategoryRepo>();
+builder.Services.AddScoped<ProductImageRepo>();
+builder.Services.AddScoped<OrderRepo>();
+builder.Services.AddScoped<UserRepo>();
+builder.Services.AddScoped<AddressDetailRepo>();
 
 
 
@@ -52,6 +56,7 @@ builder.Services.Configure<IdentityOptions>(options => {
 builder.Services.AddScoped<RoleRepo>();
 builder.Services.AddScoped<IdentityUserRepo>();
 builder.Services.AddScoped<UserRoleRepo>();
+builder.Services.AddScoped<UserRepo>();
 
 
 

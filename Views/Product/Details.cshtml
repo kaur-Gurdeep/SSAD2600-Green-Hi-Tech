@@ -40,16 +40,16 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Manufacturer)
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductImages)
+            @Html.DisplayNameFor(model => model.ProductImageVMs)
         </dt>
         <dd class="product-images">
-            @if (Model.ProductImages != null)
+            @if (Model.ProductImageVMs != null && Model.ProductImageVMs.Any())
             {
                 int i = 0;
-                foreach (var image in Model.ProductImages)
+                foreach (var image in Model.ProductImageVMs)
                 {
                     string altId = "image_" + i.ToString();
-                    < src=@image.ImageUrl alt=@altId />
+                    <img src=@image.ImageUrl alt=@altId class="detail-image"/>
                     i++;                     
                 }
             }
@@ -57,7 +57,6 @@
             {
                 <div>No images</div>
             }
-        </dd>
         </dd>
     </dl>
 </div>

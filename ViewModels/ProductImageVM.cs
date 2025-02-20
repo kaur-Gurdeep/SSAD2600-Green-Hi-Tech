@@ -6,7 +6,10 @@ namespace GreenHiTech.ViewModels
 {
     public class ProductImageVM
     {
-        //public int PkId { get; set; }
+        [Required]
+        [Column(TypeName = "int")]
+        public int PkId { get; set; }
+
         [Required]
         [StringLength(150)]
         public string AltText { get; set; } = null!;
@@ -20,7 +23,7 @@ namespace GreenHiTech.ViewModels
         public string ImageUrl { get; set; } = null!;
 
         [Required]
-        [Column(TypeName = "DateTime")]
+        [Column(TypeName = "DateOnly")]
         public DateOnly CreateDate { get; set; }
 
         [Required]

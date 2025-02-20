@@ -3,51 +3,50 @@ using Microsoft.AspNetCore.Mvc;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using GreenHiTech.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 
 namespace GreenHiTech.Controllers
 {
     public class ProductController : Controller
     {
-        // Repo methods: Add, GetAll, GetById, Update, Delete
-
         private readonly ProductRepo _productRepo;
         private readonly CategoryRepo _categoryRepo;
+        private readonly ProductImageRepo _productImageRepo;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo)
+        public ProductController(ProductRepo productRepo, CategoryRepo categoryRepo, ProductImageRepo productImageRepo, IWebHostEnvironment webHostEnvironment)
         {
             _productRepo = productRepo;
             _categoryRepo = categoryRepo;
+            _productImageRepo = productImageRepo;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
         {
-            var products = _productRepo.GetAll();
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
+            List<Product> products = _productRepo.GetAll(allProductImages);
+            List<ProductVM> productVMs = new List<ProductVM>();
 
-            var productVMs = products.Select(p => new ProductVM
+            foreach(Product product in products)
             {
-                PkId = p.PkId,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                StockQuantity = p.StockQuantity,
-                FkCategoryId = p.FkCategoryId,
-                Manufacturer = p.Manufacturer,
-            }).ToList();
+                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
+                foreach(ProductImage productImage in product.ProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
+                    {
+                        PkId = productImage.PkId,
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
 
-            return View(productVMs);
-        }
-
-        public IActionResult Details(int id)
-        {
-            string returnMessage = string.Empty;
-            Product? product = _productRepo.GetById(id);
-
-            if(product == null) {
-                returnMessage = $"error,Could not find product ID: {id}";
-                return RedirectToAction("Index");
-            }
-            else
-            {
                 ProductVM productVM = new ProductVM
                 {
                     PkId = product.PkId,
@@ -57,7 +56,52 @@ namespace GreenHiTech.Controllers
                     StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
-                    ProductImages = product.ProductImages,
+                    ProductImageVMs = productImageVMs,
+                };
+
+                productVMs.Add(productVM);
+            }
+
+            return View(productVMs);
+        }
+
+        public IActionResult Details(int id)
+        {
+            string returnMessage = string.Empty;
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
+            Product? product = _productRepo.GetById(id);
+
+            if(product == null) {
+                returnMessage = $"error,Could not find product ID: {id}";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
+                foreach(var productImage in product.ProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
+                    {
+                        PkId = productImage.PkId,
+
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
+
+                ProductVM productVM = new ProductVM
+                {
+                    PkId = product.PkId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity,
+                    FkCategoryId = product.FkCategoryId,
+                    Manufacturer = product.Manufacturer,
+                    ProductImageVMs = productImageVMs,
                 };
                 return View(productVM);
             }
@@ -67,14 +111,10 @@ namespace GreenHiTech.Controllers
         public IActionResult Create()
         {
             string returnMessage = string.Empty;
-            var categoryItems = _categoryRepo.GetAll().Select(c =>  new SelectListItem
-            {
-                Value = c.Name,
-                Text = c.Name
-            }).ToList();
+            List<SelectListItem> categoryItems = _categoryRepo.GetSelectListItems();
             if(categoryItems == null)
             {
-                returnMessage = "cannot find caterories";
+                returnMessage = "cannot find categories";
                 return RedirectToAction("Index", new { message = returnMessage });
             }
             else
@@ -88,9 +128,10 @@ namespace GreenHiTech.Controllers
         // POST
         [HttpPost]
         // manager access
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Create(ProductVM productVM, List<IFormFile> fileImages)
         {
             string returnMessage = string.Empty;
+            List<ProductImage> productImages = _productImageRepo.GetAll();
 
             if (ModelState.IsValid)
             {
@@ -105,7 +146,41 @@ namespace GreenHiTech.Controllers
                         FkCategoryId = productVM.FkCategoryId,
                         Manufacturer = productVM.Manufacturer,
                     };
+
                     _productRepo.Add(product);
+                    int productId = _productRepo.GetAll(productImages).Max(p => p.PkId);
+
+                    if(fileImages.Count > 0)
+                    {
+                        string webRootPath = _webHostEnvironment.WebRootPath;
+                        string imageFolderPath = Path.Combine(webRootPath, "images", productId.ToString());
+
+                        if(!Directory.Exists(imageFolderPath))
+                        {
+                            Directory.CreateDirectory(imageFolderPath);
+                        }
+
+                        //const string filepath = "/images/";
+                        foreach(var fileImage in fileImages)
+                        {
+                            string fileName = Path.GetFileName(fileImage.FileName);
+                            string filePath = Path.Combine(imageFolderPath, fileName);
+                            using(var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                fileImage.CopyTo(stream);
+                            }
+
+                            ProductImage productImage = new ProductImage
+                            {
+                                AltText = $"{productId}_{product.Name}_",
+                                FkProductId = productId,
+                                ImageUrl = $"/images/{productId}/{fileName}",
+                                CreateDate = DateOnly.FromDateTime(DateTime.Now),
+                            };
+                            _productImageRepo.Add(productImage);
+                        }
+                    }
+
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
                 }
                 catch (Exception ex)
@@ -124,14 +199,45 @@ namespace GreenHiTech.Controllers
         // GET
         public IActionResult Edit(int id)
         {
-            Product? product = _productRepo.GetById(id);
+            string returnMessage = String.Empty;
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
+            Product? product = _productRepo.GetById(id, allProductImages);
 
-            if (product == null)
+            if(product == null)
             {
                 return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
             }
             else
             {
+                List<SelectListItem> categoryItems = _categoryRepo.GetSelectListItems();
+                if(categoryItems == null)
+                {
+                    returnMessage = "cannot find categories";
+                    return RedirectToAction("Index", new
+                    {
+                        message = returnMessage
+                    });
+                }
+                else
+                {
+                    SelectList categorySelectList = new SelectList(categoryItems, "Value", "Text");
+                    ViewBag.CategorySelectList = categorySelectList;
+                }
+
+                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
+                foreach(ProductImage productImage in product.ProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
+                    {
+                        PkId = productImage.PkId,
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
+
                 ProductVM productVM = new ProductVM
                 {
                     PkId = product.PkId,
@@ -141,8 +247,10 @@ namespace GreenHiTech.Controllers
                     StockQuantity = product.StockQuantity,
                     FkCategoryId = product.FkCategoryId,
                     Manufacturer = product.Manufacturer,
-                    ProductImages = product.ProductImages,
+                    ProductImageVMs = productImageVMs,
                 };
+                ViewBag.ProductImageVMs = productImageVMs;
+
                 return View(productVM);
             }
         }
@@ -150,24 +258,100 @@ namespace GreenHiTech.Controllers
         // POST
         [HttpPost]
         // manager access
-        public IActionResult Edit(ProductVM productVM)
+        public IActionResult Edit(ProductVM productVM, List<IFormFile> fileImages, string DeletedImageIds = "")
         {
             string returnMessage = string.Empty;
+            List<ProductImage> productImages = _productImageRepo.GetAll();
 
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
-                Product? product = _productRepo.GetById(productVM.PkId);
-                if (product == null)
+                Product? product = _productRepo.GetById(productVM.PkId, productImages);
+                if(product == null)
                 {
                     returnMessage = $"error,Product could not be updated: (Name {productVM.Name})";
                 }
                 else
                 {
-                    _productRepo.Update(product);
-                    returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
-                }
-            }
+                    // Update Product information
+                    product.Name = productVM.Name;
+                    product.Description = productVM.Description;
+                    product.Price = productVM.Price;
+                    product.StockQuantity = productVM.StockQuantity;
+                    product.FkCategoryId = productVM.FkCategoryId;
+                    product.Manufacturer = productVM.Manufacturer;
+                    product.Name = productVM.Name;
 
+                    _productRepo.Update(product);
+
+                    // DOnt need this, ProductImages does not persist
+                    List<ProductImage>? newProductImages = product.ProductImages.ToList();
+
+                    // Handle ProductImage removal
+                    if(!string.IsNullOrEmpty(DeletedImageIds))
+                    {
+                        List<string> imagesToDelete = DeletedImageIds.Split(",").ToList();
+                        foreach(string imageId in imagesToDelete)
+                        {
+                            if(int.TryParse(imageId, out int parsedImageId))
+                            {
+                                ProductImage? productImage = _productImageRepo.GetById(parsedImageId);
+
+                                if(productImage != null)
+                                {
+                                    // Delete the physical file (optional)
+                                    var filePath = Path.Combine(_webHostEnvironment.WebRootPath, productImage.ImageUrl.TrimStart('/'));
+                                    if(System.IO.File.Exists(filePath))
+                                    {
+                                        System.IO.File.Delete(filePath);
+                                    }
+
+                                    _productImageRepo.Delete(parsedImageId);
+                                }
+                            }
+                        }
+                    }
+
+                        // Handle ProductImage addition
+                        if(fileImages.Count > 0)
+                        {
+                            string webRootPath = _webHostEnvironment.WebRootPath;
+                            string imageFolderPath = Path.Combine(webRootPath, "images", productVM.PkId.ToString());
+
+                            if(!Directory.Exists(imageFolderPath))
+                            {
+                                Directory.CreateDirectory(imageFolderPath);
+                            }
+
+                            //const string filepath = "/images/";
+                            foreach(var fileImage in fileImages)
+                            {
+                                string fileName = Path.GetFileName(fileImage.FileName);
+                                string filePath = Path.Combine(imageFolderPath, fileName);
+                                using(var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    fileImage.CopyTo(stream);
+                                }
+
+                                ProductImage productImage = new ProductImage
+                                {
+                                    AltText = $"{productVM.PkId}_{product.Name}_",
+                                    FkProductId = productVM.PkId,
+                                    ImageUrl = $"/images/{productVM.PkId}/{fileName}",
+                                    CreateDate = DateOnly.FromDateTime(DateTime.Now),
+                                };
+                                _productImageRepo.Add(productImage);
+                            }
+                        }
+
+                        product.ProductImages = newProductImages;
+                        returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
+                }
+
+            }
+            else
+            {
+                returnMessage = $"success,Successfully updated Product: (Name {productVM.Name})";
+            }
             return RedirectToAction("Index", new { message = returnMessage });
         }
 

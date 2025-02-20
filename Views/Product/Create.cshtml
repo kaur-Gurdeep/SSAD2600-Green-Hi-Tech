@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data" id="input-form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -33,10 +33,10 @@
                 <span asp-validation-for="StockQuantity" class="text-danger"></span>
             </div><br />
             <div class="form-group mb-3">
-                <label asp-for="FkCategoryId" class="control-label">Select User</label>
+                <label asp-for="FkCategoryId" class="control-label">Select Category</label>
                 <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList"
                         class="form-select">
-                    <option value="">-- Select User --</option>
+                    <option value="">-- Select Category --</option>
                 </select>
                 <span asp-validation-for="FkCategoryId" class="text-danger"></span>
             </div><br />
@@ -46,12 +46,24 @@
                 <span asp-validation-for="Manufacturer" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <label asp-for="ProductImages" class="control-label"></label>
-                <input asp-for="ProductImages" class="form-control" />
-                <span asp-validation-for="ProductImages" class="text-danger"></span>
+                <label asp-for="ProductImageVMs" class="control-label"></label>
+                <div 
+                    id="drop_zone" 
+                    class="drop-zone" 
+                    ondrop="handleDrop(event);"
+                     ondragover="handleDragOver(event);"
+                     ondragend="handleDragEnd(event);"
+                     ondragenter="handleDragEnter(event);"
+                     ondragleave="handleDragLeave(event);">
+                    Drag and drop your images here.
+                </div>
+                <div class="thumbnails">
+                    <div id="no-images">No images</div>
+                </div>
+                <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
             </div><br />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" onclick="sendFilesToController(event)" />
             </div>
         </form>
     </div>
@@ -62,6 +74,7 @@
 
 @section Scripts {
     @{
+        <script src="~/js/productForm.js"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

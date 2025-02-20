@@ -1,0 +1,240 @@
+/*Button color grey nav and footer =#494949
+    green nav and footer = #889982
+
+    red button = #ae0202
+    green button = #4e9648
+    grey button = #494949
+*/
+/* Reset & Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+    background-color: #494949;
+    border-top: 12px solid #889982;
+    color: white;
+    padding: 10px 5px;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.menu-icon {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.logo {
+    text-align: center;
+}
+
+.logo a {
+    color: white;
+}
+
+.nav-icons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nav-icons i {
+    margin-right: 10px;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.menu-icon i {
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Navbar */
+.navbarNav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    list-style-type: none;
+    justify-content: flex-end;
+}
+
+.navbarNav .nav-item {
+    list-style-type: none;
+    margin-right: 15px;
+}
+
+.navbarNav .nav-link {
+    text-decoration: none;
+    color: white;
+}
+
+.container {
+    flex: 1;
+    background: #f1f1f1;
+}
+
+/*Search Box*/
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    background: #f1f1f1;
+}
+
+.search-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 16px;
+}
+
+.search-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: -35px;
+    font-size: 18px;
+    color: #494949;
+}
+
+/*Login and Register Page*/
+.authContainer {
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.authContainer h2 {
+    text-align: center;
+    color: #494949;
+}
+
+.authContainer form {
+    display: flex;
+    flex-direction: column;
+}
+
+.authContainer .form-floating {
+    margin-bottom: 15px;
+}
+
+.authContainer button {
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.authContainer p {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.authContainer a {
+    color: #494949;
+    text-decoration: none;
+}
+
+.authContainer a:hover {
+    text-decoration: underline;
+}
+
+.btn-custom {
+    background-color: #4e9648;
+    border-color: #4e9648;
+}
+
+.btn-custom:hover {
+    background-color: #417e41;
+    border-color: #417e41;
+    color: white;
+}
+
+/* Footer */
+.footer {
+    background-color: #7d856d;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
+
+.footer-menu a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+.footer-icons i {
+    font-size: 20px;
+    margin: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+@media (min-width: 850px) {
+    .collapse {
+        display: flex !important;
+        justify-content: flex-start;
+    }
+
+    .header {
+        padding: 15px 30px;
+    }
+
+    .menu-icon {
+        display: none;
+    }
+
+    .navbarNav {
+        display: flex;
+        flex-direction: row;
+        list-style-type: none;
+        justify-content: flex-start;
+    }
+
+    .navbarNav .nav-item {
+        margin: 0;
+    }
+
+    .nav-item {
+        display: flex;
+    }
+
+    .nav-icons i {
+        font-size: 28px;
+    }
+
+    /*Search Container*/
+    .search-container {
+        padding: 15px;
+    }
+
+    .search-box {
+        max-width: 500px;
+    }
+}
+

@@ -1,0 +1,175 @@
+﻿@model GreenHiTech.ViewModels.UserVM
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+<h4>User #@Model.PkUserId</h4>
+<hr />
+<div class="container my-5">
+    <div class="px-2">
+        <h2 class="text-center mb-3">Edit Your Profile</h2>
+        <div class="card-body">
+            <form asp-action="Edit" asp-controller="User" method="post">
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="form-label">First Name</label>
+                    <div class="input-group">
+                        <input asp-for="FirstName" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LastName" class="form-label">Last Name</label>
+                    <div class="input-group">
+                        <input asp-for="LastName" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label">E-mail Address</label>
+                    <div class="input-group">
+                        <input asp-for="Email" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Phone" class="form-label">Phone Number</label>
+                    <div class="input-group">
+                        <input asp-for="Phone" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Role" class="form-label">Role</label>
+                    <div class="input-group">
+                        <input asp-for="Role" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.Unit" class="form-label">Unit</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.Unit" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.Unit" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.HouseNumber" class="form-label">House Number</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.HouseNumber" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.HouseNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.Street" class="form-label">Street</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.Street" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.Street" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.City" class="form-label">City</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.City" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.City" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.Province" class="form-label">Province</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.Province" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.Province" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.Country" class="form-label">Country</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.Country" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.Country" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AddressDetail.PostalCode" class="form-label">Postal Code</label>
+                    <div class="input-group">
+                        <input asp-for="AddressDetail.PostalCode" class="form-control" />
+                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    </div>
+                    <span asp-validation-for="AddressDetail.PostalCode" class="text-danger"></span>
+                </div>
+                <input type="hidden" asp-for="PkUserId" />
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" >Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Success Modal -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="bi bi-check-circle" style="font-size: 3rem; color: green;"></i>
+                    <p class="mt-3" style="font-size: 1.25rem; font-weight:bold; color: black;">@TempData["SuccessMessage"]</p>
+                </div>
+                  
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Show the success modal if there's a success message in TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+            </text>
+        }
+
+        // Close the modal if clicked outside of it, and then redirect to Index page
+        var successModalElement = document.getElementById('successModal');
+        successModalElement.addEventListener('hidden.bs.modal', function () {
+            window.location.href = '@Url.Action("Index", "User")'; // Redirect to the Index page
+        });
+    </script>
+}
+
+<style>
+    .modal-header{
+        border:none;
+    }
+</style>
+
+
+

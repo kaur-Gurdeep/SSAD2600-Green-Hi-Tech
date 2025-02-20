@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace GreenHiTech.Models;
 
 public partial class User
 {
+    [Key]
     public int PkId { get; set; }
 
     public string FirstName { get; set; } = null!;
@@ -16,10 +19,8 @@ public partial class User
     public string Email { get; set; } = null!;
 
     public string Phone { get; set; } = null!;
-
-    public string IdentityUserId { get; set; } = null!;
-
-    public int FkAddressId { get; set; }
+  
+    public int? FkAddressId { get; set; }
 
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 

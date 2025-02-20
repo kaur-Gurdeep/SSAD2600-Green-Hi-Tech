@@ -15,9 +15,12 @@
        style="width:500px;">
     <thead>
         <tr>
+            <th>Image</th>
             <th>@Html.DisplayNameFor(model => model.Name)</th>
             <th>@Html.DisplayNameFor(model => model.Price)</th>
             <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
+            <th></th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -25,10 +28,20 @@
         @foreach (var product in Model)
         {
             <tr>
+                <td>
+                    <img src="@(product.ProductImageVMs != null && product.ProductImageVMs.Any()
+                                ? product.ProductImageVMs.First().ImageUrl
+                                : "/images/no-image-available.jpg")"
+                         alt="Product Image"
+                         style="max-width: 100px; max-height: 100px;" />
+                </td>
                 <td>@product.Name</td>
                 <td>$ @product.Price</td>
                 <td>@product.StockQuantity</td>
                 <td><a asp-action="Details" asp-route-id=@product.PkId>Details</a></td>
+                @* manager access only below *@
+                <td><a asp-action="Edit" asp-route-id=@product.PkId>Edit</a></td>
+                <td><a asp-action="Delete" asp-route-id=@product.PkId>Delete</a></td>
             </tr>
         }
     </tbody>

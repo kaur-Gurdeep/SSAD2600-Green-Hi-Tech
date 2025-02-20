@@ -1,0 +1,13 @@
+﻿@model IEnumerable<GreenHiTech.ViewModels.CartProductVM>
+
+<h1>Checkout</h1>
+<h2>Deliver To</h2>
+<h3>@ViewBag.Name</h3>
+<h2>Shipping Address</h2>
+<h3>@ViewBag.Address</h3>
+<a asp-area="" asp-controller="CartProduct" asp-action="Index" class="btn btn-primary">Return to Cart</a>
+
+<h2>Payment Details</h2>
+<p>Subtotal:            @ViewBag.SubTotal</p>
+<p>Taxes:               @ViewBag.TaxTotal</p>
+<p>Grand Total:         @ViewBag.TotalAmount</p>

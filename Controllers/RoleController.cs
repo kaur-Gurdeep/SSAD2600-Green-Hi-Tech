@@ -25,6 +25,16 @@ namespace GreenHiTech.Controllers
             return View(roleVM);
         }
 
+        public IActionResult Detail(string roleId)
+        {
+            var role = _roleRepo.GetRole(roleId); 
+            if (role == null)
+            {
+                return NotFound(); 
+            }
+            return View(role); 
+        }
+
         [HttpGet]
         public ActionResult Create()
         {
@@ -51,6 +61,22 @@ namespace GreenHiTech.Controllers
             return View(roleVM);
         }
 
+        [HttpPost]
+        public IActionResult Delete(string roleId)
+        {
+            string errorMessage;
+            bool isSuccess = _roleRepo.DeleteRole(roleId, out errorMessage); 
+
+            if (isSuccess)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                ModelState.AddModelError("", errorMessage);
+                return View("Index", _roleRepo.GetAllRoles());
+            }
+        }
 
     }
 }

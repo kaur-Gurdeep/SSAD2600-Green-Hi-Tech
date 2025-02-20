@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Authentication;
@@ -34,6 +35,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
         private readonly IdentityUserRepo _identityUserRepo;
+        private readonly UserRepo _userRepo;
+        private readonly AddressDetailRepo _addressDetailRepo;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +45,9 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             IConfiguration config,
-            IdentityUserRepo identityUserRepo)
+            IdentityUserRepo identityUserRepo,
+            UserRepo userRepo,
+            AddressDetailRepo addressDetailRepo)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -52,7 +57,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _config = config;
             _identityUserRepo = identityUserRepo;
-
+            _userRepo = userRepo;
+            _addressDetailRepo = addressDetailRepo;
         }
 
         /// <summary>
@@ -151,29 +157,39 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Get identityUser object after creation
-                    var createdUser = await _userManager.GetUserAsync(User);
+                    AddressDetail emptyAddress = new()
+                    {
+                        Unit = "",
+                        HouseNumber = "",
+                        Street = "",
+                        City = "",
+                        Province = "",
+                        PostalCode = "",
+                        Country = "",
+                    };
 
-                    // Save user details into the custom User table
-                    var newUser = new Models.User
+                    _addressDetailRepo.Add(emptyAddress);
+                    int addressId = _addressDetailRepo.GetAll().Max(a => a.PkId);
+
+                    // If no user exists, create a new custom user entry
+                    var newUser = new User
                     {
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
-                        Role = "User", //default role
                         Email = Input.Email,
-                        Phone = "", 
-                        IdentityUserId = createdUser?.Id, 
-                        FkAddressId = 0 // set this later or default it
+                        Role = "User", // Default role
+                        Phone = "",
+                        FkAddressId = addressId,
                     };
 
-                    // Save to the database using IdentityUserRepo
-                    _identityUserRepo.AddUser(newUser);
+                    _userRepo.Add(newUser);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
