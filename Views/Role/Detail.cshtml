@@ -13,15 +13,15 @@
         </div>
         <div class="card-body">
             <p><strong>Role ID:</strong> @Model.Id</p>
-            <p><strong>Users Assigned:</strong> @Model.UsersCount</p>
+            @* <p><strong>Users Assigned:</strong> @Model.UsersCount</p> *@
 
-            <h4 class="mt-4">User Emails:</h4>
-            <ul class="list-group">
-                @foreach (var email in Model.UserEmails)
-                {
-                    <li class="list-group-item">@email</li> <!-- Display each user's email -->
-                }
-            </ul>
+            @* <h4 class="mt-4">User Emails:</h4> *@
+            @* <ul class="list-group"> *@
+            @*     @foreach (var email in Model.UserEmails) *@
+            @*     { *@
+            @*         <li class="list-group-item">@email</li> <!-- Display each user's email --> *@
+            @*     } *@
+            @* </ul> *@
         </div>
         <div class="card-footer text-center">
             <a asp-action="Index" class="btn" style="background-color: #494949; color: white;">Back to Role List</a>
