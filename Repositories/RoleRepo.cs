@@ -43,8 +43,8 @@ namespace GreenHiTech.Repositories
                 {
                     Id = role.Id,
                     RoleName = role.Name,
-                    UsersCount = userEmails.Count,
-                    UserEmails = userEmails 
+                    //UsersCount = userEmails.Count,
+                    //UserEmails = userEmails 
                 };
             }
             return null; // Return null if role not found
