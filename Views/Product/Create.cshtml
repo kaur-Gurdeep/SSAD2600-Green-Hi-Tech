@@ -50,12 +50,15 @@
                 <div 
                     id="drop_zone" 
                     class="drop-zone" 
-                    ondrop="dropHandler(event);"
-                     ondragover="dragOverHandler(event);"
-                     ondragend="dragEndHandler(event);"
-                     ondragenter="dragEnterHandler(event);"
-                     ondragleave="dragLeaveHandler(event);">
+                    ondrop="handleDrop(event);"
+                     ondragover="handleDragOver(event);"
+                     ondragend="handleDragEnd(event);"
+                     ondragenter="handleDragEnter(event);"
+                     ondragleave="handleDragLeave(event);">
                     Drag and drop your images here.
+                </div>
+                <div class="thumbnails">
+                    <div id="no-images">No images</div>
                 </div>
                 <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
             </div><br />

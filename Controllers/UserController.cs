@@ -136,6 +136,7 @@ namespace GreenHiTech.Controllers
             // Remove RoleList from ModelState to prevent validation errors
             ModelState.Remove("RoleList");
 
+
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetById(userVM.PkUserId);
@@ -213,3 +214,96 @@ namespace GreenHiTech.Controllers
         }
     }
 }
+
+
+//using GreenHiTech.ViewModels;
+//using GreenHiTech.Repositories;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Extensions.Logging;
+
+//namespace GreenHiTech.Controllers
+//{
+//    public class UserController : Controller
+//    {
+//        private readonly UserRepo _userRepo;
+//        private readonly ILogger<UserController> _logger;
+
+//        public UserController(ILogger<UserController> logger, UserRepo userRepo)
+//        {
+//            _logger = logger;
+//            _userRepo = userRepo;
+//        }
+
+//        public IActionResult Index()
+//        {
+//            var userVMs = _userRepo.GetAll();
+//            return View("Index", userVMs);
+//        }
+
+//        public IActionResult Detail(int id)
+//        {
+//            var userVM = _userRepo.GetById(id);
+//            if (userVM == null)
+//            {
+//                TempData["ErrorMessage"] = $"User ID {id} not found.";
+//                return RedirectToAction("Index");
+//            }
+//            return View(userVM);
+//        }
+
+//        public IActionResult Edit(int id)
+//        {
+//            var userVM = _userRepo.GetById(id);
+//            if (userVM == null)
+//            {
+//                TempData["ErrorMessage"] = $"User ID {id} not found.";
+//                return RedirectToAction("Index");
+//            }
+//            return View(userVM);
+//        }
+
+//        [HttpPost]
+//        public IActionResult Edit(UserVM userVM)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                TempData["ErrorMessage"] = "Invalid data provided.";
+//                return RedirectToAction("Edit", new { id = userVM.PkUserId });
+//            }
+
+//            string result = _userRepo.UpdateUser(userVM);
+
+//            if (result.StartsWith("error"))
+//            {
+//                TempData["ErrorMessage"] = result;
+//                return RedirectToAction("Edit", new { id = userVM.PkUserId });
+//            }
+
+//            TempData["SuccessMessage"] = "User updated successfully.";
+//            return RedirectToAction("Index");
+//        }
+
+//        [HttpPost]
+//        public IActionResult Delete(int id)
+//        {
+//            if (id == 0)
+//            {
+//                return RedirectToAction("Index", new { message = "error, Invalid User ID." });
+//            }
+
+//            string result = _userRepo.Delete(id);
+
+//            if (result.StartsWith("error"))
+//            {
+//                TempData["ErrorMessage"] = result;
+//            }
+//            else
+//            {
+//                TempData["SuccessMessage"] = "User deleted successfully.";
+//            }
+
+//            return RedirectToAction("Index");
+//        }
+
+//    }
+//}
