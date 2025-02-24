@@ -48,15 +48,12 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
                         </li>
                         
-                        @* @if (User.IsInRole("Staff")) *@
-                        @* { *@
+                        @if (User.IsInRole("Staff"))
+                        {
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">All Products</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Create">Staff Dashboard</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Create">Add Product</a>
-                        </li>
-                        @* } *@
+                        }
                         @* @if (User.IsInRole("Admin")) *@
                         @* { *@
                         <li class="nav-item">
