@@ -1,106 +1,208 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using GreenHiTech.Models;
+using GreenHiTech.Repositories;
+using GreenHiTech.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GreenHiTech.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class OrderDetailController : ControllerBase
+    public class OrderDetailController : Controller
     {
-        private readonly GreenHiTechContext _context;
+        private readonly OrderDetailRepo _orderDetailRepo;
+        private readonly ProductRepo _productRepo;
+        private readonly OrderRepo _orderRepo;
 
-        public OrderDetailController(GreenHiTechContext context)
+        public OrderDetailController(OrderDetailRepo orderDetailRepo, ProductRepo productRepo, OrderRepo orderRepo)
         {
-            _context = context;
+            _orderDetailRepo = orderDetailRepo;
+            _productRepo = productRepo;
+            _orderRepo = orderRepo;
         }
 
-        // GET: api/OrderDetail
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetails()
+        public IActionResult Index()
         {
-            return await _context.OrderDetails.ToListAsync();
+            var orderDetails = _orderDetailRepo.GetAll();
+
+            var orderDetailVMs = orderDetails.Select(od => new OrderDetailVM
+            {
+                PkId = od.PkId,
+                FkOrderId = od.FkOrderId,
+                FkProductId = od.FkProductId,
+                Quantity = od.Quantity,
+                ProductName = od.FkProduct?.Name,
+                //OrderDate = od.FkOrder?.OrderDate
+            }).ToList();
+
+            return View(orderDetailVMs);
         }
 
-        // GET: api/OrderDetail/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OrderDetail>> GetOrderDetail(int id)
+        public IActionResult Details(int id)
         {
-            var orderDetail = await _context.OrderDetails.FindAsync(id);
+            var orderDetail = _orderDetailRepo.GetById(id);
 
             if (orderDetail == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {id})" });
             }
 
-            return orderDetail;
-        }
-
-        // POST: api/OrderDetail
-        [HttpPost]
-        public async Task<ActionResult<OrderDetail>> PostOrderDetail(OrderDetail orderDetail)
-        {
-            _context.OrderDetails.Add(orderDetail);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetOrderDetail), new { id = orderDetail.PkId }, orderDetail);
-        }
-
-        // PUT: api/OrderDetail/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderDetail(int id, OrderDetail orderDetail)
-        {
-            if (id != orderDetail.PkId)
+            var orderDetailVM = new OrderDetailVM
             {
-                return BadRequest();
+                PkId = orderDetail.PkId,
+                FkOrderId = orderDetail.FkOrderId,
+                FkProductId = orderDetail.FkProductId,
+                Quantity = orderDetail.Quantity,
+                ProductName = orderDetail.FkProduct?.Name,
+                //OrderDate = orderDetail.FkOrder?.OrderDate
+            };
+
+            return View(orderDetailVM);
+        }
+
+        // GET: Create
+        public IActionResult Create()
+        {
+            ViewBag.Products = _productRepo.GetAll().Select(p => new SelectListItem
+            {
+                Value = p.PkId.ToString(),
+                Text = p.Name
+            }).ToList();
+
+            ViewBag.Orders = _orderRepo.GetAll().Select(o => new SelectListItem
+            {
+                Value = o.PkId.ToString(),
+                Text = o.OrderDate.ToString()
+            }).ToList();
+
+            return View(new OrderDetailVM());
+        }
+
+        // POST: Create
+        [HttpPost]
+        public IActionResult Create(OrderDetailVM orderDetailVM)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var orderDetail = new OrderDetail
+                    {
+                        FkOrderId = orderDetailVM.FkOrderId,
+                        FkProductId = orderDetailVM.FkProductId,
+                        Quantity = orderDetailVM.Quantity
+                    };
+
+                    _orderDetailRepo.Add(orderDetail);
+                    return RedirectToAction("Index", new { message = "success, Order detail created successfully." });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error creating order detail: {ex.Message}");
+                }
             }
 
-            _context.Entry(orderDetail).State = EntityState.Modified;
+            return View(orderDetailVM);
+        }
 
+        // GET: Edit
+        public IActionResult Edit(int id)
+        {
+            var orderDetail = _orderDetailRepo.GetById(id);
+
+            if (orderDetail == null)
+            {
+                return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {id})" });
+            }
+
+            var orderDetailVM = new OrderDetailVM
+            {
+                PkId = orderDetail.PkId,
+                FkOrderId = orderDetail.FkOrderId,
+                FkProductId = orderDetail.FkProductId,
+                Quantity = orderDetail.Quantity
+            };
+
+            ViewBag.Products = _productRepo.GetAll().Select(p => new SelectListItem
+            {
+                Value = p.PkId.ToString(),
+                Text = p.Name
+            }).ToList();
+
+            ViewBag.Orders = _orderRepo.GetAll().Select(o => new SelectListItem
+            {
+                Value = o.PkId.ToString(),
+                Text = o.OrderDate.ToString()
+            }).ToList();
+
+            return View(orderDetailVM);
+        }
+
+        // POST: Edit
+        [HttpPost]
+        public IActionResult Edit(OrderDetailVM orderDetailVM)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existingOrderDetail = _orderDetailRepo.GetById(orderDetailVM.PkId);
+
+                    if (existingOrderDetail == null)
+                    {
+                        return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {orderDetailVM.PkId})" });
+                    }
+
+                    existingOrderDetail.FkOrderId = orderDetailVM.FkOrderId;
+                    existingOrderDetail.FkProductId = orderDetailVM.FkProductId;
+                    existingOrderDetail.Quantity = orderDetailVM.Quantity;
+
+                    _orderDetailRepo.Update(existingOrderDetail);
+                    return RedirectToAction("Index", new { message = "success, Order detail updated successfully." });
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error updating order detail: {ex.Message}");
+                }
+            }
+
+            return View(orderDetailVM);
+        }
+
+        // GET: Delete
+        public IActionResult Delete(int id)
+        {
+            var orderDetail = _orderDetailRepo.GetById(id);
+
+            if (orderDetail == null)
+            {
+                return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {id})" });
+            }
+
+            var orderDetailVM = new OrderDetailVM
+            {
+                PkId = id,
+                FkOrderId = orderDetail.FkOrderId,
+                FkProductId = orderDetail.FkProductId,
+                Quantity = orderDetail.Quantity,
+                ProductName = orderDetail.FkProduct?.Name,
+                //OrderDate = orderDetail.FkOrder?.OrderDate
+            };
+
+            return View(orderDetailVM);
+        }
+
+        // POST: Delete
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
             try
             {
-                await _context.SaveChangesAsync();
+                _orderDetailRepo.Delete(id);
+                return RedirectToAction("Index", new { message = "success, Order detail deleted successfully." });
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!OrderDetailExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return RedirectToAction("Index", new { message = $"error, Error deleting order detail: {ex.Message}" });
             }
-
-            return NoContent();
         }
-
-        // DELETE: api/OrderDetail/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrderDetail(int id)
-        {
-            var orderDetail = await _context.OrderDetails.FindAsync(id);
-            if (orderDetail == null)
-            {
-                return NotFound();
-            }
-
-            _context.OrderDetails.Remove(orderDetail);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool OrderDetailExists(int id)
-        {
-            return _context.OrderDetails.Any(e => e.PkId == id);
-        }
-
-
     }
 }
