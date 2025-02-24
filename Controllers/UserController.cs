@@ -6,6 +6,7 @@ using GreenHiTech.Repositories;
 using System.Net;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace GreenHiTech.Controllers
 {
@@ -15,12 +16,14 @@ namespace GreenHiTech.Controllers
         private readonly UserRepo _userRepo;
         private readonly ILogger<UserController> _logger;
         private readonly AddressDetailRepo _addressDetailRepo;
+        private readonly UserRoleRepo _userRoleRepo;
 
-        public UserController(ILogger<UserController> logger, UserRepo userRepo, AddressDetailRepo addressDetailRepo)
+        public UserController(ILogger<UserController> logger, UserRepo userRepo, AddressDetailRepo addressDetailRepo, UserRoleRepo userRoleRepo)
         {
             _logger = logger;
             _userRepo = userRepo;
             _addressDetailRepo = addressDetailRepo;
+            _userRoleRepo = userRoleRepo;
         }
 
 
@@ -46,7 +49,7 @@ namespace GreenHiTech.Controllers
             //}
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
             User? user = _userRepo.GetById(id);
 
@@ -62,6 +65,7 @@ namespace GreenHiTech.Controllers
             {
                 var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
 
+                var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
                 var userVM = new UserVM
                 {
                     PkUserId = user.PkId,
@@ -81,12 +85,13 @@ namespace GreenHiTech.Controllers
                         Country = address.Country,
                         Province = address.Province
                     } : null,
+                    RoleList = roles.ToList(),
                 };
 
                 return View(userVM);
             }
         }
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             var user = _userRepo.GetById(id);
             if (user == null)
@@ -96,6 +101,7 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
+            var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
             var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
             var userVM = new UserVM
             {
@@ -104,7 +110,7 @@ namespace GreenHiTech.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
-                Phone= user.Phone,
+                Phone = user.Phone,
                 AddressDetail = address != null ? new AddressDetailVM
                 {
                     PkId = address.PkId,
@@ -115,15 +121,22 @@ namespace GreenHiTech.Controllers
                     Province = address.Province,
                     PostalCode = address.PostalCode,
                     Country = address.Country
-                } : null
+                } : null,
+                RoleList = roles.ToList()
             };
 
             return View(userVM);
         }
+
         [HttpPost]
         public IActionResult Edit(UserVM userVM)
         {
             string returnMessage = string.Empty;
+
+            // Remove RoleList from ModelState to prevent validation errors
+            ModelState.Remove("RoleList");
+
+
             if (ModelState.IsValid)
             {
                 var user = _userRepo.GetById(userVM.PkUserId);
@@ -137,7 +150,7 @@ namespace GreenHiTech.Controllers
                 user.FirstName = userVM.FirstName;
                 user.LastName = userVM.LastName;
                 user.Phone = userVM.Phone;
-                user.Role = userVM.Role;
+                user.Role = userVM.Role ?? "User";
 
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))
@@ -150,13 +163,13 @@ namespace GreenHiTech.Controllers
                 {
                     var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0) ?? new AddressDetail();
 
-                    address.Unit = userVM.AddressDetail.Unit;
-                    address.HouseNumber = userVM.AddressDetail.HouseNumber;
-                    address.Street = userVM.AddressDetail.Street;
-                    address.City = userVM.AddressDetail.City;
-                    address.Province = userVM.AddressDetail.Province;
-                    address.PostalCode = userVM.AddressDetail.PostalCode;
-                    address.Country = userVM.AddressDetail.Country;
+                    address.Unit = userVM.AddressDetail?.Unit ?? string.Empty;
+                    address.HouseNumber = userVM.AddressDetail?.HouseNumber ?? string.Empty;
+                    address.Street = userVM.AddressDetail?.Street ?? string.Empty;
+                    address.City = userVM.AddressDetail?.City ?? string.Empty;
+                    address.Province = userVM.AddressDetail?.Province ?? string.Empty;
+                    address.PostalCode = userVM.AddressDetail?.PostalCode ?? string.Empty;
+                    address.Country = userVM.AddressDetail?.Country ?? string.Empty;
 
                     string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
 
@@ -201,3 +214,96 @@ namespace GreenHiTech.Controllers
         }
     }
 }
+
+
+//using GreenHiTech.ViewModels;
+//using GreenHiTech.Repositories;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Extensions.Logging;
+
+//namespace GreenHiTech.Controllers
+//{
+//    public class UserController : Controller
+//    {
+//        private readonly UserRepo _userRepo;
+//        private readonly ILogger<UserController> _logger;
+
+//        public UserController(ILogger<UserController> logger, UserRepo userRepo)
+//        {
+//            _logger = logger;
+//            _userRepo = userRepo;
+//        }
+
+//        public IActionResult Index()
+//        {
+//            var userVMs = _userRepo.GetAll();
+//            return View("Index", userVMs);
+//        }
+
+//        public IActionResult Detail(int id)
+//        {
+//            var userVM = _userRepo.GetById(id);
+//            if (userVM == null)
+//            {
+//                TempData["ErrorMessage"] = $"User ID {id} not found.";
+//                return RedirectToAction("Index");
+//            }
+//            return View(userVM);
+//        }
+
+//        public IActionResult Edit(int id)
+//        {
+//            var userVM = _userRepo.GetById(id);
+//            if (userVM == null)
+//            {
+//                TempData["ErrorMessage"] = $"User ID {id} not found.";
+//                return RedirectToAction("Index");
+//            }
+//            return View(userVM);
+//        }
+
+//        [HttpPost]
+//        public IActionResult Edit(UserVM userVM)
+//        {
+//            if (!ModelState.IsValid)
+//            {
+//                TempData["ErrorMessage"] = "Invalid data provided.";
+//                return RedirectToAction("Edit", new { id = userVM.PkUserId });
+//            }
+
+//            string result = _userRepo.UpdateUser(userVM);
+
+//            if (result.StartsWith("error"))
+//            {
+//                TempData["ErrorMessage"] = result;
+//                return RedirectToAction("Edit", new { id = userVM.PkUserId });
+//            }
+
+//            TempData["SuccessMessage"] = "User updated successfully.";
+//            return RedirectToAction("Index");
+//        }
+
+//        [HttpPost]
+//        public IActionResult Delete(int id)
+//        {
+//            if (id == 0)
+//            {
+//                return RedirectToAction("Index", new { message = "error, Invalid User ID." });
+//            }
+
+//            string result = _userRepo.Delete(id);
+
+//            if (result.StartsWith("error"))
+//            {
+//                TempData["ErrorMessage"] = result;
+//            }
+//            else
+//            {
+//                TempData["SuccessMessage"] = "User deleted successfully.";
+//            }
+
+//            return RedirectToAction("Index");
+//        }
+
+//    }
+//}

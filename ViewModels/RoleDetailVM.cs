@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GreenHiTech.ViewModels
 {
-    public class RoleVM
+    public class RoleDetailVM
     {
         [Display(Name = "ID")]
         public string? Id { get; set; }
@@ -11,8 +11,8 @@ namespace GreenHiTech.ViewModels
         [Display(Name = "Role Name")]
         public string RoleName { get; set; }
 
-        //public int UsersCount { get; set; }
+        public int UsersCount { get; set; }
 
-        //public List<string> UserEmails { get; set; }
+        public List<string> UserEmails { get; set; }
     }
 }

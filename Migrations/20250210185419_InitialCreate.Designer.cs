@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GreenHiTech.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250128223045_initialCreate")]
-    partial class initialCreate
+    [Migration("20250210185419_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

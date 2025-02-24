@@ -1,31 +1,42 @@
 @model GreenHiTech.ViewModels.UserRoleVM
 
-<h4>Assign User Role</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                @Html.DropDownList("Email",
-                         new SelectList(ViewBag.UserSelectList, "Value", "Text",
-                         ViewBag.SelectedUser),
-                         "Select User", new { @id = "userDD", @class = "form-control" })
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Role" class="control-label"></label>
-                @Html.DropDownList("Role",
-                         new SelectList(ViewBag.RoleSelectList, "Value", "Text"),
-                         "Select Role", new { @id = "roleDD", @class = "form-control" })
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <button id="assignUserRole" type="submit"
-                    class="w-100 btn btn-sm btn-primary">Assign</button>
-            </div>        
-        </form>
+@{
+    ViewData["Title"] = "Assign User Role";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
+
+    <div class="card shadow-sm" style="max-width: 500px; margin: auto;">
+        <div class="card-header" style="background-color: #494949; color: white;">
+            <h4>Assign User Role</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label font-weight-bold"></label>
+                    @Html.DropDownList("Email",
+                             new SelectList(ViewBag.UserSelectList, "Value", "Text",
+                             ViewBag.SelectedUser),
+                             "Select User", new { @id = "userDD", @class = "form-control" })
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <label asp-for="Role" class="control-label font-weight-bold"></label>
+                    @Html.DropDownList("Role",
+                             new SelectList(ViewBag.RoleSelectList, "Value", "Text"),
+                             "Select Role", new { @id = "roleDD", @class = "form-control" })
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <button id="assignUserRole" type="submit" class="btn" style="background-color: #4e9648; color: white; width: 100%;">Assign</button>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Index" class="btn" style="background-color: #494949; color: white; width: 100%;">Back to List</a>
+        </div>
     </div>
 </div>
 
