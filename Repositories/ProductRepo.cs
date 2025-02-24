@@ -47,7 +47,7 @@ namespace GreenHiTech.Repositories
         }
 
         // Get product by id with ProductImages filled
-        public Product? GetById(int id, List<ProductImage> allProductImages)
+        public Product? GetById(int id, List<ProductImage>? allProductImages)
         {
             if(id == 0 || !_context.Products.Any(p => p.PkId == id))
             {
@@ -59,12 +59,19 @@ namespace GreenHiTech.Repositories
                 if(product == null)
                 {
                     return null;
-                } else
+                } 
+                else
                 {
-                    product.ProductImages = allProductImages.Where(pi => pi.FkProductId == id).ToList();
+                    if(allProductImages == null)
+                    {
+                        product.ProductImages = new List<ProductImage>();
+                    }
+                    else
+                    {
+                        product.ProductImages = allProductImages.Where(pi => pi.FkProductId == id).ToList();
+                    }
                     return product;
                 }
-
             }
         }
 
@@ -110,19 +117,20 @@ namespace GreenHiTech.Repositories
         }
 
         // Delete product
-        public string Delete(int id)
+        public string Delete(Product product)
         {
-            Product? product = GetById(id);
+            //Product? product = GetById(id);
+
             if (product == null)
             {
-                return $"warning,Unable to find product ID: {id}";
+                return $"warning,Unable to find product ID: {product.PkId}";
             }
 
             try
             {
                 _context.Products.Remove(product);
                 _context.SaveChanges();
-                return $"success,Successfully deleted product ID: {id}";
+                return $"success,Successfully deleted product ID: {product.PkId}";
             }
             catch (Exception e)
             {

@@ -41,9 +41,36 @@
                 <td><a asp-action="Details" asp-route-id=@product.PkId>Details</a></td>
                 @* manager access only below *@
                 <td><a asp-action="Edit" asp-route-id=@product.PkId>Edit</a></td>
-                <td><a asp-action="Delete" asp-route-id=@product.PkId>Delete</a></td>
+                @* <td><a asp-action="Delete" asp-route-id=@product.PkId>Delete</a></td> *@
+                <td>
+                    <form asp-action="Delete" method="post" asp-route-id=@product.PkId style="display:inline;" id="deleteForm_@product.PkId">
+                        @* <input type="hidden" name="userName" value="@ViewBag.UserName" /> *@
+                        <input type="hidden" name="productId" value="@product.PkId" />
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete(@product.PkId)">Delete</button>
+                    </form>
+                </td>
+
+
             </tr>
-        }q
+        }
     </tbody>
 </table>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p id="modalMessage">Are you sure you want to delete this product?</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteBtn" class="btn btn-danger">Yes</button>
+            <button id="cancelDeleteBtn" class="btn btn-secondary">No</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <script src="~/js/modal.js"></script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
 

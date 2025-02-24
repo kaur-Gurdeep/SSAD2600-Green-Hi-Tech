@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GreenHiTech.Controllers
 {
@@ -385,14 +386,24 @@ namespace GreenHiTech.Controllers
         // manager access
         public IActionResult DeleteConfirmed(int id)
         {
-            Product? product = _productRepo.GetById(id);
+            string returnMessage = string.Empty;
+            List<ProductImage>? productImages = _productImageRepo.GetAllForProductId(id);
+            Product? product = _productRepo.GetById(id, productImages);
+
             if (product == null)
             {
                 return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
             }
             else
             {
-                string returnMessage = _productRepo.Delete(id);
+                if(!productImages.IsNullOrEmpty())
+                {
+                    foreach(var productImage in productImages!)
+                    {
+                        _productImageRepo.Delete(productImage.PkId);
+                    }
+                }
+                returnMessage = _productRepo.Delete(product);
                 return RedirectToAction("Index", new { message = returnMessage });
             }
         }
