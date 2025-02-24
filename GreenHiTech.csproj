@@ -23,6 +23,8 @@
 
   <ItemGroup>
     <Folder Include="Repositories\" />
+    <Folder Include="wwwroot\images\0\" />
+    <Folder Include="wwwroot\images\1\" />
   </ItemGroup>
 
 </Project>

@@ -30,6 +30,19 @@ namespace GreenHiTech.Repositories
             return _context.ProductImages.Find(id);
         }
 
+        // Get product images for a product id
+        public List<ProductImage>? GetAllForProductId(int productId)
+        {
+            if(productId == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return GetAll().Where(pi => pi.FkProductId == productId).ToList();
+            }
+        }
+
         // Add product image
         public string Add(ProductImage productImage)
         {
