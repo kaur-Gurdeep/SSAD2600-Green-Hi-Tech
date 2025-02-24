@@ -1,4 +1,4 @@
-﻿@model GreenHiTech.ViewModels.RoleVM
+﻿@model GreenHiTech.ViewModels.RoleDetailVM
 
 @{
     ViewData["Title"] = "Role Details";
@@ -19,7 +19,7 @@
             <ul class="list-group">
                 @foreach (var email in Model.UserEmails)
                 {
-                    <li class="list-group-item">@email</li> <!-- Display each user's email -->
+                    <li class="list-group-item">@email</li> 
                 }
             </ul>
         </div>

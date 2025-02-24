@@ -25,7 +25,7 @@ namespace GreenHiTech.Repositories
             return roles;
         }
 
-        public RoleVM GetRole(string roleId)
+        public RoleDetailVM GetRole(string roleId)
         {
             var role = _context.Roles
                 .FirstOrDefault(r => r.Id == roleId); 
@@ -39,7 +39,7 @@ namespace GreenHiTech.Repositories
                     .ToList();
 
                 // Return role details with users' emails
-                return new RoleVM
+                return new RoleDetailVM
                 {
                     Id = role.Id,
                     RoleName = role.Name,
