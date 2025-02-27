@@ -1,43 +1,50 @@
 ﻿using GreenHiTech.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GreenHiTech.Repositories
 {
     public class OrderDetailRepo
     {
         private readonly GreenHiTechContext _context;
+
         public OrderDetailRepo(GreenHiTechContext context)
         {
             _context = context;
         }
 
-        // Get all order details
         public List<OrderDetail> GetAll()
         {
-            return _context.OrderDetails.ToList();
+            return _context.OrderDetails
+                .Include(od => od.FkOrder)
+                .Include(od => od.FkProduct)
+                .ToList();
         }
 
-        // Get order detail by id
-        public OrderDetail? GetById(int id)
+        public OrderDetail GetById(int id)
         {
-            if (id == 0)
-            {
-                return null;
-            }
-            else if (!_context.OrderDetails.Any(od => od.PkId == id))
-            {
-                return null;
-            }
-            return _context.OrderDetails.Find(id);
+            return _context.OrderDetails
+                .Include(od => od.FkOrder)
+                .Include(od => od.FkProduct)
+                .FirstOrDefault(od => od.PkId == id);
         }
 
-        // Add order detail
+        public List<OrderDetail> GetByOrderId(int orderId)
+        {
+            return _context.OrderDetails
+                .Include(od => od.FkOrder)
+                .Include(od => od.FkProduct)
+                .Where(od => od.FkOrderId == orderId)
+                .ToList();
+        }
+
         public string Add(OrderDetail orderDetail)
         {
             try
             {
                 _context.OrderDetails.Add(orderDetail);
                 _context.SaveChanges();
-
                 return $"success,Successfully created order detail ID: {orderDetail.PkId}";
             }
             catch (Exception e)
@@ -46,33 +53,23 @@ namespace GreenHiTech.Repositories
             }
         }
 
-        // Update order detail
         public string Update(OrderDetail orderDetail)
         {
-            if (Any(orderDetail.PkId))
+            try
             {
-                try
-                {
-                    _context.OrderDetails.Update(orderDetail);
-                    _context.SaveChanges();
-
-                    return $"success,Successfully updated order detail ID: {orderDetail.PkId}";
-                }
-                catch (Exception ex)
-                {
-                    return $"error,Order detail could not be updated: {ex.Message}";
-                }
+                _context.OrderDetails.Update(orderDetail);
+                _context.SaveChanges();
+                return $"success,Successfully updated order detail ID: {orderDetail.PkId}";
             }
-            else
+            catch (Exception e)
             {
-                return $"warning,Unable to find order detail ID: {orderDetail.PkId}";
+                return $"error,Failed to update order detail: {e.Message}";
             }
         }
 
-        // Delete order detail
         public string Delete(int id)
         {
-            OrderDetail? orderDetail = GetById(id);
+            var orderDetail = _context.OrderDetails.Find(id);
             if (orderDetail == null)
             {
                 return $"warning,Unable to find order detail ID: {id}";
@@ -88,12 +85,6 @@ namespace GreenHiTech.Repositories
             {
                 return $"error,Failed to delete order detail: {e.Message}";
             }
-        }
-
-        // if order detail exists
-        public bool Any(int id)
-        {
-            return _context.OrderDetails.Any(od => od.PkId == id);
         }
     }
 }

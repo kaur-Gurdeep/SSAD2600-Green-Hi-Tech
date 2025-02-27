@@ -19,11 +19,17 @@ namespace GreenHiTech.ViewModels
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; }
 
+        [Display(Name = "Price")]
+        public decimal Price { get; set; }
+
+        [Display(Name = "Total")]
+        public decimal Total => Quantity * Price;
+
         // Additional fields for display purposes
         [Display(Name = "Product Name")]
         public string? ProductName { get; set; }
 
         [Display(Name = "Order Date")]
-        public DateTime? OrderDate { get; set; }
+        public DateOnly? OrderDate { get; set; }
     }
 }
