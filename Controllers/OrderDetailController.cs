@@ -1,37 +1,42 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GreenHiTech.Models;
+﻿using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace GreenHiTech.Controllers
 {
     public class OrderDetailController : Controller
     {
         private readonly OrderDetailRepo _orderDetailRepo;
-        private readonly ProductRepo _productRepo;
         private readonly OrderRepo _orderRepo;
 
-        public OrderDetailController(OrderDetailRepo orderDetailRepo, ProductRepo productRepo, OrderRepo orderRepo)
+        public OrderDetailController(OrderDetailRepo orderDetailRepo, OrderRepo orderRepo)
         {
             _orderDetailRepo = orderDetailRepo;
-            _productRepo = productRepo;
             _orderRepo = orderRepo;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int id)
         {
-            var orderDetails = _orderDetailRepo.GetAll();
+            Console.WriteLine("hello");
+            List<OrderDetail> orderDetails = this._orderDetailRepo.GetByOrderId(id);
+            List<OrderDetailVM> orderDetailVMs = new List<OrderDetailVM>();
 
-            var orderDetailVMs = orderDetails.Select(od => new OrderDetailVM
+            foreach(OrderDetail orderDetail in orderDetails)
             {
-                PkId = od.PkId,
-                FkOrderId = od.FkOrderId,
-                FkProductId = od.FkProductId,
-                Quantity = od.Quantity,
-                ProductName = od.FkProduct?.Name,
-                //OrderDate = od.FkOrder?.OrderDate
-            }).ToList();
+                OrderDetailVM orderDetailVM = new OrderDetailVM
+                {
+                    PkId = orderDetail.PkId,
+                    FkOrderId = orderDetail.FkOrderId,
+                    FkProductId = orderDetail.FkProductId,
+                    Quantity = orderDetail.Quantity,
+                    ProductName = orderDetail.FkProduct?.Name,
+                    //OrderDate = orderDetail.FkOrder?.OrderDate.ToDateTime(TimeOnly.MinValue)
+                };
+                orderDetailVMs.Add(orderDetailVM);
+            }
 
             return View(orderDetailVMs);
         }
@@ -39,170 +44,131 @@ namespace GreenHiTech.Controllers
         public IActionResult Details(int id)
         {
             var orderDetail = _orderDetailRepo.GetById(id);
-
             if (orderDetail == null)
             {
-                return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {id})" });
+                return NotFound();
             }
-
-            var orderDetailVM = new OrderDetailVM
-            {
-                PkId = orderDetail.PkId,
-                FkOrderId = orderDetail.FkOrderId,
-                FkProductId = orderDetail.FkProductId,
-                Quantity = orderDetail.Quantity,
-                ProductName = orderDetail.FkProduct?.Name,
-                //OrderDate = orderDetail.FkOrder?.OrderDate
-            };
-
+            var orderDetailVM = MapToViewModel(orderDetail);
             return View(orderDetailVM);
         }
 
-        // GET: Create
         public IActionResult Create()
         {
-            ViewBag.Products = _productRepo.GetAll().Select(p => new SelectListItem
-            {
-                Value = p.PkId.ToString(),
-                Text = p.Name
-            }).ToList();
-
-            ViewBag.Orders = _orderRepo.GetAll().Select(o => new SelectListItem
-            {
-                Value = o.PkId.ToString(),
-                Text = o.OrderDate.ToString()
-            }).ToList();
-
-            return View(new OrderDetailVM());
+            return View();
         }
 
-        // POST: Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(OrderDetailVM orderDetailVM)
         {
             if (ModelState.IsValid)
             {
-                try
+                var orderDetail = MapToModel(orderDetailVM);
+                string result = _orderDetailRepo.Add(orderDetail);
+                if (result.StartsWith("success"))
                 {
-                    var orderDetail = new OrderDetail
-                    {
-                        FkOrderId = orderDetailVM.FkOrderId,
-                        FkProductId = orderDetailVM.FkProductId,
-                        Quantity = orderDetailVM.Quantity
-                    };
-
-                    _orderDetailRepo.Add(orderDetail);
-                    return RedirectToAction("Index", new { message = "success, Order detail created successfully." });
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"Error creating order detail: {ex.Message}");
-                }
+                ModelState.AddModelError("", result);
             }
-
             return View(orderDetailVM);
         }
 
-        // GET: Edit
         public IActionResult Edit(int id)
         {
             var orderDetail = _orderDetailRepo.GetById(id);
-
             if (orderDetail == null)
             {
-                return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {id})" });
+                return NotFound();
+            }
+            var orderDetailVM = MapToViewModel(orderDetail);
+            return View(orderDetailVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, OrderDetailVM orderDetailVM)
+        {
+            if (id != orderDetailVM.PkId)
+            {
+                return NotFound();
             }
 
-            var orderDetailVM = new OrderDetailVM
+            if (ModelState.IsValid)
+            {
+                var orderDetail = MapToModel(orderDetailVM);
+                string result = _orderDetailRepo.Update(orderDetail);
+                if (result.StartsWith("success"))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", result);
+            }
+            return View(orderDetailVM);
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var orderDetail = _orderDetailRepo.GetById(id);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+            var orderDetailVM = MapToViewModel(orderDetail);
+            return View(orderDetailVM);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            string result = _orderDetailRepo.Delete(id);
+            if (result.StartsWith("success"))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            ModelState.AddModelError("", result);
+            return View();
+        }
+
+        private List<OrderDetailVM> MapToViewModels(List<OrderDetail> orderDetails)
+        {
+            //Order? order = this._orderRepo.GetById(orderDetails.)
+            
+
+            return orderDetails.Select(od => new OrderDetailVM
+            {
+                PkId = od.PkId,
+                FkOrderId = od.FkOrderId,
+                FkProductId = od.FkProductId,
+                Quantity = od.Quantity,
+                ProductName = od.FkProduct?.Name,
+                //OrderDate = od.FkOrder?.OrderDate.ToDateTime(TimeOnly.MinValue)
+            }).ToList();
+        }
+
+        private OrderDetailVM MapToViewModel(OrderDetail orderDetail)
+        {
+            return new OrderDetailVM
             {
                 PkId = orderDetail.PkId,
                 FkOrderId = orderDetail.FkOrderId,
                 FkProductId = orderDetail.FkProductId,
-                Quantity = orderDetail.Quantity
-            };
-
-            ViewBag.Products = _productRepo.GetAll().Select(p => new SelectListItem
-            {
-                Value = p.PkId.ToString(),
-                Text = p.Name
-            }).ToList();
-
-            ViewBag.Orders = _orderRepo.GetAll().Select(o => new SelectListItem
-            {
-                Value = o.PkId.ToString(),
-                Text = o.OrderDate.ToString()
-            }).ToList();
-
-            return View(orderDetailVM);
-        }
-
-        // POST: Edit
-        [HttpPost]
-        public IActionResult Edit(OrderDetailVM orderDetailVM)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var existingOrderDetail = _orderDetailRepo.GetById(orderDetailVM.PkId);
-
-                    if (existingOrderDetail == null)
-                    {
-                        return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {orderDetailVM.PkId})" });
-                    }
-
-                    existingOrderDetail.FkOrderId = orderDetailVM.FkOrderId;
-                    existingOrderDetail.FkProductId = orderDetailVM.FkProductId;
-                    existingOrderDetail.Quantity = orderDetailVM.Quantity;
-
-                    _orderDetailRepo.Update(existingOrderDetail);
-                    return RedirectToAction("Index", new { message = "success, Order detail updated successfully." });
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"Error updating order detail: {ex.Message}");
-                }
-            }
-
-            return View(orderDetailVM);
-        }
-
-        // GET: Delete
-        public IActionResult Delete(int id)
-        {
-            var orderDetail = _orderDetailRepo.GetById(id);
-
-            if (orderDetail == null)
-            {
-                return RedirectToAction("Index", new { message = $"error, Order detail not found: (ID {id})" });
-            }
-
-            var orderDetailVM = new OrderDetailVM
-            {
-                PkId = id,
-                FkOrderId = orderDetail.FkOrderId,
-                FkProductId = orderDetail.FkProductId,
                 Quantity = orderDetail.Quantity,
                 ProductName = orderDetail.FkProduct?.Name,
-                //OrderDate = orderDetail.FkOrder?.OrderDate
+                //OrderDate = orderDetail.FkOrder?.OrderDate.ToDateTime(TimeOnly.MinValue)
             };
-
-            return View(orderDetailVM);
         }
 
-        // POST: Delete
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        private OrderDetail MapToModel(OrderDetailVM orderDetailVM)
         {
-            try
+            return new OrderDetail
             {
-                _orderDetailRepo.Delete(id);
-                return RedirectToAction("Index", new { message = "success, Order detail deleted successfully." });
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("Index", new { message = $"error, Error deleting order detail: {ex.Message}" });
-            }
+                PkId = orderDetailVM.PkId,
+                FkOrderId = orderDetailVM.FkOrderId,
+                FkProductId = orderDetailVM.FkProductId,
+                Quantity = orderDetailVM.Quantity
+            };
         }
     }
 }

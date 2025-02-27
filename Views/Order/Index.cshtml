@@ -30,9 +30,9 @@
                             <td>@order.TotalAmount</td>
                             <td>@order.Status</td>
                             <td>
-                                <button class="btn btn-primary" asp-action="ViewOrderDetails" asp-route-id="@order.PkId">
+                                <a class="btn btn-primary" asp-controller="OrderDetail" asp-action="Index" asp-route-id="@order.PkId">
                                     Order Details 
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     }

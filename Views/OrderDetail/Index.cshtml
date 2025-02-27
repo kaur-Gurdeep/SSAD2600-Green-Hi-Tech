@@ -1,0 +1,43 @@
+﻿@model IEnumerable<GreenHiTech.ViewModels.OrderDetailVM>
+
+@{
+    ViewData["Title"] = "Order Detail";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Orders</h2>
+    <div class="=table-responsive" style="overflow-x: auto;">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.PkId)</th>
+                    <th>@Html.DisplayNameFor(model => model.FkOrderId)</th>
+                    <th>@Html.DisplayNameFor(model => model.FkProductId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Quantity)</th>
+                    <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    @foreach (var orderDetail in Model)
+                    {
+                        <tr>
+                            <td>@orderDetail.PkId)</td>
+                            <td>@orderDetail.FkOrderId)</td>
+                            <td>@orderDetail.FkProductId)</td>
+                            <td>@orderDetail.Quantity)</td>
+                            <td>@orderDetail.ProductName)</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">No orderDetails exist.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
