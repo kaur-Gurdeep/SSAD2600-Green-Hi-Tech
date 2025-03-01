@@ -6,7 +6,6 @@ function confirmDelete(roleName, roleId, formId) {
 
 // Write your JavaScript code.
 
-
 //Script for Edit Action Modal
 
 // Show the success modal if there's a success message in TempData
@@ -53,7 +52,3 @@ window.onclick = function (event) {
         document.getElementById('deleteModal').style.display = "none";
     }
 };
-
-
-
-
