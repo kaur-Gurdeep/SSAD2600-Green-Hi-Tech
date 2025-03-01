@@ -32,22 +32,20 @@ namespace GreenHiTech.Repositories
 
             if (role != null)
             {
-                // Get a list of user emails assigned to this role
                 var userEmails = _context.UserRoles
                     .Where(ur => ur.RoleId == role.Id)
-                    .Join(_context.Users, ur => ur.UserId, u => u.Id, (ur, u) => u.Email) // Join to get the user's email
+                    .Join(_context.Users, ur => ur.UserId, u => u.Id, (ur, u) => u.Email)
                     .ToList();
 
-                // Return role details with users' emails
                 return new RoleDetailVM
                 {
                     Id = role.Id,
                     RoleName = role.Name,
-                    //UsersCount = userEmails.Count,
-                    //UserEmails = userEmails 
+                    UsersCount = userEmails.Count,
+                    UserEmails = userEmails
                 };
             }
-            return null; // Return null if role not found
+            return null; 
         }
 
 
@@ -83,7 +81,6 @@ namespace GreenHiTech.Repositories
 
             try
             {
-                // Get the number of users assigned to this role
                 var roleAssignedToUsersCount = _context.UserRoles.Count(ur => ur.RoleId == roleId);
 
                 if (roleAssignedToUsersCount > 0)
