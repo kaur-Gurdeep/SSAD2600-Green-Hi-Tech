@@ -22,7 +22,7 @@ namespace GreenHiTech.Repositories
                 .ToList();
         }
 
-        public OrderDetail GetById(int id)
+        public OrderDetail? GetById(int id)
         {
             return _context.OrderDetails
                 .Include(od => od.FkOrder)

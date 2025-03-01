@@ -1,20 +1,25 @@
 ﻿@model IEnumerable<GreenHiTech.ViewModels.OrderDetailVM>
 
 @{
-    ViewData["Title"] = "Order Detail";
+    ViewData["Title"] = "Order Details";
 }
 
 <div class="container mt-5">
-    <h2 class="mb-4">Orders</h2>
+    <h2 class="mb-4">Orders Details</h2>
+    <a asp-controller="Order" asp-action="Index">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 16L16 24M16 24L24 32M16 24H32M44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4C35.0457 4 44 12.9543 44 24Z" stroke="#4E9648" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </a>
+    <div>Order #@ViewBag.OrderId</div>
+    <div>Placed @ViewBag.OrderDate</div>
     <div class="=table-responsive" style="overflow-x: auto;">
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.PkId)</th>
-                    <th>@Html.DisplayNameFor(model => model.Total)</th>
-                    <th>@Html.DisplayNameFor(model => model.FkProductId)</th>
-                    <th>@Html.DisplayNameFor(model => model.Quantity)</th>
+                    <th>@Html.DisplayNameFor(model => model.ProductImage)</th>
                     <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Price)</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,11 +28,11 @@
                     @foreach (var orderDetail in Model)
                     {
                         <tr>
-                            <td>@orderDetail.PkId</td>
-                            <td>@orderDetail.Total</td>
-                            <td>@orderDetail.FkProductId</td>
-                            <td>@orderDetail.Quantity</td>
+                            <td>
+                                <img src=@(orderDetail.ProductImage != null ? orderDetail.ProductImage.ImageUrl : "/images/no-image-available.jpg") alt=@(orderDetail.ProductImage != null ? orderDetail.ProductImage.AltText : "No image available") class="detail-image" style="max-width: 100px; max-height: 100px;" />
+                            </td>
                             <td>@orderDetail.ProductName</td>
+                            <td>Unit Price: @orderDetail.Price</td>
                         </tr>
                     }
                 }
@@ -35,9 +40,16 @@
                 {
                     <tr>
                         <td colspan="6" class="text-center">No orderDetails exist.</td>
+                        <td colspan="6" class="text-center"></td>
+                        <td colspan="6" class="text-center"></td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+    <div>Order Total: $@ViewBag.OrderTotal</div>
+    <div>
+        <h4>Refund policy</h4>
+        <p>No refunds, fuck you.</p>
     </div>
 </div>

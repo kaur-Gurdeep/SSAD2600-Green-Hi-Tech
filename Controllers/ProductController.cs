@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc;
+﻿using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
-using GreenHiTech.Models;
-using Microsoft.AspNetCore.Hosting;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.IdentityModel.Tokens;
 
 namespace GreenHiTech.Controllers
@@ -72,7 +68,8 @@ namespace GreenHiTech.Controllers
             List<ProductImage> allProductImages = _productImageRepo.GetAll();
             Product? product = _productRepo.GetById(id);
 
-            if(product == null) {
+            if(product == null)
+            {
                 returnMessage = $"error,Could not find product ID: {id}";
                 return RedirectToAction("Index");
             }
@@ -116,7 +113,10 @@ namespace GreenHiTech.Controllers
             if(categoryItems == null)
             {
                 returnMessage = "cannot find categories";
-                return RedirectToAction("Index", new { message = returnMessage });
+                return RedirectToAction("Index", new
+                {
+                    message = returnMessage
+                });
             }
             else
             {
@@ -134,7 +134,7 @@ namespace GreenHiTech.Controllers
             string returnMessage = string.Empty;
             List<ProductImage> productImages = _productImageRepo.GetAll();
 
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 try
                 {
@@ -184,7 +184,7 @@ namespace GreenHiTech.Controllers
 
                     returnMessage = $"success,Successfully created Product: (Name {productVM.Name})";
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     returnMessage = $"error,Product could not be created: (Name {productVM.Name})";
                 }
@@ -194,7 +194,10 @@ namespace GreenHiTech.Controllers
                 return View(productVM);
             }
 
-            return RedirectToAction("Index", new { message = returnMessage });
+            return RedirectToAction("Index", new
+            {
+                message = returnMessage
+            });
         }
 
         // GET
@@ -206,7 +209,10 @@ namespace GreenHiTech.Controllers
 
             if(product == null)
             {
-                return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
+                return RedirectToAction("Index", new
+                {
+                    message = $"warning,Product not found: (ID {id})"
+                });
             }
             else
             {
@@ -312,40 +318,40 @@ namespace GreenHiTech.Controllers
                         }
                     }
 
-                        // Handle ProductImage addition
-                        if(fileImages.Count > 0)
+                    // Handle ProductImage addition
+                    if(fileImages.Count > 0)
+                    {
+                        string webRootPath = _webHostEnvironment.WebRootPath;
+                        string imageFolderPath = Path.Combine(webRootPath, "images", productVM.PkId.ToString());
+
+                        if(!Directory.Exists(imageFolderPath))
                         {
-                            string webRootPath = _webHostEnvironment.WebRootPath;
-                            string imageFolderPath = Path.Combine(webRootPath, "images", productVM.PkId.ToString());
-
-                            if(!Directory.Exists(imageFolderPath))
-                            {
-                                Directory.CreateDirectory(imageFolderPath);
-                            }
-
-                            //const string filepath = "/images/";
-                            foreach(var fileImage in fileImages)
-                            {
-                                string fileName = Path.GetFileName(fileImage.FileName);
-                                string filePath = Path.Combine(imageFolderPath, fileName);
-                                using(var stream = new FileStream(filePath, FileMode.Create))
-                                {
-                                    fileImage.CopyTo(stream);
-                                }
-
-                                ProductImage productImage = new ProductImage
-                                {
-                                    AltText = $"{productVM.PkId}_{product.Name}_",
-                                    FkProductId = productVM.PkId,
-                                    ImageUrl = $"/images/{productVM.PkId}/{fileName}",
-                                    CreateDate = DateOnly.FromDateTime(DateTime.Now),
-                                };
-                                _productImageRepo.Add(productImage);
-                            }
+                            Directory.CreateDirectory(imageFolderPath);
                         }
 
-                        product.ProductImages = newProductImages;
-                        returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
+                        //const string filepath = "/images/";
+                        foreach(var fileImage in fileImages)
+                        {
+                            string fileName = Path.GetFileName(fileImage.FileName);
+                            string filePath = Path.Combine(imageFolderPath, fileName);
+                            using(var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                fileImage.CopyTo(stream);
+                            }
+
+                            ProductImage productImage = new ProductImage
+                            {
+                                AltText = $"{productVM.PkId}_{product.Name}_",
+                                FkProductId = productVM.PkId,
+                                ImageUrl = $"/images/{productVM.PkId}/{fileName}",
+                                CreateDate = DateOnly.FromDateTime(DateTime.Now),
+                            };
+                            _productImageRepo.Add(productImage);
+                        }
+                    }
+
+                    product.ProductImages = newProductImages;
+                    returnMessage = $"success,Successfully updated Product: (Name {product.Name})";
                 }
 
             }
@@ -353,7 +359,10 @@ namespace GreenHiTech.Controllers
             {
                 returnMessage = $"success,Successfully updated Product: (Name {productVM.Name})";
             }
-            return RedirectToAction("Index", new { message = returnMessage });
+            return RedirectToAction("Index", new
+            {
+                message = returnMessage
+            });
         }
 
         // GET
@@ -361,9 +370,12 @@ namespace GreenHiTech.Controllers
         {
             Product? product = _productRepo.GetById(id);
 
-            if (product == null)
+            if(product == null)
             {
-                return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
+                return RedirectToAction("Index", new
+                {
+                    message = $"warning,Product not found: (ID {id})"
+                });
             }
 
             ProductVM productVM = new ProductVM
@@ -390,9 +402,12 @@ namespace GreenHiTech.Controllers
             List<ProductImage>? productImages = _productImageRepo.GetAllForProductId(id);
             Product? product = _productRepo.GetById(id, productImages);
 
-            if (product == null)
+            if(product == null)
             {
-                return RedirectToAction("Index", new { message = $"warning,Product not found: (ID {id})" });
+                return RedirectToAction("Index", new
+                {
+                    message = $"warning,Product not found: (ID {id})"
+                });
             }
             else
             {
@@ -404,7 +419,10 @@ namespace GreenHiTech.Controllers
                     }
                 }
                 returnMessage = _productRepo.Delete(product);
-                return RedirectToAction("Index", new { message = returnMessage });
+                return RedirectToAction("Index", new
+                {
+                    message = returnMessage
+                });
             }
         }
     }

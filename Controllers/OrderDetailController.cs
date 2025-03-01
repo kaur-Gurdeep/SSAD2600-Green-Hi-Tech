@@ -15,8 +15,8 @@ namespace GreenHiTech.Controllers
         private readonly ProductImageRepo _productImageRepo;
 
         public OrderDetailController(
-            OrderDetailRepo orderDetailRepo, 
-            OrderRepo orderRepo, 
+            OrderDetailRepo orderDetailRepo,
+            OrderRepo orderRepo,
             ProductRepo productRepo,
             ProductImageRepo productImageRepo)
         {
@@ -26,30 +26,32 @@ namespace GreenHiTech.Controllers
             _productImageRepo = productImageRepo;
         }
 
-        public IActionResult Index(int id)
+        public IActionResult Index(int orderId)
         {
-            Console.WriteLine("hello");
-            List<OrderDetail> orderDetails = this._orderDetailRepo.GetByOrderId(id);
+            List<OrderDetail> orderDetails = _orderDetailRepo.GetByOrderId(orderId);
             List<OrderDetailVM> orderDetailVMs = new List<OrderDetailVM>();
+            bool firstPass = true;
 
             foreach(OrderDetail orderDetail in orderDetails)
             {
-                // TODO: Get list of product images (inject PIRepo)
-                List<ProductImage> allProductImages = _productImageRepo.GetAll();
-                Product product = _productRepo.GetById(orderDetail.FkProductId, allProductImages);
-                if(product != null)
+                if(firstPass)
                 {
-                    OrderDetailVM orderDetailVM = new OrderDetailVM
-                    {
-                        //PkId = orderDetail.PkId,
-                        FkOrderId = orderDetail.FkOrderId,
-                        Price = product.Price,
-                        Quantity = orderDetail.Quantity,
-                        ProductName = orderDetail.FkProduct?.Name,
-                    };
-                    orderDetailVMs.Add(orderDetailVM);
+                    ViewBag.OrderDate = orderDetail.FkOrder.OrderDate;
+                    ViewBag.OrderTotal = orderDetail.FkOrder.TotalAmount;
+                    firstPass = false;
                 }
+                ProductImage? productImage = _productImageRepo.GetFirstForProductId(orderDetail.FkProductId);
+                OrderDetailVM orderDetailVM = new OrderDetailVM
+                {
+                    ProductImage = productImage,
+                    ProductName = orderDetail.FkProduct.Name,
+                    Price = orderDetail.FkProduct.Price,
+                    Quantity = orderDetail.Quantity,
+                };
+                orderDetailVMs.Add(orderDetailVM);
             }
+
+            ViewBag.OrderId = orderId;
 
             return View(orderDetailVMs);
         }
