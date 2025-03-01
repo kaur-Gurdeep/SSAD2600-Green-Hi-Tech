@@ -25,11 +25,16 @@ namespace GreenHiTech.ViewModels
         [Display(Name = "Total")]
         public decimal Total => Quantity * Price;
 
-        // Additional fields for display purposes
+         //Additional fields for display purposes
         [Display(Name = "Product Name")]
         public string? ProductName { get; set; }
 
-        [Display(Name = "Order Date")]
-        public DateOnly? OrderDate { get; set; }
+        //[Display(Name = "Order Date")]
+        //public DateOnly? OrderDate { get; set; }
+
+        [Display(Name = "Product Name")]
+        public string? ProductVMs { get; set; }
+
+
     }
 }

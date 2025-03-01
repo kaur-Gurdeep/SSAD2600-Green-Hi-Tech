@@ -41,12 +41,10 @@ namespace GreenHiTech.ViewModels
         [Display(Name = "Manufacturer")]
         public string Manufacturer { get; set; } = null!;
 
+        // Navigational properties
         [Required]
         [Display(Name = "Product Images")]
         public virtual ICollection<ProductImageVM> ProductImageVMs { get; set; } = new List<ProductImageVM>();
-
-        //public ICollection<Category> Categories { get; set; } = null!;
-
 
     }
 }

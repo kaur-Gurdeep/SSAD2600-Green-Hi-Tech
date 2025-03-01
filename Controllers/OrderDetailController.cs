@@ -33,7 +33,6 @@ namespace GreenHiTech.Controllers
                     FkProductId = orderDetail.FkProductId,
                     Quantity = orderDetail.Quantity,
                     ProductName = orderDetail.FkProduct?.Name,
-                    //OrderDate = orderDetail.FkOrder?.OrderDate.ToDateTime(TimeOnly.MinValue)
                 };
                 orderDetailVMs.Add(orderDetailVM);
             }
