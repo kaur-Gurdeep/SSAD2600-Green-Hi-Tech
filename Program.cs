@@ -29,6 +29,7 @@ builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddScoped<CategoryRepo>();
 builder.Services.AddScoped<ProductImageRepo>();
 builder.Services.AddScoped<OrderRepo>();
+builder.Services.AddScoped<OrderDetailRepo>();
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddScoped<AddressDetailRepo>();
 

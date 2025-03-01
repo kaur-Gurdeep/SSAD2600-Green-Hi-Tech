@@ -122,6 +122,5 @@ function displayImage(file) {
         thumbnails.appendChild(newImage);
     };
 
-    // read as url?? what does that do?
     fileReader.readAsDataURL(file);
 }

@@ -91,7 +91,7 @@ namespace GreenHiTech.Controllers
                 return View(userVM);
             }
         }
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             var user = _userRepo.GetById(id);
             if (user == null)
@@ -101,6 +101,7 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
+            var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
             var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
             var userVM = new UserVM
             {
@@ -120,18 +121,21 @@ namespace GreenHiTech.Controllers
                     Province = address.Province,
                     PostalCode = address.PostalCode,
                     Country = address.Country
-                } : null
+                } : null,
+                RoleList = roles.ToList()
             };
 
             return View(userVM);
         }
+
         [HttpPost]
         public IActionResult Edit(UserVM userVM)
         {
             string returnMessage = string.Empty;
 
+            // Remove RoleList from ModelState to prevent validation errors
+            ModelState.Remove("RoleList");
 
-            ModelState.Remove("RoleList");//will remove this field when fixed the rolefunctionality
 
             if (ModelState.IsValid)
             {
@@ -146,7 +150,7 @@ namespace GreenHiTech.Controllers
                 user.FirstName = userVM.FirstName;
                 user.LastName = userVM.LastName;
                 user.Phone = userVM.Phone;
-                user.Role = userVM.Role;
+                user.Role = userVM.Role ?? "User";
 
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))
@@ -159,13 +163,13 @@ namespace GreenHiTech.Controllers
                 {
                     var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0) ?? new AddressDetail();
 
-                    address.Unit = userVM.AddressDetail.Unit;
-                    address.HouseNumber = userVM.AddressDetail.HouseNumber;
-                    address.Street = userVM.AddressDetail.Street;
-                    address.City = userVM.AddressDetail.City;
-                    address.Province = userVM.AddressDetail.Province;
-                    address.PostalCode = userVM.AddressDetail.PostalCode;
-                    address.Country = userVM.AddressDetail.Country;
+                    address.Unit = userVM.AddressDetail?.Unit ?? string.Empty;
+                    address.HouseNumber = userVM.AddressDetail?.HouseNumber ?? string.Empty;
+                    address.Street = userVM.AddressDetail?.Street ?? string.Empty;
+                    address.City = userVM.AddressDetail?.City ?? string.Empty;
+                    address.Province = userVM.AddressDetail?.Province ?? string.Empty;
+                    address.PostalCode = userVM.AddressDetail?.PostalCode ?? string.Empty;
+                    address.Country = userVM.AddressDetail?.Country ?? string.Empty;
 
                     string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
 
