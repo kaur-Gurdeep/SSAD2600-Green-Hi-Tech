@@ -26,5 +26,3 @@ window.onclick = function (event) {
 };
 
 
-
-//UPDATE MODAL

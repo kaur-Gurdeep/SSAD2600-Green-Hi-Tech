@@ -6,7 +6,7 @@
 
 <div class="container mt-5">
         <h1 class="text-center mb-4">User: @ViewBag.UserName</h1>
-        <div class="card-body">
+    <div class="card-body" style="max-width: 600px; margin: auto;">
             <div class="text-center mb-3">
                 <a asp-action="Create" asp-route-userName="@ViewBag.UserName" class="btn btn-success">
                     Assign Roles
@@ -39,8 +39,6 @@
                 }
                 </tbody>
             </table>
-        </div>
-
         <div class="card-footer text-center">
             <a asp-action="Index" class="btn btn-secondary">Back to List</a>
         </div>
