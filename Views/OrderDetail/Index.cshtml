@@ -11,7 +11,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.PkId)</th>
-                    <th>@Html.DisplayNameFor(model => model.FkOrderId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Total)</th>
                     <th>@Html.DisplayNameFor(model => model.FkProductId)</th>
                     <th>@Html.DisplayNameFor(model => model.Quantity)</th>
                     <th>@Html.DisplayNameFor(model => model.ProductName)</th>
@@ -24,7 +24,7 @@
                     {
                         <tr>
                             <td>@orderDetail.PkId</td>
-                            <td>@orderDetail.FkOrderId</td>
+                            <td>@orderDetail.Total</td>
                             <td>@orderDetail.FkProductId</td>
                             <td>@orderDetail.Quantity</td>
                             <td>@orderDetail.ProductName</td>

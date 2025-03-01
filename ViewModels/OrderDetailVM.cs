@@ -19,7 +19,7 @@ namespace GreenHiTech.ViewModels
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; }
 
-        [Display(Name = "Price")]
+        [Display(Name = "Unit Price")]
         public decimal Price { get; set; }
 
         [Display(Name = "Total")]

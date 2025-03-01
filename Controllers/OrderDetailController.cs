@@ -11,11 +11,19 @@ namespace GreenHiTech.Controllers
     {
         private readonly OrderDetailRepo _orderDetailRepo;
         private readonly OrderRepo _orderRepo;
+        private readonly ProductRepo _productRepo;
+        private readonly ProductImageRepo _productImageRepo;
 
-        public OrderDetailController(OrderDetailRepo orderDetailRepo, OrderRepo orderRepo)
+        public OrderDetailController(
+            OrderDetailRepo orderDetailRepo, 
+            OrderRepo orderRepo, 
+            ProductRepo productRepo,
+            ProductImageRepo productImageRepo)
         {
             _orderDetailRepo = orderDetailRepo;
             _orderRepo = orderRepo;
+            _productRepo = productRepo;
+            _productImageRepo = productImageRepo;
         }
 
         public IActionResult Index(int id)
@@ -26,15 +34,21 @@ namespace GreenHiTech.Controllers
 
             foreach(OrderDetail orderDetail in orderDetails)
             {
-                OrderDetailVM orderDetailVM = new OrderDetailVM
+                // TODO: Get list of product images (inject PIRepo)
+                List<ProductImage> allProductImages = _productImageRepo.GetAll();
+                Product product = _productRepo.GetById(orderDetail.FkProductId, allProductImages);
+                if(product != null)
                 {
-                    PkId = orderDetail.PkId,
-                    FkOrderId = orderDetail.FkOrderId,
-                    FkProductId = orderDetail.FkProductId,
-                    Quantity = orderDetail.Quantity,
-                    ProductName = orderDetail.FkProduct?.Name,
-                };
-                orderDetailVMs.Add(orderDetailVM);
+                    OrderDetailVM orderDetailVM = new OrderDetailVM
+                    {
+                        //PkId = orderDetail.PkId,
+                        FkOrderId = orderDetail.FkOrderId,
+                        Price = product.Price,
+                        Quantity = orderDetail.Quantity,
+                        ProductName = orderDetail.FkProduct?.Name,
+                    };
+                    orderDetailVMs.Add(orderDetailVM);
+                }
             }
 
             return View(orderDetailVMs);
