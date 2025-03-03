@@ -33,7 +33,13 @@
                     <td>
                         <a asp-action="Detail" asp-route-id="@user.PkUserId" class="btn btn-info">Details</a>
                         <a asp-action="Edit" asp-route-id="@user.PkUserId" class="btn btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@user.PkUserId" class="btn btn-danger">Delete</a>
+                        <button type="button" class="btn btn-danger btn-sm"
+                                onclick="confirmDelete('user', '@user.PkUserId', 'deleteForm_@user.PkUserId')">
+                            Delete
+                        </button>
+                        <form id="deleteForm_@user.PkUserId" method="post" asp-action="Delete" asp-route-id="@user.PkUserId" style="display:none;">
+                            <input type="hidden" name="userId" value="@user.PkUserId" />
+                        </form>
                     </td>
                 </tr>
             }
@@ -44,3 +50,18 @@ else
 {
     <p>No users found.</p>
 }
+
+<!-- Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p id="modalMessage">Are you sure you want to delete this role?</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteBtn" class="btn btn-danger">Yes</button>
+            <button id="cancelDeleteBtn" class="btn btn-secondary">No</button>
+        </div>
+    </div>
+</div>
+
+<!-- Link to external JS  and CSS files -->
+<link href="~/css/GreenHiTech.css" rel="stylesheet" />
+<script src="~/js/deleteModal.js"></script>

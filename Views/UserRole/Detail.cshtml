@@ -27,13 +27,16 @@
                             <td>@role.RoleName</td>
                                 @* @if (User.IsInRole("Admin"))
                                  { *@
-                                <td>
-                                    <form asp-action="Delete" method="post" style="display:inline;" id="deleteForm_@role.RoleName">
-                                        <input type="hidden" name="userName" value="@ViewBag.UserName" />
-                                        <input type="hidden" name="roleName" value="@role.RoleName" />
-                                <button type="button" class="btn btn-danger" onclick="confirmDelete('@role.RoleName', '@role.RoleName', 'deleteForm_@role.RoleName')">Delete</button>
-                                    </form>
-                                </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="confirmDelete('role', '@role.RoleName', 'deleteForm_@role.RoleName')">
+                                    Delete
+                                </button>
+                                <form id="deleteForm_@role.RoleName" method="post" asp-action="Delete" style="display:none;">
+                                    <input type="hidden" name="userName" value="@ViewBag.UserName" />
+                                    <input type="hidden" name="roleName" value="@role.RoleName" />
+                                </form>
+                             </td>
                                 @* } *@
                         </tr>
                 }
@@ -58,4 +61,4 @@
 
 <!-- Link to external JS  and CSS files -->
 <link href="~/css/GreenHiTech.css" rel="stylesheet" />
-<script src="~/js/site.js"></script>
+<script src="~/js/deleteModal.js"></script>

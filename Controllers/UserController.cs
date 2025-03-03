@@ -197,6 +197,24 @@ namespace GreenHiTech.Controllers
         }
 
 
+        public IActionResult Delete(int id)
+        {
+            var user = _userRepo.GetById(id);
+
+            if (user == null)
+            {
+                return RedirectToAction("Index", new { message = $"error, Unable to find User Id: {id}" });
+            }
+
+            string result = _userRepo.Delete(id);
+            if (result.StartsWith("error"))
+            {
+                return RedirectToAction("Index", new { message = $"error, Failed to delete User Id: {id}" });
+            }
+            TempData["SuccessMessage"] = $"User Id: {id} has been deleted successfully.";
+            return RedirectToAction("Index");
+        }
+
         private static UserVM GetUserView(User user, string? role = null)
         {
             return new UserVM

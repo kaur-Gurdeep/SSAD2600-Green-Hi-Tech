@@ -1,4 +1,5 @@
 ﻿using GreenHiTech.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreenHiTech.Repositories
@@ -6,10 +7,12 @@ namespace GreenHiTech.Repositories
     public class UserRepo
     {
         private readonly GreenHiTechContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserRepo(GreenHiTechContext context)
+        public UserRepo(GreenHiTechContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         // Get all users
         public List<User> GetAll()
@@ -77,24 +80,51 @@ namespace GreenHiTech.Repositories
             return $"error,User ID: {user.PkId} not found";
         }
 
-        // Delete user
+        // Delete User
         public string Delete(int id)
         {
-            if (Any(id))
+            try
             {
-                try
+                var user = _context.Users.Find(id);
+
+                if (user == null)
                 {
-                    _context.Users.Remove(_context.Users.Find(id));
-                    _context.SaveChanges();
-                    return $"success,Successfully deleted user ID: {id}";
+                    return $"error, User ID: {id} not found";
                 }
-                catch (Exception e)
+
+                // Find the IdentityUser by its email (assuming email is unique)
+                var identityUser = _userManager.FindByEmailAsync(user.Email).Result;
+                if (identityUser != null)
                 {
-                    return $"error,Failed to delete user: {e.Message}";
+                    // Get all roles of the user
+                    var roles = _userManager.GetRolesAsync(identityUser).Result;
+
+                    // Remove user from all roles
+                    foreach (var role in roles)
+                    {
+                        _userManager.RemoveFromRoleAsync(identityUser, role).Wait();
+                    }
+
+                    // Delete the user from AspNetUsers
+                    var identityResult = _userManager.DeleteAsync(identityUser).Result;
+                    if (!identityResult.Succeeded)
+                    {
+                        return $"error, Failed to delete user from Identity: {string.Join(", ", identityResult.Errors.Select(e => e.Description))}";
+                    }
                 }
+                // Remove the user from the Users table
+                _context.Users.Remove(user);
+                _context.SaveChanges();
+
+                return $"success, Successfully deleted user ID: {id}";
             }
-            return $"error,User ID: {id} not found";
+            catch (Exception e)
+            {
+                return $"error, Failed to delete user: {e.Message}";
+            }
         }
+
+
 
         // Check if user exists
         public bool Any(int id)
