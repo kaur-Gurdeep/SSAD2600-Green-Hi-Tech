@@ -46,6 +46,12 @@ namespace GreenHiTech.Repositories
             }
         }
 
+        // Get products by category
+        public List<Product> GetByCategory(int categoryId)
+        {
+            return _context.Products.Where(p => p.FkCategoryId == categoryId).ToList();
+        }
+
         // Get product by id with ProductImages filled
         public Product? GetById(int id, List<ProductImage>? allProductImages)
         {

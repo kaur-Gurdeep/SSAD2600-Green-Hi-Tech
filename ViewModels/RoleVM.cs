@@ -10,9 +10,5 @@ namespace GreenHiTech.ViewModels
         [Required]
         [Display(Name = "Role Name")]
         public string RoleName { get; set; }
-
-        //public int UsersCount { get; set; }
-
-        //public List<string> UserEmails { get; set; }
     }
 }

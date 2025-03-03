@@ -36,7 +36,7 @@
                         <td>
                             <form id="deleteForm_@item.Id" method="post" asp-action="Delete">
                                 <input type="hidden" name="roleId" value="@item.Id" />
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('@item.RoleName', '@item.Id', 'deleteForm_@item.Id')">Delete</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('role', '@item.RoleName', 'deleteForm_@item.Id')">Delete</button>
                             </form>
                         </td>
                         <td>
@@ -62,4 +62,5 @@
 
 <!-- Link to external JS  and CSS files -->
 <link href="~/css/GreenHiTech.css" rel="stylesheet" />
-<script src="~/js/site.js"></script>
+<link href="~/css/DeleteModal.css" rel="stylesheet" />
+<script src="~/js/deleteModal.js"></script>

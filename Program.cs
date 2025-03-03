@@ -1,4 +1,5 @@
 using GreenHiTech.Data;
+using GreenHiTech.Data.Services;
 using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<OrderRepo>();
 builder.Services.AddScoped<OrderDetailRepo>();
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddScoped<AddressDetailRepo>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 
 
