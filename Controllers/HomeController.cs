@@ -10,11 +10,13 @@ namespace GreenHiTech.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ProductRepo _productReop;
+        private readonly CategoryRepo _categoryRepo;
 
-        public HomeController(ILogger<HomeController> logger, ProductRepo productReop)
+        public HomeController(ILogger<HomeController> logger, ProductRepo productReop, CategoryRepo categoryRepo)
         {
             _logger = logger;
             _productReop = productReop;
+            _categoryRepo = categoryRepo;
         }
 
         public IActionResult Index()
@@ -27,6 +29,10 @@ namespace GreenHiTech.Controllers
             List<ProductVM> productVMs = new List<ProductVM>();
             List<Product> productsInCategory = new List<Product>();
             productsInCategory = _productReop.GetByCategory(categoryID);
+
+            var category = _categoryRepo.GetById(categoryID);
+            ViewBag.CategoryName = "in "+category?.Name ?? "";
+
 
             foreach (Product product in productsInCategory)
             {
