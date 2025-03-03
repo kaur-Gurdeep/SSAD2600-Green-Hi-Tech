@@ -6,7 +6,7 @@
 
 <div class="container mt-5">
         <h1 class="text-center mb-4">User: @ViewBag.UserName</h1>
-        <div class="card-body">
+    <div class="card-body" style="max-width: 600px; margin: auto;">
             <div class="text-center mb-3">
                 <a asp-action="Create" asp-route-userName="@ViewBag.UserName" class="btn btn-success">
                     Assign Roles
@@ -27,20 +27,21 @@
                             <td>@role.RoleName</td>
                                 @* @if (User.IsInRole("Admin"))
                                  { *@
-                                <td>
-                                    <form asp-action="Delete" method="post" style="display:inline;" id="deleteForm_@role.RoleName">
-                                        <input type="hidden" name="userName" value="@ViewBag.UserName" />
-                                        <input type="hidden" name="roleName" value="@role.RoleName" />
-                                <button type="button" class="btn btn-danger" onclick="confirmDelete('@role.RoleName', '@role.RoleName', 'deleteForm_@role.RoleName')">Delete</button>
-                                    </form>
-                                </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="confirmDelete('role', '@role.RoleName', 'deleteForm_@role.RoleName')">
+                                    Delete
+                                </button>
+                                <form id="deleteForm_@role.RoleName" method="post" asp-action="Delete" style="display:none;">
+                                    <input type="hidden" name="userName" value="@ViewBag.UserName" />
+                                    <input type="hidden" name="roleName" value="@role.RoleName" />
+                                </form>
+                             </td>
                                 @* } *@
                         </tr>
                 }
                 </tbody>
             </table>
-        </div>
-
         <div class="card-footer text-center">
             <a asp-action="Index" class="btn btn-secondary">Back to List</a>
         </div>
@@ -60,4 +61,5 @@
 
 <!-- Link to external JS  and CSS files -->
 <link href="~/css/GreenHiTech.css" rel="stylesheet" />
-<script src="~/js/site.js"></script>
+<link href="~/css/DeleteModal.css" rel="stylesheet" />
+<script src="~/js/deleteModal.js"></script>

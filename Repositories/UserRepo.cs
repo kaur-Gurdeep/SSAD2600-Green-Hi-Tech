@@ -1,4 +1,5 @@
 ﻿using GreenHiTech.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreenHiTech.Repositories
@@ -6,10 +7,12 @@ namespace GreenHiTech.Repositories
     public class UserRepo
     {
         private readonly GreenHiTechContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserRepo(GreenHiTechContext context)
+        public UserRepo(GreenHiTechContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         // Get all users
         public List<User> GetAll()
@@ -77,24 +80,51 @@ namespace GreenHiTech.Repositories
             return $"error,User ID: {user.PkId} not found";
         }
 
-        // Delete user
+        // Delete User
         public string Delete(int id)
         {
-            if (Any(id))
+            try
             {
-                try
+                var user = _context.Users.Find(id);
+
+                if (user == null)
                 {
-                    _context.Users.Remove(_context.Users.Find(id));
-                    _context.SaveChanges();
-                    return $"success,Successfully deleted user ID: {id}";
+                    return $"error, User ID: {id} not found";
                 }
-                catch (Exception e)
+
+                // Find the IdentityUser by its email (assuming email is unique)
+                var identityUser = _userManager.FindByEmailAsync(user.Email).Result;
+                if (identityUser != null)
                 {
-                    return $"error,Failed to delete user: {e.Message}";
+                    // Get all roles of the user
+                    var roles = _userManager.GetRolesAsync(identityUser).Result;
+
+                    // Remove user from all roles
+                    foreach (var role in roles)
+                    {
+                        _userManager.RemoveFromRoleAsync(identityUser, role).Wait();
+                    }
+
+                    // Delete the user from AspNetUsers
+                    var identityResult = _userManager.DeleteAsync(identityUser).Result;
+                    if (!identityResult.Succeeded)
+                    {
+                        return $"error, Failed to delete user from Identity: {string.Join(", ", identityResult.Errors.Select(e => e.Description))}";
+                    }
                 }
+                // Remove the user from the Users table
+                _context.Users.Remove(user);
+                _context.SaveChanges();
+
+                return $"success, Successfully deleted user ID: {id}";
             }
-            return $"error,User ID: {id} not found";
+            catch (Exception e)
+            {
+                return $"error, Failed to delete user: {e.Message}";
+            }
         }
+
+
 
         // Check if user exists
         public bool Any(int id)
@@ -104,149 +134,4 @@ namespace GreenHiTech.Repositories
 
     }
 }
-
-//using GreenHiTech.Models;
-//using GreenHiTech.ViewModels;
-//using Microsoft.EntityFrameworkCore;
-
-//namespace GreenHiTech.Repositories
-//{
-//    public class UserRepo
-//    {
-//        private readonly GreenHiTechContext _context;
-//        private readonly AddressDetailRepo _addressDetailRepo;
-//        private readonly UserRoleRepo _userRoleRepo;
-
-//        public UserRepo(GreenHiTechContext context, AddressDetailRepo addressDetailRepo, UserRoleRepo userRoleRepo)
-//        {
-//            _context = context;
-//            _addressDetailRepo = addressDetailRepo;
-//            _userRoleRepo = userRoleRepo;
-//        }
-
-//        public List<UserVM> GetAll()
-//        {
-//            return _context.Users.Select(user => new UserVM
-//            {
-//                PkUserId = user.PkId,
-//                FirstName = user.FirstName,
-//                LastName = user.LastName,
-//                Email = user.Email,
-//                Role = user.Role,
-//                Phone = user.Phone
-//            }).ToList();
-//        }
-
-//        public UserVM? GetById(int id)
-//        {
-//            var user = _context.Users.Find(id);
-//            if (user == null) return null;
-
-//            var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
-//            var roles = _userRoleRepo.GetUserRolesAsync(user.Email).Result;
-
-//            return new UserVM
-//            {
-//                PkUserId = user.PkId,
-//                FirstName = user.FirstName,
-//                LastName = user.LastName,
-//                Email = user.Email,
-//                Role = user.Role,
-//                Phone = user.Phone,
-//                AddressDetail = address != null ? new AddressDetailVM
-//                {
-//                    PkId = address.PkId,
-//                    Unit = address.Unit,
-//                    HouseNumber = address.HouseNumber,
-//                    Street = address.Street,
-//                    City = address.City,
-//                    PostalCode = address.PostalCode,
-//                    Country = address.Country,
-//                    Province = address.Province
-//                } : null,
-//                RoleList = roles.ToList(),
-//            };
-//        }
-
-//        // Add user
-//        public string Add(GreenHiTech.Models.User user)
-//        {
-//            try
-//            {
-//                _context.Users.Add(user);
-//                _context.SaveChanges();
-//                return $"success,Successfully created user ID: " +
-//                       $"{user.PkId}";
-//            }
-//            catch (Exception e)
-//            {
-//                return $"error,Failed to create user: {e.Message}";
-//            }
-//        }
-//        public string UpdateUser(UserVM userVM)
-//        {
-//            var user = _context.Users.Find(userVM.PkUserId);
-//            if (user == null) return $"error,User ID: {userVM.PkUserId} not found";
-
-//            user.Email = userVM.Email;
-//            user.FirstName = userVM.FirstName;
-//            user.LastName = userVM.LastName;
-//            user.Phone = userVM.Phone;
-//            user.Role = userVM.Role;
-
-//            _context.Users.Update(user);
-//            _context.SaveChanges();
-
-//            if (userVM.AddressDetail != null)
-//            {
-//                var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0) ?? new AddressDetail
-//                {
-//                    Unit = userVM.AddressDetail.Unit,
-//                    HouseNumber = userVM.AddressDetail.HouseNumber,
-//                    Street = userVM.AddressDetail.Street,
-//                    City = userVM.AddressDetail.City,
-//                    Province = userVM.AddressDetail.Province,
-//                    PostalCode = userVM.AddressDetail.PostalCode,
-//                    Country = userVM.AddressDetail.Country
-//                };
-
-//                if (address.PkId == 0)
-//                    _addressDetailRepo.Add(address);
-//                else
-//                    _addressDetailRepo.Update(address);
-
-//                user.FkAddressId = address.PkId;
-//                _context.Users.Update(user);
-//                _context.SaveChanges();
-//            }
-
-//            return $"success,Successfully updated User: (Email {user.Email})";
-//        }
-
-//        //Delete user
-//                public string Delete(int id)
-//        {
-//            if (Any(id))
-//            {
-//                try
-//                {
-//                    _context.Users.Remove(_context.Users.Find(id));
-//                    _context.SaveChanges();
-//                    return $"success,Successfully deleted user ID: {id}";
-//                }
-//                catch (Exception e)
-//                {
-//                    return $"error,Failed to delete user: {e.Message}";
-//                }
-//            }
-//            return $"error,User ID: {id} not found";
-//        }
-
-//        // Check if user exists
-//        public bool Any(int id)
-//        {
-//            return _context.Users.Any(u => u.PkId == id);
-//        }
-//    }
-//}
 

@@ -32,6 +32,7 @@ namespace GreenHiTech.Repositories
                     Quantity = cp.Quantity,
                     Image = _context.ProductImages.FirstOrDefault(p => p.FkProductId == cp.FkProductId).ImageUrl,
                     ProductName = cp.FkProduct.Name,
+                    Price = cp.FkProduct.Price
                 }).ToList();
             return cartProducts;
         }
@@ -71,6 +72,7 @@ namespace GreenHiTech.Repositories
                     FkCartId = cart.PkId,
                     FkProductId = productId,
                     Quantity = quantity
+
                 };
                 _context.CartProducts.Add(cartProduct);
             };
