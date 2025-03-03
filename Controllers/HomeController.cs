@@ -21,6 +21,13 @@ namespace GreenHiTech.Controllers
             return View();
         }
 
+        public IActionResult Category(int categoryID)
+        {
+            List<Product> productsInCategory = new List<Product>();
+            productsInCategory = _productReop.GetByCategory(categoryID);
+            return View(productsInCategory);
+        }
+
         public IActionResult Contact()
         {
             return View();
