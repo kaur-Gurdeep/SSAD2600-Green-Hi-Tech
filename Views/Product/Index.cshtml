@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<GreenHiTech.ViewModels.ProductVM>
 
 @{
-	ViewData["Title"] = "Products";
+    ViewData["Title"] = "Products";
 }
 
 <br />
@@ -12,16 +12,18 @@
     <div class="alert alert-info">@ViewBag.Message</div>
 }
 <table class="table table-striped table-bordered table-hover"
-       style="width:500px;">
+style="width:500px;">
     <thead>
         <tr>
             <th>Image</th>
             <th>@Html.DisplayNameFor(model => model.Name)</th>
             <th>@Html.DisplayNameFor(model => model.Price)</th>
             <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
-            <th></th>
-            <th></th>
-            <th></th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th></th>
+                <th></th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -32,25 +34,22 @@
                     <img src="@(product.ProductImageVMs != null && product.ProductImageVMs.Any()
                                 ? product.ProductImageVMs.First().ImageUrl
                                 : "/images/no-image-available.jpg")"
-                         alt="Product Image"
-                         style="max-width: 100px; max-height: 100px;" />
+                    alt="Product Image"
+                    style="max-width: 100px; max-height: 100px;" />
                 </td>
                 <td>@product.Name</td>
                 <td>$ @product.Price</td>
                 <td>@product.StockQuantity</td>
                 <td><a asp-action="Details" asp-route-id=@product.PkId>Details</a></td>
-                @* manager access only below *@
-                <td><a asp-action="Edit" asp-route-id=@product.PkId>Edit</a></td>
-                @* <td><a asp-action="Delete" asp-route-id=@product.PkId>Delete</a></td> *@
-                <td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td><a asp-action="Edit" asp-route-id=@product.PkId>Edit</a></td>
+                    <td><a asp-action="Delete" asp-route-id=@product.PkId>Delete</a></td>
                     <form asp-action="Delete" method="post" asp-route-id=@product.PkId style="display:inline;" id="deleteForm_@product.PkId">
-                        @* <input type="hidden" name="userName" value="@ViewBag.UserName" /> *@
                         <input type="hidden" name="productId" value="@product.PkId" />
                         <button type="button" class="btn btn-danger" onclick="confirmDelete(@product.PkId)">Delete</button>
                     </form>
-                </td>
-
-
+                }
             </tr>
         }
     </tbody>
