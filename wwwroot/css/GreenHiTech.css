@@ -82,6 +82,11 @@
     background: #f1f1f1;
 }
 
+/*banner*/
+.desktop-banner {
+    display: none;
+}
+
 /*Search Box*/
 .search-container {
     display: flex;
@@ -235,6 +240,14 @@
 
     .search-box {
         max-width: 500px;
+    }
+
+    .mobile-banner {
+        display: none;
+    }
+
+    .desktop-banner {
+        display: block;
     }
 }
 
