@@ -1,62 +1,75 @@
 ﻿@model IEnumerable<GreenHiTech.ViewModels.CartProductVM>
 
+<div class="container mt-4">
+    <div class="d-flex justify-content-center mb-4">
+        <div class="step completed">Cart</div>
+        <div class="step">Checkout</div>
+        <div class="step">Payment</div>
+    </div>
+
 @if (Model != null && Model.Any())
 {
-	<table>
-		<thead>
-			<tr>
-				<th>Product ID</th>
-				<th>Name</th>
-				<th>Image</th>
-				<th>Quantity</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model)
-			{
-				<tr>
-					<td>@item.FkProductId</td>
-					<td>@item.ProductName</td>
-					<td><img src="@item.Image" alt="@item.FkProductId" style="width: 100px; height:auto" /></td>
-					<td>@item.Quantity</td>
-					<td>
-						<form asp-action="IncreaseQuantity" method="post" style="display:inline">
-							<input type="hidden" name="id" value="@item.PkId" />
-							<button type="submit">+</button>
-						</form>
-						<form asp-action="DecreaseQuantity" method="post" style="display:inline">
-							<input type="hidden" name="id" value="@item.PkId" />
-							<button type="submit">-</button>
-						</form>
-						<form asp-action="Delete" method="post" style="display:inline">
-							<input type="hidden" name="id" value="@item.PkId" />
-							<button type="submit">Delete</button
-						</form>
-					</td>
-				</tr>
-			}
-			</tbody>
-		</table>
-		<h4>Subtotal: @ViewBag.SubTotal</h4>
-		<h4>Taxes: @ViewBag.TaxTotal</h4>
-		<h4>Total Amount: @ViewBag.TotalAmount</h4>
-		<a asp-area="" asp-controller="CartProduct" asp-action="Checkout" class="btn btn-primary">Checkout</a>
-	}
-	else
-	{
-		<p>Your cart is empty.</p>
-	}
+    <div class="cart-items">
+        @foreach (var item in Model)
+        {
+            <div class="cart-item d-flex align-items-center p-3 border rounded mb-3">
+                <img src="@item.Image" alt="@item.ProductName" class="cart-item-image me-3" />
+                <div class="cart-item-details flex-grow-1">
+                    <h5>@item.ProductName</h5>
+                    <p class="price">$@item.Price</p>
+                    <div class="quantity-control d-flex align-items-center">
+                        <form asp-action="DecreaseQuantity" method="post">
+                            <input type="hidden" name="id" value="@item.PkId" />
+                            <button type="submit" class="btn btn-light">-</button>
+                        </form>
+                        <span class="mx-2">@item.Quantity</span>
+                        <form asp-action="IncreaseQuantity" method="post">
+                            <input type="hidden" name="id" value="@item.PkId" />
+                            <button type="submit" class="btn btn-light">+</button>
+                        </form>
+                    </div>
+                </div>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@item.PkId" />
+                    <button type="submit" class="btn btn-danger ms-3">&#128465;</button>
+                </form>
+            </div>
+        }
+    </div>
 
-	<h3>Add New Product</h3>
-	<form asp-action="AddToCart" method="post">
-		<div>
-			<label>Product ID:</label>
-			<input type="number" name="productId" />
-		</div>
-		<div>
-			<label>Quantity:</label>
-			<input type="number" name="quantity" />
-		</div>
-		<button type="submit">Add to Cart</button>
-	</form>
+    <!-- Price Summary -->
+    <div class="summary p-3 border rounded mt-3">
+        <p>Subtotal: <span class="float-end">$@ViewBag.SubTotal</span></p>
+        <p>Taxes: <span class="float-end">$@ViewBag.TaxTotal</span></p>
+        <h5>Grand Total: <span class="float-end">$@ViewBag.TotalAmount</span></h5>
+    </div>
+
+    <a asp-controller="CartProduct" asp-action="Checkout" class="btn btn-primary w-100 mt-3">Proceed to Checkout</a>
+}
+else
+{
+    <p class="text-center">Your cart is empty.</p>
+}
+</div>
+
+<style>
+    .cart-item-image {
+        width: 80px;
+        height: auto;
+    }
+
+    .step {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        margin: 0 5px;
+        border-radius: 20px;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .completed {
+        background-color: #4CAF50;
+        color: white;
+    }
+</style>
+
