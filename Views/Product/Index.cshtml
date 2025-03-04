@@ -3,70 +3,58 @@
 @{
     ViewData["Title"] = "Products";
 }
-
-<br />
-<h1>All the Products @ViewBag.CategoryName</h1>
-<br />
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <div class="alert alert-info">@ViewBag.Message</div>
-}
-<div class="=table-responsive" style="overflow-x: auto;">
-    <table class="table table-striped table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>@Html.DisplayNameFor(model => model.Name)</th>
-                <th>@Html.DisplayNameFor(model => model.Price)</th>
-                <th>@Html.DisplayNameFor(model => model.StockQuantity)</th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>
-                    <img src="@(product.ProductImageVMs != null && product.ProductImageVMs.Any()
-                            ? product.ProductImageVMs.First().ImageUrl
-                            : "/images/no-image-available.jpg")"
-                    alt="Product Image"
-                    style="max-width: 100px; max-height: 100px;" />
-                </td>
-                <td>@product.Name</td>
-                <td>$ @product.Price</td>
-                <td>@product.StockQuantity</td>
-                <td><a asp-action="Details" asp-route-id=@product.PkId>Details</a></td>
-                @if (User.IsInRole("Admin"))
+<div class="container mt-4">
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="alert alert-info">@ViewBag.Message</div>
+    }
+    <div class="=table-responsive" style="overflow-x: auto;">
+        <table class="table table-striped table-bordered table-hover">
+            <tbody>
+                @foreach (var product in Model)
                 {
-                    <td></td>
-                    <td></td>
-                }
-                else if (User.IsInRole("Customer"))
-                {
-                    <td></td>
+                <tr>
                     <td>
-                        <form asp-controller="CartProduct" asp-action="AddToCart" method="post" asp-route-productId=@product.PkId asp-route-quantity=1>
-                            <button class="btn btn-primary">Add to Cart</button>
-                        </form>
+                        <img src="@(product.ProductImageVMs != null && product.ProductImageVMs.Any()
+                                                        ? product.ProductImageVMs.First().ImageUrl
+                                                        : "/images/no-image-available.jpg")" alt="Product Image"
+                            style="max-width: 100px; max-height: 100px;" />
                     </td>
+                    <td><a asp-action="Details" asp-route-id=@product.PkId class="btn btn-success btn-sm text-white rounded-3 ">Details</a></td>
+                    @if (User.IsInRole("Admin"))
+                        {
+                            <td></td>
+                            <td></td>
+                        }
+                        else if (User.IsInRole("Customer"))
+                        {
+                            <td></td>
+                            <td>
+                                <form asp-controller="CartProduct" asp-action="AddToCart" method="post"
+                                    asp-route-productId=@product.PkId asp-route-quantity=1>
+                                    <button class="btn btn-primary">Add to Cart</button>
+                                </form>
+                            </td>
+                        }
+                        else if (User.IsInRole("Staff"))
+                        {
+                            <td><a asp-controller="Product" asp-action="Edit" asp-route-id=@product.PkId><i class="fa-solid fa-pen-to-square text-warning"></i></a></td>
+                            <td>
+                                <form asp-controller="Product" asp-action="Delete" method="post" asp-route-id=@product.PkId
+                                    style="display:inline;" id="deleteForm_@product.PkId">
+                                    <button type="button" class="btn btn-danger"
+                                        onclick="confirmDelete(@product.PkId)"><i class="fa-solid fa-trash text-danger"></i></button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
                 }
-                else if (User.IsInRole("Staff"))
-                {
-                    <td><a asp-controller="Product" asp-action="Edit" asp-route-id=@product.PkId>Edit</a></td>
-                    <td>
-                        <form asp-controller="Product" asp-action="Delete" method="post" asp-route-id=@product.PkId style="display:inline;" id="deleteForm_@product.PkId">
-                            <button type="button" class="btn btn-danger" onclick="confirmDelete(@product.PkId)">Delete</button>
-                        </form>
-                    </td>
-                }
-            </tr>
-        }
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+
 
 <div id="deleteModal" class="modal">
     <div class="modal-content">
@@ -84,5 +72,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
-
