@@ -196,7 +196,7 @@ namespace GreenHiTech.Controllers
 
         }
 
-
+        [HttpPost]
         public IActionResult Delete(int id)
         {
             var user = _userRepo.GetById(id);
@@ -214,6 +214,8 @@ namespace GreenHiTech.Controllers
             TempData["SuccessMessage"] = $"User Id: {id} has been deleted successfully.";
             return RedirectToAction("Index");
         }
+
+
 
         private static UserVM GetUserView(User user, string? role = null)
         {
