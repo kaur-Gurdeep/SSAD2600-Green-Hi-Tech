@@ -61,7 +61,19 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.PkId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <a class="btn btn-secondary" asp-controller="Product" asp-action="Index">Back to List</a>
+    @if (User.IsInRole("Admin")) {}
+    else if (User.IsInRole("Customer"))
+    {
+        <form  asp-controller="CartProduct" asp-action="AddToCart" method="post" asp-route-productId=@Model.PkId asp-route-quantity=1>
+            <button class="btn btn-primary">Add to Cart</button>
+        </form>
+    }
+    else if (User.IsInRole("Staff"))
+    {
+        <a class="btn btn-secondary" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.PkId">Edit</a>
+    }
+
 </div>
 

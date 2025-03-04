@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace GreenHiTech.ViewModels
 {
@@ -16,5 +17,7 @@ namespace GreenHiTech.ViewModels
         public string Image { get; set; }
         [Display(Name = "Product Name")]
         public string ProductName { get; set; }
+        [Display(Name = "Price")]
+        public decimal Price { get; set; }
     }
 }

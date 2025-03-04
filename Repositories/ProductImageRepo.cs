@@ -42,6 +42,18 @@ namespace GreenHiTech.Repositories
                 return GetAll().Where(pi => pi.FkProductId == productId).ToList();
             }
         }
+        // Get first product image for product id
+        public ProductImage? GetFirstForProductId(int productId)
+        {
+            if(productId == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return GetAll().Where(pi => pi.FkProductId == productId).FirstOrDefault();
+            }
+        }
 
         // Add product image
         public string Add(ProductImage productImage)
