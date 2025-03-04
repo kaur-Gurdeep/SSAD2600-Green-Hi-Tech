@@ -185,6 +185,16 @@ namespace GreenHiTech.Repositories
         //}
 
 
+        public string GetFullNameByEmail(string email)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (user != null)
+            {
+                return $"{user.FirstName} {user.LastName}";
+            }
+            return string.Empty; 
+        }
+
 
         // Check if user exists
         public bool Any(int id)
