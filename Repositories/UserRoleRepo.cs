@@ -13,7 +13,7 @@ namespace GreenHiTech.Repositories
             _userManager = userManager;
         }
 
-        // Assign a role to a user.
+        //Assign a role to a user.
         public async Task<bool> AddUserRoleAsync(string email
                                                 , string roleName)
         {
@@ -21,7 +21,7 @@ namespace GreenHiTech.Repositories
             if (user != null)
             {
                 var result = await _userManager.AddToRoleAsync(user
-                                                              , roleName);
+                                                                      , roleName);
                 return result.Succeeded;
             }
 

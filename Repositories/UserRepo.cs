@@ -1,6 +1,8 @@
 ﻿using GreenHiTech.Models;
+using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GreenHiTech.Repositories
 {
@@ -8,11 +10,13 @@ namespace GreenHiTech.Repositories
     {
         private readonly GreenHiTechContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserRoleRepo _userRoleRepo;
 
-        public UserRepo(GreenHiTechContext context, UserManager<IdentityUser> userManager)
+        public UserRepo(GreenHiTechContext context, UserManager<IdentityUser> userManager, UserRoleRepo userRoleRepo)
         {
             _context = context;
             _userManager = userManager;
+            _userRoleRepo = userRoleRepo;
         }
         // Get all users
         public List<User> GetAll()
@@ -81,6 +85,9 @@ namespace GreenHiTech.Repositories
         }
 
         // Delete User
+
+        //Only Admin can delete any user.
+        //A regular user can delete their profile.
         public string Delete(int id)
         {
             try
@@ -124,7 +131,44 @@ namespace GreenHiTech.Repositories
             }
         }
 
+        public string GetFullNameByEmail(string email)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (user != null)
+            {
+                return $"{user.FirstName} {user.LastName}";
+            }
+            return string.Empty; 
+        }
 
+        // Method to fetch users with their roles
+        public async Task<List<UserVM>> GetUsersWithRolesAsync()
+        {
+            var users = _context.Users.ToList();
+            var userVMs = new List<UserVM>();
+
+            foreach (var user in users)
+            {
+                // Get the roles for the user asynchronously
+                var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
+
+                // Join the roles into a comma-separated string
+                var roleString = string.Join(", ", roles.Select(role => role.RoleName));
+
+                // Create the UserVM object and add it to the list
+                userVMs.Add(new UserVM
+                {
+                    PkUserId = user.PkId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Role = roleString
+                });
+            }
+
+            return userVMs;
+        }
 
         // Check if user exists
         public bool Any(int id)
