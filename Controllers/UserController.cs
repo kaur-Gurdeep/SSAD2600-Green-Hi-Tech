@@ -1,12 +1,8 @@
 ﻿using GreenHiTech.Models;
-using GreenHiTech.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using GreenHiTech.Repositories;
-using System.Net;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using GreenHiTech.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
-using System.Threading.Tasks;
 
 namespace GreenHiTech.Controllers
 {
@@ -270,6 +266,29 @@ namespace GreenHiTech.Controllers
                 Email = user.Email
             };
         }
+
+        public IActionResult UserDashboard(string userEmail)
+        {
+            User? user = _userRepo.GetByEmail(userEmail);
+            if (user != null)
+            {
+                UserVM userVM = new UserVM
+                {
+                    PkUserId = user.PkId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Role = "Customer",
+                    Email = user.Email
+                };
+
+                return View(userVM);
+            }
+            else
+            {
+                return View();
+            }
+        }
+
     }
 }
 

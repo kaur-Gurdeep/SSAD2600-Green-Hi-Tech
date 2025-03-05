@@ -1,0 +1,18 @@
+﻿@model GreenHiTech.ViewModels.UserVM
+
+<br />
+<h1>User Dashboard</h1>
+<br />
+
+<div>Welcome @Model.FirstName @Model.LastName</div>
+
+<a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Detail">Update Address</a>
+<a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Order History</a>
+
+
+@section Scripts {
+    @{
+        <script src="~/js/modal.js"></script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

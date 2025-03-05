@@ -12,4 +12,5 @@ obj/
 #Ignore gitignore
 appsettings.json
 appsettings.Development.json
+secrets.json
 notes.txt
