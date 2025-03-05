@@ -33,7 +33,10 @@
                  { 
                      <a class="nav-link text-white" asp-area="" asp-controller="CartProduct" asp-action="Index"> 
                          <i class="fas fa-shopping-cart"></i> 
-                     </a> 
+                     </a>
+                    <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="UserDashboard" asp-route-userEmail=@User.Identity.Name>
+                        <i class="fas fa-user-circle"></i>
+                    </a>
                  } 
                  else if (User.IsInRole("Staff")) 
                  { 
@@ -44,8 +47,8 @@
                      <a class="nav-link text-white" href="/Identity/Account/Login"> 
                          <i class="fas fa-shopping-cart"></i> 
                      </a> 
-                } <!-- Shopping Cart Icon --> 
-                <i class="fas fa-user-circle"></i>  <!-- User Profile Icon -->
+                } <!-- Shopping Cart Icon -->
+                </i>  <!-- User Profile Icon -->
             </div>
         </div>
 
