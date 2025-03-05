@@ -41,14 +41,17 @@
                     </div>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
-                <div class="mb-3" style="display:none;">
-                    <label asp-for="Role" class="form-label">Role</label>
-                    <div class="input-group">
-                        <input asp-for="Role" class="form-control" type="hidden"/>
+                @if (User.IsInRole("Admin"))
+                {
+                    <!-- Admins can edit Role -->
+                    <div class="mb-3">
+                        <label asp-for="Role" class="form-label">Role</label>
+                        <div class="input-group">
+                            <input asp-for="Role" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
-                    <span asp-validation-for="Role" class="text-danger"></span>
-                </div>
-
+                }
                  <!-- Display Roles as Plain Text -->
                 <div class="mb-3">
                     <label class="form-label">Roles</label>

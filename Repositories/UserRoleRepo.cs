@@ -13,41 +13,41 @@ namespace GreenHiTech.Repositories
             _userManager = userManager;
         }
 
-        // Assign a role to a user.
-        //public async Task<bool> AddUserRoleAsync(string email
-        //                                        , string roleName)
-        //{
-        //    var user = await _userManager.FindByEmailAsync(email);
-        //    if (user != null)
-        //    {
-        //        var result = await _userManager.AddToRoleAsync(user
-        //                                                      , roleName);
-        //        return result.Succeeded;
-        //    }
-
-        //    return false;
-        //}
-
-        public async Task<bool> AddUserRoleAsync(string email, string roleName)
+        //Assign a role to a user.
+        public async Task<bool> AddUserRoleAsync(string email
+                                                , string roleName)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var currentRoles = await _userManager.GetRolesAsync(user);
-                if (currentRoles.Any())
-                {
-                    var result = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                    if (!result.Succeeded)
-                    {
-                        return false;
-                    }
-                }
-                var addRoleResult = await _userManager.AddToRoleAsync(user, roleName);
-                return addRoleResult.Succeeded;
+                var result = await _userManager.AddToRoleAsync(user
+                                                                      , roleName);
+                return result.Succeeded;
             }
 
             return false;
         }
+
+        //public async Task<bool> AddUserRoleAsync(string email, string roleName)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    if (user != null)
+        //    {
+        //        var currentRoles = await _userManager.GetRolesAsync(user);
+        //        if (currentRoles.Any())
+        //        {
+        //            var result = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        //            if (!result.Succeeded)
+        //            {
+        //                return false;
+        //            }
+        //        }
+        //        var addRoleResult = await _userManager.AddToRoleAsync(user, roleName);
+        //        return addRoleResult.Succeeded;
+        //    }
+
+        //    return false;
+        //}
 
 
         // Remove role from a user.

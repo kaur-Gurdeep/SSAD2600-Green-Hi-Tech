@@ -42,38 +42,41 @@ namespace GreenHiTech.Controllers
         //        Phone = user.Phone
         //    }).ToList();
         //    return View("Index", userVMs);
+
         //    //}
         //    //else
         //    //{
         //    //    return View();
         //    //}
+        //    //}
         //}
-
         public async Task<IActionResult> Index()
         {
+            // Fetch the list of users
             var users = _userRepo.GetAll();
+
+            // Create a list of UserVMs asynchronously
             var userVMs = new List<UserVM>();
 
             foreach (var user in users)
             {
-                // Get the user roles asynchronously
+                // Get the roles for the user asynchronously
                 var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
 
-                var role = roles.FirstOrDefault()?.RoleName;
+                // Join the roles into a comma-separated string
+                var roleString = string.Join(", ", roles.Select(role => role.RoleName));
 
-                var userVM = new UserVM
+                // Create the UserVM object and add it to the list
+                userVMs.Add(new UserVM
                 {
                     PkUserId = user.PkId,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
-                    Role = role, 
-                    Phone = user.Phone
-                };
-
-                userVMs.Add(userVM);
+                    Phone = user.Phone,
+                    Role = roleString
+                });
             }
-
             return View("Index", userVMs);
         }
 
@@ -137,7 +140,7 @@ namespace GreenHiTech.Controllers
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Role = user.Role,
+                //Role = user.Role,
                 Phone = user.Phone,
                 AddressDetail = address != null ? new AddressDetailVM
                 {
@@ -151,6 +154,15 @@ namespace GreenHiTech.Controllers
                     Country = address.Country
                 } : null
             };
+            var currentUserRole = User.IsInRole("Admin");
+            if (!currentUserRole)
+            {
+                userVM.Role = null;  
+            }
+            else
+            {
+                userVM.Role = user.Role;  
+            }
 
             return View(userVM);
         }
@@ -171,11 +183,16 @@ namespace GreenHiTech.Controllers
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
+                if (User.IsInRole("Admin"))
+                {
+                    user.Role = userVM.Role;  // Allow Admin to change the Role
+                }
+
                 user.Email = userVM.Email;
                 user.FirstName = userVM.FirstName;
                 user.LastName = userVM.LastName;
                 user.Phone = userVM.Phone;
-                user.Role = userVM.Role;
+                //user.Role = userVM.Role;
 
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))

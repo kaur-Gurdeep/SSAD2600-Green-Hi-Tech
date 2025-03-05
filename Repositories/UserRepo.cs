@@ -1,4 +1,5 @@
 ﻿using GreenHiTech.Models;
+using GreenHiTech.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
