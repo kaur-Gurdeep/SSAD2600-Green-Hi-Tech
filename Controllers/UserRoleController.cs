@@ -40,7 +40,6 @@ namespace DeckMaster.Controllers
 
 
         //[Authorize(Roles = "Admin")]
-        // Show all roles for a specific user.
         public async Task<IActionResult> Detail(string userName)
         {
             UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);
@@ -51,53 +50,28 @@ namespace DeckMaster.Controllers
             return View(roles);
         }
 
-        // Present user with ability to assign roles to a user.
-        // It gives two drop downs - the first contains the user names with
-        // the requested user selected. The second drop down contains all
-        // possible roles.
-
         //[Authorize(Roles = "Admin")]
         public ActionResult Create(string userName)
         {
-            // Store the email address of the Identity user
-            // which is their user name.
             ViewBag.SelectedUser = userName;
 
-            // Build SelectList with role data and store in ViewBag.
             RoleRepo roleRepo = new RoleRepo(_context);
             var roles = roleRepo.GetAllRoles().ToList();
 
-            // There might be a better way but I have always found using the 
-            // .NET dropdown lists to be a challenge. Here is a way to make 
-            // it work if you can get the data in the proper format. 
-
-            // 1. Preparation for 'Roles' drop down.
-            //    a) Build a list of SelectListItem objects which have 'Value' and 
-            //       'Text' properties. 
             var preRoleList = roles.Select(r =>
                 new SelectListItem { Value = r.RoleName, Text = r.RoleName })
                     .ToList();
-            //    b) Store the SelectListItem objects in a SelectList object 
-            //       with 'Value' and 'Text' properties set specifically.
             var roleList = new SelectList(preRoleList, "Value", "Text");
 
-            //    c) Store the SelectList in a ViewBag.
             ViewBag.RoleSelectList = roleList;
 
-            // 2. Preparation for 'Users' drop down list. 
-            //    a) Build a list of SelectListItem objects which have 'Value' and 
-            //       'Text' properties.
             var userList = _context.Users.ToList();
 
-            //    b) Store the SelectListItem objects in a SelectList object 
-            //       with 'Value' and 'Text' properties set specifically.
             var preUserList = userList.Select(u =>
                 new SelectListItem { Value = u.Email, Text = u.Email }).ToList();
             SelectList userSelectList = new SelectList(preUserList
                                                         , "Value"
                                                         , "Text");
-
-            //    c) Store the SelectList in a ViewBag.
             ViewBag.UserSelectList = userSelectList;
             return View();
         }

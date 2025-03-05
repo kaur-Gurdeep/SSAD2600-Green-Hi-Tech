@@ -27,27 +27,56 @@ namespace GreenHiTech.Controllers
         }
 
 
-        public IActionResult Index()
+        //public IActionResult Index()
+        //{
+        //    //if (User.IsInRole("Admin"))
+        //    //{
+        //    var users = _userRepo.GetAll();
+        //    var userVMs = users.Select(user => new UserVM
+        //    {
+        //        PkUserId = user.PkId,
+        //        FirstName = user.FirstName,
+        //        LastName = user.LastName,
+        //        Email = user.Email,
+        //        Role = user.Role,
+        //        Phone = user.Phone
+        //    }).ToList();
+        //    return View("Index", userVMs);
+        //    //}
+        //    //else
+        //    //{
+        //    //    return View();
+        //    //}
+        //}
+
+        public async Task<IActionResult> Index()
         {
-            //if (User.IsInRole("Admin"))
-            //{
             var users = _userRepo.GetAll();
-            var userVMs = users.Select(user => new UserVM
+            var userVMs = new List<UserVM>();
+
+            foreach (var user in users)
             {
-                PkUserId = user.PkId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Role = user.Role,
-                Phone = user.Phone
-            }).ToList();
+                // Get the user roles asynchronously
+                var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
+
+                var role = roles.FirstOrDefault()?.RoleName;
+
+                var userVM = new UserVM
+                {
+                    PkUserId = user.PkId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Role = role, 
+                    Phone = user.Phone
+                };
+
+                userVMs.Add(userVM);
+            }
+
             return View("Index", userVMs);
-            //}
-            //else
-            //{
-            //    return View();
-            //}
         }
+
 
         public async Task<IActionResult> Detail(int id)
         {
