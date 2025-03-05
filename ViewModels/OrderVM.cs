@@ -19,7 +19,7 @@ public partial class OrderVM
     [Display(Name = "Total Amount")]
     public decimal TotalAmount { get; set; }
 
-    [Display(Name = "Payment Status")]
+    [Display(Name = "Order Status")]
     public string Status { get; set; } = null!;
 
     

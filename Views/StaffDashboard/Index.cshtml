@@ -1,0 +1,46 @@
+﻿@model IEnumerable<GreenHiTech.ViewModels.OrderVM>
+
+
+@{
+    ViewData["Title"] = "Staff Dashboard";
+}
+<br />
+<h1>Staff Dashboard</h1>
+<br />
+
+<div>Total Sales: $ @ViewBag.TotalSales</div>
+<div>Average Sales: $ @ViewBag.AverageSales</div>
+<div>Total Orders: @ViewBag.TotalOrders</div>
+
+<a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">View Products</a>
+<a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Create">Add Product</a>
+<a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">View Orders</a>
+
+<table class="table table-striped table-bordered table-hover"
+       style="width:500px;">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.PkId)</th>
+            <th>@Html.DisplayNameFor(model => model.OrderDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.PkId</td>
+            <td>@product.OrderDate</td>
+            <td>@product.Status</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    @{
+        <script src="~/js/modal.js"></script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

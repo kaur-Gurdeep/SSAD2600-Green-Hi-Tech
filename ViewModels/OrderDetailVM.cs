@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GreenHiTech.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace GreenHiTech.ViewModels
@@ -19,17 +20,18 @@ namespace GreenHiTech.ViewModels
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; }
 
-        [Display(Name = "Price")]
+        [Display(Name = "Unit Price")]
         public decimal Price { get; set; }
 
         [Display(Name = "Total")]
         public decimal Total => Quantity * Price;
 
-        // Additional fields for display purposes
+        // Navigational properties
         [Display(Name = "Product Name")]
         public string? ProductName { get; set; }
 
-        [Display(Name = "Order Date")]
-        public DateOnly? OrderDate { get; set; }
+        [Display(Name = "Product Image")]
+        public ProductImage? ProductImage { get; set; }
+
     }
 }

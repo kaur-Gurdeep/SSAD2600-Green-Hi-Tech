@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GreenHiTech.Data.Services;
 using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
@@ -37,6 +38,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
         private readonly IdentityUserRepo _identityUserRepo;
         private readonly UserRepo _userRepo;
         private readonly AddressDetailRepo _addressDetailRepo;
+        private readonly IEmailService _emailService;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -47,7 +49,8 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             IConfiguration config,
             IdentityUserRepo identityUserRepo,
             UserRepo userRepo,
-            AddressDetailRepo addressDetailRepo)
+            AddressDetailRepo addressDetailRepo,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -59,6 +62,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
             _identityUserRepo = identityUserRepo;
             _userRepo = userRepo;
             _addressDetailRepo = addressDetailRepo;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -184,7 +188,7 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                         FirstName = Input.FirstName,
                         LastName = Input.LastName,
                         Email = Input.Email,
-                        Role = "User", // Default role
+                        Role = "Customer", // Default role
                         Phone = "",
                         FkAddressId = addressId,
                     };
@@ -200,12 +204,24 @@ namespace GreenHiTech.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    var response = await _emailService.SendSingleEmail(new EmailVM
+                    {
+                        Subject = "Confirm your email",
+                        Email = Input.Email,
+                        Body = $"Please confirm your account by <a " +
+                        $"href='{HtmlEncoder.Default.Encode(callbackUrl)}'> " +
+                        $"clicking here</a>."
+                    });
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation",
+                         new
+                         {
+                             email = Input.Email,
+                             returnUrl = returnUrl,
+                             DisplayConfirmAccountLink = false
+                         });
                     }
                     else
                     {
