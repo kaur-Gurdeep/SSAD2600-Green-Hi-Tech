@@ -28,28 +28,6 @@ namespace GreenHiTech.Repositories
             return false;
         }
 
-        //public async Task<bool> AddUserRoleAsync(string email, string roleName)
-        //{
-        //    var user = await _userManager.FindByEmailAsync(email);
-        //    if (user != null)
-        //    {
-        //        var currentRoles = await _userManager.GetRolesAsync(user);
-        //        if (currentRoles.Any())
-        //        {
-        //            var result = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-        //            if (!result.Succeeded)
-        //            {
-        //                return false;
-        //            }
-        //        }
-        //        var addRoleResult = await _userManager.AddToRoleAsync(user, roleName);
-        //        return addRoleResult.Succeeded;
-        //    }
-
-        //    return false;
-        //}
-
-
         // Remove role from a user.
         public async Task<bool> RemoveUserRoleAsync(string email
                                                    , string roleName)

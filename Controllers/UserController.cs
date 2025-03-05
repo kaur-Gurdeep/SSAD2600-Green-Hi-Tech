@@ -52,33 +52,13 @@ namespace GreenHiTech.Controllers
         //}
         public async Task<IActionResult> Index()
         {
-            // Fetch the list of users
-            var users = _userRepo.GetAll();
+            // Get users with roles from the UserRepo
+            var userVMs = await _userRepo.GetUsersWithRolesAsync();
 
-            // Create a list of UserVMs asynchronously
-            var userVMs = new List<UserVM>();
-
-            foreach (var user in users)
-            {
-                // Get the roles for the user asynchronously
-                var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
-
-                // Join the roles into a comma-separated string
-                var roleString = string.Join(", ", roles.Select(role => role.RoleName));
-
-                // Create the UserVM object and add it to the list
-                userVMs.Add(new UserVM
-                {
-                    PkUserId = user.PkId,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    Phone = user.Phone,
-                    Role = roleString
-                });
-            }
+            // Return the Index view with the userVMs
             return View("Index", userVMs);
         }
+
 
 
         public async Task<IActionResult> Detail(int id)
@@ -123,9 +103,9 @@ namespace GreenHiTech.Controllers
                 return View(userVM);
             }
         }
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)  // Make method async
         {
-            var user = _userRepo.GetById(id);
+            var user = _userRepo.GetById(id);  // Assuming GetById is synchronous, no need to await it
             if (user == null)
             {
                 return RedirectToAction("Index", new
@@ -133,14 +113,20 @@ namespace GreenHiTech.Controllers
                     message = $"warning, Unable to find User Id: {id}"
                 });
             }
+
+            // Await the asynchronous method to get the list of roles
+            var roleList = await _userRoleRepo.GetUserRolesAsync(user.Email);
+
             var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
+
+            // Creating ViewModel for the user and address
             var userVM = new UserVM
             {
                 PkUserId = user.PkId,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                //Role = user.Role,
+                Role = user.Role,
                 Phone = user.Phone,
                 AddressDetail = address != null ? new AddressDetailVM
                 {
@@ -152,30 +138,34 @@ namespace GreenHiTech.Controllers
                     Province = address.Province,
                     PostalCode = address.PostalCode,
                     Country = address.Country
-                } : null
+                } : null,
+                RoleList = roleList.ToList()  // Convert IEnumerable to List
             };
+
+            // Check if the current user is an Admin to allow role editing
             var currentUserRole = User.IsInRole("Admin");
             if (!currentUserRole)
             {
-                userVM.Role = null;  
+                userVM.Role = null;  // If not an Admin, remove Role from ViewModel
             }
             else
             {
-                userVM.Role = user.Role;  
+                userVM.Role = user.Role;  // If Admin, keep Role
             }
 
-            return View(userVM);
+            return View(userVM);  // Return the View with the populated ViewModel
         }
+
         [HttpPost]
         public IActionResult Edit(UserVM userVM)
         {
             string returnMessage = string.Empty;
 
+            //ModelState.Remove("RoleList");  // Remove RoleList from ModelState to avoid validation issues
 
-            ModelState.Remove("RoleList");//will remove this field when fixed the rolefunctionality
-
-            if (ModelState.IsValid)
+            if (ModelState.IsValid)  // Check if the model is valid
             {
+                // Fetch the user by Id
                 var user = _userRepo.GetById(userVM.PkUserId);
                 if (user == null)
                 {
@@ -183,17 +173,19 @@ namespace GreenHiTech.Controllers
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
+                // If the current user is an Admin, allow the role change
                 if (User.IsInRole("Admin"))
                 {
                     user.Role = userVM.Role;  // Allow Admin to change the Role
                 }
 
+                // Update user details
                 user.Email = userVM.Email;
                 user.FirstName = userVM.FirstName;
                 user.LastName = userVM.LastName;
                 user.Phone = userVM.Phone;
-                //user.Role = userVM.Role;
 
+                // Update user information in the repository
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))
                 {
@@ -201,10 +193,12 @@ namespace GreenHiTech.Controllers
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
+                // If the AddressDetail is provided, update the address
                 if (userVM.AddressDetail != null)
                 {
                     var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0) ?? new AddressDetail();
 
+                    // Update address fields
                     address.Unit = userVM.AddressDetail.Unit;
                     address.HouseNumber = userVM.AddressDetail.HouseNumber;
                     address.Street = userVM.AddressDetail.Street;
@@ -213,23 +207,25 @@ namespace GreenHiTech.Controllers
                     address.PostalCode = userVM.AddressDetail.PostalCode;
                     address.Country = userVM.AddressDetail.Country;
 
+                    // If address is new, add it; otherwise, update it
                     string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
 
-
+                    // Handle address update failure
                     if (addressResult.StartsWith("error"))
                     {
                         returnMessage = $"error,Failed to update Address: (User Email {user.Email})";
                         return RedirectToAction("Index", new { message = returnMessage });
                     }
 
+                    // Update the user's address reference
                     user.FkAddressId = address.PkId;
-                    _userRepo.Update(user);
+                    _userRepo.Update(user);  // Update the user with new address
+
                     returnMessage = $"success,Successfully updated User: (User Email {user.Email})";
 
                     // Set success message in TempData
                     TempData["SuccessMessage"] = "Edited Successfully";
                 }
-
             }
             else
             {
@@ -238,8 +234,8 @@ namespace GreenHiTech.Controllers
                 return RedirectToAction("Index", new { message = returnMessage });
             }
 
+            // After successful POST, redirect to the Edit page with the updated User details
             return RedirectToAction("Edit", new { id = userVM.PkUserId });
-
         }
 
         [HttpPost]

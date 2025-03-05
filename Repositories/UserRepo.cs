@@ -10,11 +10,13 @@ namespace GreenHiTech.Repositories
     {
         private readonly GreenHiTechContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserRoleRepo _userRoleRepo;
 
-        public UserRepo(GreenHiTechContext context, UserManager<IdentityUser> userManager)
+        public UserRepo(GreenHiTechContext context, UserManager<IdentityUser> userManager, UserRoleRepo userRoleRepo)
         {
             _context = context;
             _userManager = userManager;
+            _userRoleRepo = userRoleRepo;
         }
         // Get all users
         public List<User> GetAll()
@@ -128,63 +130,6 @@ namespace GreenHiTech.Repositories
                 return $"error, Failed to delete user: {e.Message}";
             }
         }
-        //public string Delete(int id, string loggedInUserEmail)
-        //{
-        //    try
-        //    {
-        //        var user = _context.Users.Find(id);
-        //        if (user == null)
-        //        {
-        //            return $"error, User ID: {id} not found";
-        //        }
-
-        //        var identityUser = _userManager.FindByEmailAsync(user.Email).Result;
-        //        if (identityUser != null)
-        //        {
-        //            var roles = _userManager.GetRolesAsync(identityUser).Result;
-        //            bool isSelf = user.Email == loggedInUserEmail;
-
-        //            // Get logged-in user's identity
-        //            var loggedInIdentityUser = _userManager.FindByEmailAsync(loggedInUserEmail).Result;
-        //            if (loggedInIdentityUser == null)
-        //            {
-        //                return "error, Logged-in user not found.";
-        //            }
-
-        //            var loggedInUserRoles = _userManager.GetRolesAsync(loggedInIdentityUser).Result;
-        //            bool isLoggedInUserAdmin = loggedInUserRoles.Contains("Admin");
-
-        //            // Non-admin users can only delete their own profile
-        //            if (!isSelf && !isLoggedInUserAdmin)
-        //            {
-        //                return "error, You do not have permission to delete this user.";
-        //            }
-
-        //            // Remove user from all roles
-        //            foreach (var role in roles)
-        //            {
-        //                _userManager.RemoveFromRoleAsync(identityUser, role).Wait();
-        //            }
-
-        //            // Delete the user from Identity
-        //            var identityResult = _userManager.DeleteAsync(identityUser).Result;
-        //            if (!identityResult.Succeeded)
-        //            {
-        //                return $"error, Failed to delete user from Identity: {string.Join(", ", identityResult.Errors.Select(e => e.Description))}";
-        //            }
-        //        }
-
-        //        _context.Users.Remove(user);
-        //        _context.SaveChanges();
-
-        //        return "success, Successfully deleted user.";
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return $"error, Failed to delete user: {e.Message}";
-        //    }
-        //}
-
 
         public string GetFullNameByEmail(string email)
         {
@@ -196,6 +141,34 @@ namespace GreenHiTech.Repositories
             return string.Empty; 
         }
 
+        // Method to fetch users with their roles
+        public async Task<List<UserVM>> GetUsersWithRolesAsync()
+        {
+            var users = _context.Users.ToList();
+            var userVMs = new List<UserVM>();
+
+            foreach (var user in users)
+            {
+                // Get the roles for the user asynchronously
+                var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
+
+                // Join the roles into a comma-separated string
+                var roleString = string.Join(", ", roles.Select(role => role.RoleName));
+
+                // Create the UserVM object and add it to the list
+                userVMs.Add(new UserVM
+                {
+                    PkUserId = user.PkId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Role = roleString
+                });
+            }
+
+            return userVMs;
+        }
 
         // Check if user exists
         public bool Any(int id)
