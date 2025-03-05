@@ -17,6 +17,22 @@ namespace GreenHiTech.Repositories
             return _context.Products.ToList();
         }
 
+        public List<Product> Search(string searchTerm, List<ProductImage> allProductImages)
+        {
+            var products = _context.Products
+                .Where(p => p.Name.Contains(searchTerm) ||
+                            p.Description.Contains(searchTerm) ||
+                            p.Manufacturer.Contains(searchTerm))
+                .ToList();
+
+            foreach (var product in products)
+            {
+                product.ProductImages = allProductImages.Where(pi => pi.FkProductId == product.PkId).ToList();
+            }
+
+            return products;
+        }
+
         // Get all products with ProductImages filled
         public List<Product> GetAll(List<ProductImage> allProductImages)
         {

@@ -126,6 +126,7 @@ namespace GreenHiTech.Controllers
             }
         }
 
+
         // POST
         [HttpPost]
         // manager access
@@ -254,6 +255,7 @@ namespace GreenHiTech.Controllers
 
                 return View(productVM);
             }
+
         }
 
         // POST
@@ -380,6 +382,46 @@ namespace GreenHiTech.Controllers
 
             return View(productVM);
         }
+        public IActionResult Search(string searchTerm)
+        {
+            List<ProductImage> allProductImages = _productImageRepo.GetAll();
+            List<Product> products = _productRepo.Search(searchTerm, allProductImages);
+            List<ProductVM> productVMs = new List<ProductVM>();
+
+            foreach (Product product in products)
+            {
+                List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
+                foreach (ProductImage productImage in product.ProductImages)
+                {
+                    ProductImageVM productImageVM = new ProductImageVM
+                    {
+                        PkId = productImage.PkId,
+                        AltText = productImage.AltText,
+                        FkProductId = productImage.FkProductId,
+                        ImageUrl = productImage.ImageUrl,
+                        CreateDate = productImage.CreateDate,
+                    };
+                    productImageVMs.Add(productImageVM);
+                }
+
+                ProductVM productVM = new ProductVM
+                {
+                    PkId = product.PkId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    StockQuantity = product.StockQuantity,
+                    FkCategoryId = product.FkCategoryId,
+                    Manufacturer = product.Manufacturer,
+                    ProductImageVMs = productImageVMs,
+                };
+
+                productVMs.Add(productVM);
+            }
+
+            return View("Index", productVMs);
+        }
+
 
         // POST
         [HttpPost, ActionName("Delete")]
