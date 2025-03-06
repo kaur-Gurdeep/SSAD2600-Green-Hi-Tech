@@ -17,8 +17,8 @@ namespace GreenHiTech.Data.Services
         {
             var apiKey = _configuration["SendGrid:ApiKey"];
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("gagakaur188@gmail.com",
-                                        "Gurdeep Kaur");
+            var from = new EmailAddress("ooctrl88@gmail.com",
+                                        "Jay Ahn");
             var to = new EmailAddress(payload.Email);
 
             var msg = MailHelper.CreateSingleEmail(from, to, payload.Subject,

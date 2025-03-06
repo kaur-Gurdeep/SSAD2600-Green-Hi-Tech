@@ -51,7 +51,7 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
                         </li>
                         <!-- DON'T FORGET TO REMOVE THE ADMIN CHECK -->
-                        @if ((User.IsInRole("Staff") || User.IsInRole("Admin")) && !User.IsInRole("Customer"))
+                        @* @if ((User.IsInRole("Staff") || User.IsInRole("Admin")) && !User.IsInRole("Customer")) *@
                         {
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
@@ -71,7 +71,7 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                         </li>
                         }
-                        else if ((User.IsInRole("Customer") || User.IsInRole("Admin")) && !User.IsInRole("Staff"))
+                        @* else if ((User.IsInRole("Customer") || User.IsInRole("Admin")) && !User.IsInRole("Staff")) *@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="CartProduct" asp-action="Index">Cart</a>
@@ -84,15 +84,15 @@
     </header>
     <div class="container">
         <!-- Search Box -->
-        @{
-            var controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
-            var action = ViewContext.RouteData.Values["action"].ToString().ToLower();
-        }
+         @*  @{
+              string? controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+              string? action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+          }
 
-        @if (controller == "home" && action == "index" || controller == "product" && action == "index")
-        {
-            <partial name="_SearchBar" />
-        }
+          @if (controller == "home" && action == "index" || controller == "product" && action == "index")
+          {
+              <partial name="_SearchBar" />
+          } *@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
