@@ -1,6 +1,6 @@
-// Script for Edit Action Modal
+//Script for Edit Action Modal
 // Show the success modal if there's a success message in TempData
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     var jsData = document.getElementById('jsData');
     if (jsData) {
         var successMessage = jsData.getAttribute('data-success-message');
@@ -25,10 +25,9 @@ function confirmDelete(roleName, roleId, formId) {
     // Set the message to display in the modal
     document.getElementById('modalMessage').textContent = "Are you sure you want to delete the role: " + roleName + "?";
 
-    // Set the form action with the correct roleId
-    document.getElementById(formId).action = "/Role/Delete/" + roleId;
 
-    // Show the delete confirmation modal
-    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteModal.show();
-}
+// Write your JavaScript code.
+
+
+
+
