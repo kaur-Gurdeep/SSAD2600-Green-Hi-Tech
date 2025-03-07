@@ -157,7 +157,7 @@ namespace GreenHiTech.Controllers
         {
             string returnMessage = string.Empty;
 
-            ModelState.Remove("RoleList");  // Remove RoleList from ModelState to avoid validation issues
+            ModelState.Remove("RoleList");  
 
             if (ModelState.IsValid)  // Check if the model is valid
             {
