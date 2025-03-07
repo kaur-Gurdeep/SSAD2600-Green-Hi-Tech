@@ -114,6 +114,17 @@ namespace GreenHiTech.Repositories
             }
         } 
 
+        public void ClearCart(int userPkId)
+        {
+            var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
+            if (cart != null)
+            {
+                _context.CartProducts.RemoveRange(_context.CartProducts.Where(cp => cp.FkCartId == cart.PkId));
+                _context.Carts.Remove(cart);
+                _context.SaveChanges();
+            }
+        }
+
         public decimal GetSubTotal(int userPkId)
         {
             var cart = _context.Carts.FirstOrDefault(c => c.FkUserId == userPkId);
