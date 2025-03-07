@@ -98,7 +98,7 @@ namespace GreenHiTech.Controllers
             IEnumerable<CartProductVM> CartItems = _cartProductRepo.GetAll(userId);
 
 
-            foreach(var cartItem in CartItems)
+            foreach (var cartItem in CartItems)
             {
                 OrderDetail orderDetail = new OrderDetail()
                 {
@@ -108,14 +108,19 @@ namespace GreenHiTech.Controllers
                 };
 
                 var newOrderDetail = _orderDetailRepo.Add(orderDetail);
-                
-            }
 
+            }
             //Clear the cart
 
-
-
             //DISPLAYS EMAIL/ TRANSACTION ID/ AMOUNT PAID
+            // email
+            ViewBag.UserEmail = User.Identity.Name;
+
+            //amout paid
+            ViewBag.AmountPaid = order.TotalAmount;
+            // payment type
+            ViewBag.PaymentType = "PayPal";
+
 
             //PASS THIS TO VIEW
 
@@ -124,6 +129,7 @@ namespace GreenHiTech.Controllers
             ViewBag.confirmationId = confirmationId;
             return View();
         }
+
 
         private int GetUserPkId()
         {
