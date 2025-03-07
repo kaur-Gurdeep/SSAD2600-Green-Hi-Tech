@@ -3,72 +3,78 @@
 @{
     ViewData["Title"] = "Create";
 }
-<div class="row py-3 justify-content-center" style="background-color:white;">
-    <div class="col-10 col-md-8">
-        <form asp-action="Create" enctype="multipart/form-data" id="input-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label ms-1 mb-1">Product Name</label>
-                <input asp-for="Name" class="form-control" style="border-radius:12px; background-color:#F3F3F3;"/>
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <label asp-for="Description" class="control-label ms-1 mb-1">Description</label>
-                <input asp-for="Description" class="form-control" style="border-radius:12px; background-color:#F3F3F3;"/>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <label asp-for="Price" class="control-label ms-1 mb-1">Price</label>
-                <input asp-for="Price" class="form-control" style="border-radius:12px; background-color:#F3F3F3;" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <label asp-for="StockQuantity" class="control-label ms-1 mb-1">Stock Quantity</label>
-                <input asp-for="StockQuantity" class="form-control" style="border: radius 12px; background-color:#F3F3F3;"/>
-                <span asp-validation-for="StockQuantity" class="text-danger"></span>
-            </div><br />
-            <div class="form-group mb-3">
-                <label asp-for="FkCategoryId" class="control-label ms-1 mb-1">Select Category</label>
-                <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList"
-                        class="form-select" style="border-radius: 12px; background-color:#F3F3F3;">
-                    <option value="">-- Select Category --</option>
-                </select>
-                <span asp-validation-for="FkCategoryId" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <label asp-for="Manufacturer" class="control-label ms-1 mb-1"> Manufacturer</label>
-                <input asp-for="Manufacturer" class="form-control" style="border-radius: 12px; background-color:#F3F3F3;"/>
-                <span asp-validation-for="Manufacturer" class="text-danger"></span>
-            </div><br />
-            <div class="form-group">
-                <label asp-for="ProductImageVMs" class="control-label ms-1 mb-1">Product Images</label>
-                <div 
-                    id="drop_zone" 
-                    class="drop-zone" 
-                    ondrop="handleDrop(event);"
-                     ondragover="handleDragOver(event);"
-                     ondragend="handleDragEnd(event);"
-                     ondragenter="handleDragEnter(event);"
-                     ondragleave="handleDragLeave(event);">
-                    Drag and drop your images here.
-                </div>
-                <div class="thumbnails">
-                    <div id="no-images">No images</div>
-                </div>
-                <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
-            </div><br />
-            <div class="form-group text-center my-2">
-                <input type="submit" value="Create" class="btn text-white w-100 w-md-75 w-lg-50" style="background-color:#4E9648;" onclick="sendFilesToController(event)" />            
-            </div>
-            <div class="form-group text-center">
-                 <input type="submit" value="Delete" class="btn text-white w-100 w-md-75 w-lg-50" style="background-color:#AE0202">    
-            </div>
-            
-        </form>
+<div class="container bg-white">
+    <div class="row">
+        <div class="col-12">
+            <a asp-action="Index" class="d-flex align-items-center gap-2  text-decoration-none ">
+                <i class="fa-solid fa-arrow-left-long"></i> Back
+            </a>
+        </div>
     </div>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a> @{/*TODO: RETURNS TO STAFF DASHBOARD*/ }
+    <div class="row py-3 justify-content-center">
+        <div class="col-10 col-md-8">
+            <form asp-action="Create" enctype="multipart/form-data" id="input-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label ms-1 mb-1">Product Name</label>
+                    <input asp-for="Name" class="form-control" style="border-radius:12px; background-color:#F3F3F3;" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label ms-1 mb-1">Description</label>
+                    <input asp-for="Description" class="form-control"
+                        style="border-radius:12px; background-color:#F3F3F3;" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <label asp-for="Price" class="control-label ms-1 mb-1">Price</label>
+                    <input asp-for="Price" class="form-control" style="border-radius:12px; background-color:#F3F3F3;" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <label asp-for="StockQuantity" class="control-label ms-1 mb-1">Stock Quantity</label>
+                    <input asp-for="StockQuantity" class="form-control"
+                        style="border: radius 12px; background-color:#F3F3F3;" />
+                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                </div><br />
+                <div class="form-group mb-3">
+                    <label asp-for="FkCategoryId" class="control-label ms-1 mb-1">Select Category</label>
+                    <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList" class="form-select"
+                        style="border-radius: 12px; background-color:#F3F3F3;">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="FkCategoryId" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <label asp-for="Manufacturer" class="control-label ms-1 mb-1"> Manufacturer</label>
+                    <input asp-for="Manufacturer" class="form-control"
+                        style="border-radius: 12px; background-color:#F3F3F3;" />
+                    <span asp-validation-for="Manufacturer" class="text-danger"></span>
+                </div><br />
+                <div class="form-group">
+                    <label asp-for="ProductImageVMs" class="control-label ms-1 mb-1">Product Images</label>
+                    <div id="drop_zone" class="drop-zone" ondrop="handleDrop(event);"
+                        ondragover="handleDragOver(event);" ondragend="handleDragEnd(event);"
+                        ondragenter="handleDragEnter(event);" ondragleave="handleDragLeave(event);">
+                        Drag and drop your images here.
+                    </div>
+                    <div class="thumbnails">
+                        <div id="no-images">No images</div>
+                    </div>
+                    <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
+                </div><br />
+                <div class="form-group text-center my-2">
+                    <input type="submit" value="Create" class="btn text-white w-100 w-md-75 w-lg-50"
+                        style="background-color:#4E9648;" onclick="sendFilesToController(event)" />
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" value="Delete" class="btn text-white w-100 w-md-75 w-lg-50"
+                        style="background-color:#AE0202">
+                </div>
+
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

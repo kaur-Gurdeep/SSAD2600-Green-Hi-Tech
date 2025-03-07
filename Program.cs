@@ -34,7 +34,7 @@ builder.Services.AddScoped<OrderDetailRepo>();
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddScoped<AddressDetailRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
-
+builder.Services.AddScoped<PaymentRepo>();
 
 
 builder.Services.Configure<IdentityOptions>(options => {

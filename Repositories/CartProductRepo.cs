@@ -152,5 +152,7 @@ namespace GreenHiTech.Repositories
                 .Sum(cp => (cp.FkProduct.Price * cp.Quantity) + (cp.FkProduct.Price * cp.Quantity * 0.12M));
             return totalAmount;
         }
+
+
     }
 }

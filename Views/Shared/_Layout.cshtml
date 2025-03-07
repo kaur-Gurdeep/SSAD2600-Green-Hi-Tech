@@ -26,50 +26,70 @@
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GREEN HI-TECH</a>
             </div>
             
-
             <!-- Navigation Icons -->
             <div class="nav-icons">
-                <i class="fas fa-shopping-cart"></i> <!-- Shopping Cart Icon -->
-                <i class="fas fa-user-circle"></i>  <!-- User Profile Icon -->
+                <a class="nav-link text-white" asp-area="" asp-controller="CartProduct" asp-action="Index"> 
+                    <i class="fas fa-shopping-cart"></i> 
+                </a>
+                <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="UserDashboard" asp-route-userEmail=@User.Identity.Name>
+                    <i class="fas fa-user-circle"></i>
+                </a>
             </div>
+
         </div>
 
         <nav>
                 <!-- Navbar Links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbarNav">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbarNav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="about">About Us</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="contact">Contact</a>
                     </li>
+
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
                         </li>
                         <!-- DON'T FORGET TO REMOVE THE ADMIN CHECK -->
                         @* @if ((User.IsInRole("Staff") || User.IsInRole("Admin")) && !User.IsInRole("Customer")) *@
                         {
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                    </li>
+
+                    @* STAFF & ADMIN ONLY *@
+                    @if (User.IsInRole("Staff") || User.IsInRole("Admin"))
+                    {
+
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="StaffDashboard" asp-action="Index">Staff Dashboard</a>
                         </li>
+                    }
+
+                    @* ADMIN ONLY *@
+                    @if (User.IsInRole("Admin"))
+                    {
                         <li class="nav-item">
                             <a class="nav-link text-white"
-                               asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
+                                asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white"
-                               asp-area="" asp-controller="UserRole" asp-action="Index">UserRoles</a>
+                                asp-area="" asp-controller="UserRole" asp-action="Index">UserRoles</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                         </li>
+
                         }
                         @* else if ((User.IsInRole("Customer") || User.IsInRole("Admin")) && !User.IsInRole("Staff")) *@
                         {
@@ -80,11 +100,14 @@
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
+
+            </div>
+
         </nav>
     </header>
     <div class="container">
         <!-- Search Box -->
-         @*  @{
+          @{
               string? controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
               string? action = ViewContext.RouteData.Values["action"].ToString().ToLower();
           }
@@ -92,7 +115,7 @@
           @if (controller == "home" && action == "index" || controller == "product" && action == "index")
           {
               <partial name="_SearchBar" />
-          } *@
+          }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -116,10 +139,20 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="https://www.paypal.com/sdk/js?client-id=AfOVB810HsnBj2tZhE_KrTgWrwkpWUFZ2HyyDkCT-RGRmifnRlmiiodSlVO9wZ8t0YDN2_Ig1Sq_0oWx&currency=CAD"></script>
+    <script >
+        window.addEventListener('load', function() {
+            if (typeof paypal !== 'undefined') {
+                console.log('paypal');
+            } else {
+                console.error('no ')
+            }
+        })
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
 
 
+    

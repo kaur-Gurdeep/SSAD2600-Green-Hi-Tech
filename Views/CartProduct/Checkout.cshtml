@@ -1,13 +1,106 @@
 ﻿@model IEnumerable<GreenHiTech.ViewModels.CartProductVM>
 
-<h1>Checkout</h1>
-<h2>Deliver To</h2>
-<h3>@ViewBag.Name</h3>
-<h2>Shipping Address</h2>
-<h3>@ViewBag.Address</h3>
-<a asp-area="" asp-controller="CartProduct" asp-action="Index" class="btn btn-primary">Return to Cart</a>
+<div class="container mt-4">
+    <!-- Checkout Progress Indicator -->
+    <div class="d-flex justify-content-center mb-4">
+        <div class="step completed">Cart</div>
+        <div class="step active">Checkout</div>
+        <div class="step">Payment</div>
+    </div>
 
-<h2>Payment Details</h2>
-<p>Subtotal:            @ViewBag.SubTotal</p>
-<p>Taxes:               @ViewBag.TaxTotal</p>
-<p>Grand Total:         @ViewBag.TotalAmount</p>
+    <!-- Deliver To Section -->
+    <h5>Deliver To</h5>
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <select id="Name" name="Name" class="form-control custom-width">
+            @foreach (var name in ViewBag.Name as List<string>)
+            {
+                <option value="@name">@name</option>
+            }
+        </select>
+    </div>
+
+    <!-- Shipping Address Section -->
+    <h5 class="mt-3">Shipping Address</h5>
+    @if (ViewBag.AddressIncomplete)
+    {
+        <p class="text-danger">Your address is incomplete. Please update your address.</p>
+        <a asp-controller="User" asp-action="Edit" class="btn btn-warning">Update Address</a>
+    }
+    else
+    {
+        <div class="form-group">
+            <label for="Address">Select Address</label>
+            <select id="Address" name="Address" class="form-control custom-width-address">
+                @foreach (var address in ViewBag.Address as List<string>)
+                {
+                    <option value="@address">@address</option>
+                }
+            </select>
+        </div>
+    }
+
+    <a asp-controller="CartProduct" asp-action="Index" class="d-block small-dark-green mt-3">Return to Cart</a>
+
+    <!-- Payment Details -->
+    <h5 class="mt-3">Payment Details</h5>
+    <div class="p-3 border rounded">
+        <p>Subtotal: <span class="float-end">$@ViewBag.SubTotal</span></p>
+        <p>Taxes: <span class="float-end">$@ViewBag.TaxTotal</span></p>
+        <h5>Grand Total: <span class="float-end">$@ViewBag.TotalAmount</span></h5>
+    </div>
+
+    <a asp-controller="CartProduct" asp-action="Payment" class="btn btn-dark-green w-100 mt-3">Proceed to Checkout</a>
+
+</div>
+
+<style>
+    .step {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        margin: 0 5px;
+        border-radius: 20px;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .completed {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .active {
+        background-color: #FFD700;
+    }
+
+    .edit-icon {
+        text-decoration: none;
+        color: #555;
+    }
+
+    .btn-dark-green {
+		background-color: #006400;
+		color: white;
+    }
+
+		.btn-dark-green:hover {
+			background-color: #004d00;
+			color: white;
+		}
+
+        .small-dark-green {
+            color: #006400;
+        }
+
+        .small-dark-green:hover {
+            color: #004d00;
+        }
+
+	.custom-width {
+    width: 30%;
+    }
+
+    .custom-width-address {
+        width: 30%;
+    }
+</style>
