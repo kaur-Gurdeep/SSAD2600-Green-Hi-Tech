@@ -22,30 +22,6 @@ namespace GreenHiTech.Controllers
             _userRoleRepo = userRoleRepo;
         }
 
-
-        //public IActionResult Index()
-        //{
-        //    //if (User.IsInRole("Admin"))
-        //    //{
-        //    var users = _userRepo.GetAll();
-        //    var userVMs = users.Select(user => new UserVM
-        //    {
-        //        PkUserId = user.PkId,
-        //        FirstName = user.FirstName,
-        //        LastName = user.LastName,
-        //        Email = user.Email,
-        //        Role = user.Role,
-        //        Phone = user.Phone
-        //    }).ToList();
-        //    return View("Index", userVMs);
-
-        //    //}
-        //    //else
-        //    //{
-        //    //    return View();
-        //    //}
-        //    //}
-        //}
         public async Task<IActionResult> Index()
         {
             // Get users with roles from the UserRepo
@@ -55,12 +31,12 @@ namespace GreenHiTech.Controllers
             return View("Index", userVMs);
         }
 
-
-
         public async Task<IActionResult> Detail(int id)
         {
+            // Fetch user by Id
             User? user = _userRepo.GetById(id);
 
+            // If user is not found, redirect with warning message
             if (user == null)
             {
                 return RedirectToAction("Index", new
@@ -69,11 +45,18 @@ namespace GreenHiTech.Controllers
                 });
             }
             else
-
             {
-                var address = _addressDetailRepo.GetById(user.FkAddressId ?? 0);
+                // Fetch address if FkAddressId is valid
+                AddressDetail? address = null;
+                if (user.FkAddressId.HasValue && user.FkAddressId.Value > 0)
+                {
+                    address = _addressDetailRepo.GetById(user.FkAddressId.Value);
+                }
 
+                // Get user roles asynchronously
                 var roles = await _userRoleRepo.GetUserRolesAsync(user.Email);
+
+                // Map to ViewModel
                 var userVM = new UserVM
                 {
                     PkUserId = user.PkId,
@@ -95,10 +78,10 @@ namespace GreenHiTech.Controllers
                     } : null,
                     RoleList = roles.ToList(),
                 };
-
                 return View(userVM);
             }
         }
+
         public async Task<IActionResult> Edit(int id)  // Make method async
         {
             var user = _userRepo.GetById(id);  // Assuming GetById is synchronous, no need to await it
@@ -157,7 +140,7 @@ namespace GreenHiTech.Controllers
         {
             string returnMessage = string.Empty;
 
-            ModelState.Remove("RoleList");  
+            ModelState.Remove("RoleList");
 
             if (ModelState.IsValid)  // Check if the model is valid
             {
@@ -165,7 +148,7 @@ namespace GreenHiTech.Controllers
                 var user = _userRepo.GetById(userVM.PkUserId);
                 if (user == null)
                 {
-                    returnMessage = $"error,User could not be updated: (Email {userVM.Email})";
+                    returnMessage = $"error, User could not be updated: (Email {userVM.Email})";
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
@@ -185,7 +168,7 @@ namespace GreenHiTech.Controllers
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))
                 {
-                    returnMessage = $"error,Failed to update User: (Email {user.Email})";
+                    returnMessage = $"error, Failed to update User: (Email {user.Email})";
                     return RedirectToAction("Index", new { message = returnMessage });
                 }
 
@@ -206,33 +189,31 @@ namespace GreenHiTech.Controllers
                     // If address is new, add it; otherwise, update it
                     string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
 
-                    // Handle address update failure
-                    if (addressResult.StartsWith("error"))
-                    {
-                        returnMessage = $"error,Failed to update Address: (User Email {user.Email})";
-                        return RedirectToAction("Index", new { message = returnMessage });
-                    }
-
                     // Update the user's address reference
                     user.FkAddressId = address.PkId;
                     _userRepo.Update(user);  // Update the user with new address
 
-                    returnMessage = $"success,Successfully updated User: (User Email {user.Email})";
+                    returnMessage = $"success, Successfully updated User: (User Email {user.Email})";
 
                     // Set success message in TempData
                     TempData["SuccessMessage"] = "Edited Successfully";
                 }
             }
-            else
+
+            // After successful POST, redirect to the appropriate page based on the role
+            if (User.IsInRole("Admin"))
             {
-                // If there was a validation error
-                returnMessage = "error,An unexpected error occurred while updating the user.";
+                // Admin should be redirected to the Index page
                 return RedirectToAction("Index", new { message = returnMessage });
             }
-
-            // After successful POST, redirect to the Edit page with the updated User details
-            return RedirectToAction("Edit", new { id = userVM.PkUserId });
+            else
+            {
+                // Customer (non-admin) should be redirected to the Details page
+                return RedirectToAction("Detail", new { id = userVM.PkUserId });
+            }
         }
+
+
 
         [HttpPost]
         public IActionResult Delete(int id)
@@ -249,8 +230,18 @@ namespace GreenHiTech.Controllers
             {
                 return RedirectToAction("Index", new { message = $"error, Failed to delete User Id: {id}" });
             }
+
             TempData["SuccessMessage"] = $"User Id: {id} has been deleted successfully.";
-            return RedirectToAction("Index");
+
+            // Check if the user is an admin
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index"); 
+            }
+            else
+            {
+                return RedirectToPage("/Account/Register");  
+            }
         }
 
 

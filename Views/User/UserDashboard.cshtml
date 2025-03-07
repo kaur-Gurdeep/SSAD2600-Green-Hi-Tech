@@ -1,14 +1,25 @@
 ﻿@model GreenHiTech.ViewModels.UserVM
 
-<br />
-<h1>User Dashboard</h1>
-<br />
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="text-center">
+        <h1 class="display-4 text-primary">Welcome @Model.FirstName @Model.LastName</h1>
+    </div>
 
-<div>Welcome @Model.FirstName @Model.LastName</div>
-
-<a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Detail">Update Address</a>
-<a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="Index">Order History</a>
-
+    <!-- Dashboard Links Section -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 text-center mb-3">
+            <a class="btn btn-outline-success btn-lg w-100" asp-controller="User" asp-action="Detail" asp-route-id="@Model.PkUserId">
+                <i class="fas fa-address-card"></i> Go to Your Profile
+            </a>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 text-center mb-3">
+            <a class="btn btn-outline-primary btn-lg w-100" asp-controller="Order" asp-action="Index">
+                <i class="fas fa-history"></i> Order History
+            </a>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{

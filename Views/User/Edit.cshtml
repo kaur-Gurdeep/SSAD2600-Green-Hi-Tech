@@ -3,7 +3,10 @@
 @{
     ViewData["Title"] = "Edit Profile";
 }
+@if (User.IsInRole("Admin"))
+{
 <h4>User #@Model.PkUserId</h4>
+}
 <hr />
 <div class="container my-5">
     <div class="px-2">
@@ -51,19 +54,19 @@
                         </div>
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
-                }
-                 <!-- Display Roles as Plain Text -->
-                <div class="mb-3">
-                    <label class="form-label">Roles</label>
-                    <div class="input-group">
-                        <div class="d-flex flex-wrap">
-                            @foreach (var role in Model.RoleList)
-                            {
-                                <span class="badge bg-secondary me-2 p-2">@role.RoleName</span>
-                            }
+                    <!-- Display Roles as Plain Text -->
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <div class="input-group">
+                            <div class="d-flex flex-wrap">
+                                @foreach (var role in Model.RoleList)
+                                {
+                                    <span class="badge bg-secondary me-2 p-2">@role.RoleName</span>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
 
                 <div class="mb-3">
                     <label asp-for="AddressDetail!.Unit" class="form-label">Unit</label>
