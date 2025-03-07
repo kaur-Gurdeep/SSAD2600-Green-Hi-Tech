@@ -16,6 +16,13 @@ namespace GreenHiTech.Repositories
             return _context.Orders.ToList();
         }
 
+        //public Order? GetByUserId(int userId)
+        //{
+        //    return _context.Orders.FirstOrDefault(
+        //        o => o.FkUserId == userId
+        //        );
+        //}
+
         // Get order by id
         public Order? GetById(int id)
         {

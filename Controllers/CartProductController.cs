@@ -15,11 +15,17 @@ namespace GreenHiTech.Controllers
         
         private readonly CartProductRepo _cartProductRepo;
         private readonly GreenHiTechContext _context;
+        private readonly OrderRepo _orderRepo;
+        private readonly OrderDetailRepo _orderDetailRepo;
+        private readonly PaymentRepo _paymentRepo;
 
-        public CartProductController(CartProductRepo cartProductRepo, GreenHiTechContext context)
+        public CartProductController(CartProductRepo cartProductRepo, GreenHiTechContext context, OrderRepo orderRepo, OrderDetailRepo orderDetailRepo, PaymentRepo paymentRepo)
         {
             _cartProductRepo = cartProductRepo;
             _context = context;
+            _orderRepo = orderRepo;
+            _orderDetailRepo = orderDetailRepo;
+            _paymentRepo = paymentRepo;
         }
         public IActionResult Index()
         {
@@ -42,6 +48,81 @@ namespace GreenHiTech.Controllers
             int userPkId = GetUserPkId();
             _cartProductRepo.AddToCart(userPkId, productId, quantity);
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Payment()
+        {
+            int userPkId = GetUserPkId();
+
+            decimal totalAmount = _cartProductRepo.GetTotalAmount(userPkId);
+            decimal taxTotal = _cartProductRepo.GetTaxTotal(userPkId);
+            decimal subTotal = _cartProductRepo.GetSubTotal(userPkId);
+            ViewBag.TaxTotal = taxTotal.ToString("f2");
+            ViewBag.SubTotal = subTotal.ToString("f2");
+            ViewBag.TotalAmount = totalAmount.ToString("f2");
+
+            //STYLE CHECKOUT PAGE
+            return View();
+        }
+
+        public IActionResult PaymentConfirmation(string confirmationId)
+        {
+            int userId = GetUserPkId();
+
+            decimal totalAmount = _cartProductRepo.GetTotalAmount(userId);
+            Order order = new Order()
+            {
+                FkUserId = userId,
+                TotalAmount = totalAmount,
+                OrderDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = "Pending"
+            };
+            var newOrder = _orderRepo.Add(order);
+            int orderId = 0;
+            var match = Regex.Match(newOrder, @"ID: (\d+)");
+            if (match.Success)
+            {
+                orderId = int.Parse(match.Groups[1].Value);
+            }
+
+
+            Payment payment = new Payment()
+            {
+                FkOderId = orderId,
+                PaymentDate = DateOnly.FromDateTime(DateTime.Now),
+                Amount = _cartProductRepo.GetTotalAmount(userId),
+                TransactionId = 1 // change database to accept confirmationId
+            };
+            var newPayment = _paymentRepo.Add(payment);
+
+            IEnumerable<CartProductVM> CartItems = _cartProductRepo.GetAll(userId);
+
+
+            foreach(var cartItem in CartItems)
+            {
+                OrderDetail orderDetail = new OrderDetail()
+                {
+                    FkOrderId = orderId,
+                    FkProductId = cartItem.FkProductId,
+                    Quantity = cartItem.Quantity,
+                };
+
+                var newOrderDetail = _orderDetailRepo.Add(orderDetail);
+                
+            }
+
+            //Clear the cart
+
+
+
+            //DISPLAYS EMAIL/ TRANSACTION ID/ AMOUNT PAID
+
+            //PASS THIS TO VIEW
+
+
+
+            ViewBag.confirmationId = confirmationId;
+            return View();
         }
 
         private int GetUserPkId()

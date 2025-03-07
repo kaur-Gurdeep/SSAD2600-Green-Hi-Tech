@@ -58,6 +58,7 @@
                     @* STAFF & ADMIN ONLY *@
                     @if (User.IsInRole("Staff") || User.IsInRole("Admin"))
                     {
+
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
                         </li>
@@ -81,23 +82,30 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                         </li>
                     }
-                </ul>
-                <partial name="_LoginPartial" />
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+
             </div>
+
         </nav>
     </header>
     <div class="container">
         <!-- Search Box -->
-        <div class="search-container">
-            <input type="text" class="search-box" placeholder="What can we help you to find ?">
-            <button class="search-button">
-                <i class="fa fa-search"></i>
-            </button>
-        </div>
+          @{
+              string? controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+              string? action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+          }
+
+          @if (controller == "home" && action == "index" || controller == "product" && action == "index")
+          {
+              <partial name="_SearchBar" />
+          }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
 
     <footer class="footer">
         <div class="footer-menu">
@@ -116,9 +124,20 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AfOVB810HsnBj2tZhE_KrTgWrwkpWUFZ2HyyDkCT-RGRmifnRlmiiodSlVO9wZ8t0YDN2_Ig1Sq_0oWx&currency=CAD"></script>
+    <script >
+        window.addEventListener('load', function() {
+            if (typeof paypal !== 'undefined') {
+                console.log('paypal');
+            } else {
+                console.error('no ')
+            }
+        })
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
 
 
+    
