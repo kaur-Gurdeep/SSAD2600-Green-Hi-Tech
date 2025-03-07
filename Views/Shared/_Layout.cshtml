@@ -81,14 +81,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                         </li>
-
-                        }
-                        @* else if ((User.IsInRole("Customer") || User.IsInRole("Admin")) && !User.IsInRole("Staff")) *@
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="CartProduct" asp-action="Index">Cart</a>
-                            </li>
-                        }
+                    }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
