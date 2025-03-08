@@ -25,7 +25,7 @@
     @if (ViewBag.AddressIncomplete)
     {
         <p class="text-danger">Your address is incomplete. Please update your address.</p>
-        <a asp-controller="User" asp-action="Edit" class="btn btn-warning">Update Address</a>
+        <a asp-controller="User" asp-action="Edit" asp-route-id="@ViewBag.UserId" class="btn btn-warning">Update Address</a>
     }
     else
     {
@@ -50,8 +50,14 @@
         <h5>Grand Total: <span class="float-end">$@ViewBag.TotalAmount</span></h5>
     </div>
 
-    <a asp-controller="CartProduct" asp-action="Payment" class="btn btn-dark-green w-100 mt-3">Proceed to Checkout</a>
-
+    @if (ViewBag.AddressIncomplete)
+    {
+        <button class="btn btn-dark-gray w-100 mt-3" disabled>Proceed to Checkout</button>
+    }
+    else
+    {
+        <a asp-controller="CartProduct" asp-action="Payment" class="btn btn-dark-green w-100 mt-3">Proceed to Checkout</a>
+    }
 </div>
 
 <style>
@@ -96,6 +102,10 @@
             color: #004d00;
         }
 
+    .btn-dark-gray {
+        background-color: #808080;
+        color: white;
+    }
 	.custom-width {
     width: 30%;
     }

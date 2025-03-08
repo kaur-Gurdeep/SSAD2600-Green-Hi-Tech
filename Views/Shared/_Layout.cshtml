@@ -91,10 +91,10 @@
     </header>
     <div class="container">
         <!-- Search Box -->
-          @{
-              string? controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
-              string? action = ViewContext.RouteData.Values["action"].ToString().ToLower();
-          }
+        @{
+            string? controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+            string? action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+        }
 
           @if (controller == "home" && action == "index" || controller == "product" && action == "index")
           {

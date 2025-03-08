@@ -111,6 +111,7 @@ namespace GreenHiTech.Controllers
 
             }
             //Clear the cart
+            _cartProductRepo.ClearCart(userId);
 
             //DISPLAYS EMAIL/ TRANSACTION ID/ AMOUNT PAID
             // email
@@ -176,6 +177,7 @@ namespace GreenHiTech.Controllers
         {
             int userPkId = GetUserPkId();
             var user = GetUser(userPkId);
+            ViewBag.UserId = userPkId;
             ViewBag.Name = new List<string> {
             $"{user.FirstName} {user.LastName}"
             };
