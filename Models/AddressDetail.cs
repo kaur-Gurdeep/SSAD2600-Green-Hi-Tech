@@ -8,7 +8,7 @@ public partial class AddressDetail
 {
     public int PkId { get; set; }
 
-    public string Unit { get; set; } = null!;
+    public string? Unit { get; set; } = null!;
 
     public string HouseNumber { get; set; } = null!;
 

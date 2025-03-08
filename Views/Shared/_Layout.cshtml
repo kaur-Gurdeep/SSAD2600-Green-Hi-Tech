@@ -92,14 +92,13 @@
     <div class="container">
         <!-- Search Box -->
         @{
-            string? controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
-            string? action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+            string controller = ViewContext.RouteData.Values["controller"]?.ToString().ToLower() ?? "default";
+            string action = ViewContext.RouteData.Values["action"]?.ToString().ToLower() ?? "index";
         }
-
-          @if (controller == "home" && action == "index" || controller == "product" && action == "index")
-          {
-              <partial name="_SearchBar" />
-          }
+        @if (controller == "home" && action == "index" || controller == "product" && action == "index")
+        {
+            <partial name="_SearchBar" />
+        }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
