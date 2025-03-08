@@ -83,7 +83,11 @@
                 <div class="input-group">
                     <input asp-for="AddressDetail!.PostalCode" class="form-control" readonly />
                 </div>
-                <!-- Display all roles -->
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <!-- Display all roles for Admin -->
                 <div class="mb-3">
                     <label class="form-label">All Roles</label>
                     <div class="input-group">
@@ -95,10 +99,40 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-center my-3">
-                    <a asp-action="Edit" asp-route-id="@Model?.PkUserId" class="btn btn-primary">Edit Profile</a>
-                </div>
+            }
+
+            <div class="d-flex justify-content-center my-3">
+                <a asp-action="Edit" asp-route-id="@Model?.PkUserId" class="btn btn-primary me-2">Edit Profile</a>
+
+                @if (User.IsInRole("Customer"))
+                {
+                    <button type="button" class="btn btn-danger btn-sm"
+                            onclick="confirmDelete('deleteForm_@Model.PkUserId')">
+                        Delete Profile
+                    </button>
+
+                    <form id="deleteForm_@Model.PkUserId" method="post" asp-action="Delete" asp-route-id="@Model.PkUserId" style="display:none;">
+                        <input type="hidden" name="userId" value="@Model.PkUserId" />
+                    </form>
+
+                }
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <p id="modalMessage">Are you sure you want to delete?</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteBtn" class="btn btn-danger">Yes</button>
+            <button id="cancelDeleteBtn" class="btn btn-secondary">No</button>
+        </div>
+    </div>
+</div>
+
+<!-- Link to external JS  and CSS files -->
+<link href="~/css/GreenHiTech.css" rel="stylesheet" />
+<link href="~/css/DeleteModal.css" rel="stylesheet" />
+<script src="~/js/deleteModal.js"></script>

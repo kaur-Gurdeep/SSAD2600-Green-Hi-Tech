@@ -1,12 +1,5 @@
-function confirmDelete(entityName, entityId, formId) {
-    let message = "";
-    if (entityName === "role") {
-        message = "Are you sure you want to delete the role: " + entityId + "?";
-    } else if (entityName === "user") {
-        message = "Are you sure you want to delete the user: " + entityId + "?";
-    } else {
-        message = "Are you sure you want to delete this item?";
-    }
+function confirmDelete(formId) {
+    let message = "Are you sure you want to delete?"; 
 
     // Set the message to display in the modal
     document.getElementById('modalMessage').textContent = message;
