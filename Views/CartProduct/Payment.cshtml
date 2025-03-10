@@ -6,16 +6,25 @@
 }
 @* <h1>@ViewBag.TaxTotal</h1>
 <h1>@ViewBag.SubTotal</h1> *@
-<h1 id="total-amount" data-price="@ViewBag.TotalAmount"></h1>
-<h5 class="mt-3">Payment Details</h5>
-<div class="p-3 border rounded">
-    <p>Subtotal: <span class="float-end">$@ViewBag.SubTotal</span></p>
-    <p>Taxes: <span class="float-end">$@ViewBag.TaxTotal</span></p>
-    <h5>Grand Total: <span class="float-end">$@ViewBag.TotalAmount</span></h5>
-</div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-center mb-4">
+        <div class="step completed">Cart</div>
+        <div class="step active">Checkout</div>
+        <div class="step payment">Payment</div>
+    </div>
+    <h1 id="total-amount" data-price="@ViewBag.TotalAmount"></h1>
+    <h5 class="mt-3">Payment Details</h5>
+    <div class="p-3 border rounded">
+        <p>Subtotal: <span class="float-end">$@ViewBag.SubTotal</span></p>
+        <p>Taxes: <span class="float-end">$@ViewBag.TaxTotal</span></p>
+        <h5>Grand Total: <span class="float-end">$@ViewBag.TotalAmount</span></h5>
+    </div>
 
-<div id="paypal-button-container">
+    <div class="d-flex justify-content-center mb-4">
+        <div id="paypal-button-container">
 
+        </div>
+    </div>
 </div>
 
 <script>
@@ -63,3 +72,27 @@
         }).render('#paypal-button-container');
     })
 </script>
+
+<style>
+    .step {
+        padding: 10px 20px;
+        border: 1px solid #ccc;
+        margin: 0 5px;
+        border-radius: 20px;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .completed {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .active {
+        background-color: #FFD700;
+    }
+
+    .payment {
+        background-color: #ADD8E6;
+    }
+</style>
