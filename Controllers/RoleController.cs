@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GreenHiTech.Controllers
 {
-    //[Authorize(Roles = "Admin")]
 
     public class RoleController : Controller
     {

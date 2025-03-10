@@ -25,8 +25,8 @@
                     {
                         <tr>
                             <td>@role.RoleName</td>
-                                @* @if (User.IsInRole("Admin"))
-                                 { *@
+                                @if (User.IsInRole("Admin"))
+                                 {
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm"
                                         onclick="confirmDelete('role', '@role.RoleName', 'deleteForm_@role.RoleName')">
@@ -37,7 +37,7 @@
                                     <input type="hidden" name="roleName" value="@role.RoleName" />
                                 </form>
                              </td>
-                                @* } *@
+                              }
                         </tr>
                 }
                 </tbody>

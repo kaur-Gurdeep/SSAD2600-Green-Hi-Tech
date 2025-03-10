@@ -20,11 +20,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// DELETE MODAL
-function confirmDelete(roleName, roleId, formId) {
-    // Set the message to display in the modal
-    document.getElementById('modalMessage').textContent = "Are you sure you want to delete the role: " + roleName + "?";
-
+//// DELETE MODAL
+//function confirmDelete(roleName, roleId, formId) {
+//    // Set the message to display in the modal
+//    document.getElementById('modalMessage').textContent = "Are you sure you want to delete the role: " + roleName + "?";
+//}
 
 // Write your JavaScript code.
 
