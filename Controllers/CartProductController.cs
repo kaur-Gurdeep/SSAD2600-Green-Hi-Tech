@@ -6,6 +6,7 @@ using System.Security.Claims;
 using GreenHiTech.Models;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace GreenHiTech.Controllers
 {
@@ -119,7 +120,9 @@ namespace GreenHiTech.Controllers
             ViewBag.UserEmail = User.Identity.Name;
 
             //amout paid
-            ViewBag.TotalAmount = order.TotalAmount;
+            ViewBag.TotalAmount = order.TotalAmount.ToString("C", CultureInfo.GetCultureInfo("en-CA"));
+
+            //ViewBag.TotalAmount = order.TotalAmount.ToString("F2");
             // payment type
             ViewBag.PaymentType = "PayPal";
 
