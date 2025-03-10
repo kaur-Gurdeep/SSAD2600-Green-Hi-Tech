@@ -10,8 +10,6 @@ using GreenHiTech.Models;
 namespace DeckMaster.Controllers
 {
 
-    //[Authorize(Roles = "Admin")]
-
     public class UserRoleController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,17 +27,12 @@ namespace DeckMaster.Controllers
             _roleManager = roleManager;
             _identityUserRepo = new IdentityUserRepo(userManager);
         }
-
-        // Available to both Admins and Staff
-        //[Authorize(Roles = "Admin,Staff")]
         public ActionResult Index()
         {
             var users = _identityUserRepo.GetUsers(); 
             return View(users);
         }
 
-
-        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Detail(string userName)
         {
             UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);
@@ -50,7 +43,6 @@ namespace DeckMaster.Controllers
             return View(roles);
         }
 
-        //[Authorize(Roles = "Admin")]
         public ActionResult Create(string userName)
         {
             ViewBag.SelectedUser = userName;
@@ -74,12 +66,9 @@ namespace DeckMaster.Controllers
                                                         , "Text");
             ViewBag.UserSelectList = userSelectList;
             return View();
-        }
+        }        
 
-        
-        // Assigns role to user.
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(UserRoleVM userRoleVM)
         {
             UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);
@@ -101,8 +90,7 @@ namespace DeckMaster.Controllers
         }
 
         [HttpPost]
-        [ActionName("Delete")]
-        //[Authorize(Roles = "Admin")]
+        //[ActionName("Delete")]
         public async Task<IActionResult> DeleteRole(string userName, string roleName)
         {
             UserRoleRepo userRoleRepo = new UserRoleRepo(_userManager);
@@ -118,7 +106,6 @@ namespace DeckMaster.Controllers
                 TempData["ErrorMessage"] = "Error while deleting the role.";
             }
 
-            // Return to the same detail page to show the updated list of roles
             return RedirectToAction("Detail", new { userName });
         }
     }

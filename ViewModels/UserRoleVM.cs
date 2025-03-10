@@ -9,10 +9,10 @@ namespace GreenHiTech.ViewModels
 
         [Display(Name = "Email")]
         [Required]
-        public string Email { get; set; } // Role: 	string,	required
+        public string Email { get; set; } 
 
         [Display(Name = "Role")]
         [Required]
-        public string Role { get; set; } // Role: 	string,	required
+        public string Role { get; set; } 
     }
 }

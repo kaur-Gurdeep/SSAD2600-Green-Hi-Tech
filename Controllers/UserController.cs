@@ -213,8 +213,6 @@ namespace GreenHiTech.Controllers
             }
         }
 
-
-
         [HttpPost]
         public IActionResult Delete(int id)
         {
