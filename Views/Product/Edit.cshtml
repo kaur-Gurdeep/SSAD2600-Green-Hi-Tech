@@ -77,10 +77,10 @@
                     <input type="submit" value="Save Changes" class="btn text-white w-100 w-md-75 w-lg-50"
                         style="background-color:#4E9648;" onclick="sendFilesToController(event)" />
                 </div>
-                <div class="form-group text-center">
-                    <input type="submit" value="Delete" class="btn text-white w-100 w-md-75 w-lg-50"
-                        style="background-color:#AE0202">
-                </div>
+                @* <div class="form-group text-center"> *@
+                @*     <input type="submit" value="Delete" class="btn text-white w-100 w-md-75 w-lg-50" *@
+                @*         style="background-color:#AE0202"> *@
+                @* </div> *@
                 <div>
 
                     <a class="btn text-white w-100 w-md-75 w-lg-50 my-2" asp-controller="Product" asp-action="Index" style="background-color: #494949; margin-bottom: 1rem;">Back to List</a>
@@ -94,6 +94,7 @@
 @section Scripts {
     @{
         <script src="~/js/productForm.js"></script>
+        <script src="~/js/deleteModal.js"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
