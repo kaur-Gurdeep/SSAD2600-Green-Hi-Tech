@@ -27,8 +27,6 @@
                             <td class="text-center" style="vertical-align: middle;"> <a asp-controller="Product" asp-action="Details" asp-route-id=@product.PkId class="btn btn-success btn-sm text-white" style="border-radius:8px;">View Product</a></td>
                             @if (User.IsInRole("Admin"))
                                 {
-                                    @* <td></td> *@
-                                    @* <td></td> *@
                                 }
                                 else if (User.IsInRole("Customer"))
                                 {
