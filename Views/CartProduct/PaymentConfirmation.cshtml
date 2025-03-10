@@ -28,7 +28,7 @@
         </defs>
     </svg>
 
-    <h2 class="text-center mb-4">Successful Payment</h2>
+    <h2 class="text-center mb-4"></h2>
     <div class="row justify-content-center">
         <div>Payment Type</div>
         <div>@ViewBag.PaymentType</div>
@@ -37,10 +37,11 @@
         <div>Transaction ID</div>
         <div>@ViewBag.confirmationId</div>
         <div>Amount Paid</div>
-        <div>@ViewBag.TotalAmout</div>
+        <div>@ViewBag.TotalAmount</div>
     </div>
-    <button>Back</button>
-    <button>Order Status</button>
+    <a class="btn btn-primary" asp-controller="Order" asp-action="Index">
+        Order History
+    </a>
 </div>
 
 <style>
