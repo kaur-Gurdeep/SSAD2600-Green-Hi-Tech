@@ -16,13 +16,6 @@ namespace GreenHiTech.Repositories
             return _context.Orders.ToList();
         }
 
-        //public Order? GetByUserId(int userId)
-        //{
-        //    return _context.Orders.FirstOrDefault(
-        //        o => o.FkUserId == userId
-        //        );
-        //}
-
         // Get order by id
         public Order? GetById(int id)
         {
@@ -35,6 +28,25 @@ namespace GreenHiTech.Repositories
                 return null;
             }
             return _context.Orders.Find(id);
+        }
+
+        // Get all orders for a user PkId
+        public List<Order>? GetByUserId(int userId)
+        {
+            List<Order> orders = new List<Order>();
+
+            if (userId == 0)
+            {
+                return null;
+            }
+            else if (_context.Orders.Any(o => o.PkId == userId))
+            {
+                return null;
+            }
+
+            orders = GetAll().Where(o => o.FkUserId == userId).ToList();
+
+            return orders;
         }
 
         // Add order

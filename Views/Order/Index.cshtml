@@ -19,13 +19,12 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model != null)
+                @if (Model.Any())
                 {
                     @foreach (var order in Model)
                     {
                         <tr>
                             <td>@order.PkId</td>
-                            <td>@order.FkUserId</td>
                             <td>@order.OrderDate</td>
                             <td>@order.TotalAmount</td>
                             <td>@order.Status</td>
@@ -40,7 +39,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="6" class="text-center">No orderDetails exist.</td>
+                        <td colspan="6" class="text-center">No orders yet.</td>
                     </tr>
                 }
             </tbody>
