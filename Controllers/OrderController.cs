@@ -1,6 +1,7 @@
 ﻿using GreenHiTech.Models;
 using GreenHiTech.Repositories;
 using GreenHiTech.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreenHiTech.Controllers
@@ -16,20 +17,33 @@ namespace GreenHiTech.Controllers
             _userRepo = userRepo;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
-            var orders = _orderRepo.GetAll();
+            string? userEmail = User.Identity.Name;
+            List<Order>? orders = new List<Order>();
+            User? user = _userRepo.GetByEmail(userEmail);
+                if (user != null)
+                {
+                    int userId = user.PkId;
+                    orders = _orderRepo.GetByUserId(userId);
 
-            var orderList = orders.Select(o => new OrderVM
-            {
-                PkId = o.PkId,
-                FkUserId = o.FkUserId,
-                OrderDate = o.OrderDate,
-                TotalAmount = o.TotalAmount,
-                Status = o.Status,
-            }).ToList();
-
-            return View(orderList);
+                    List<OrderVM> orderVMs = new List<OrderVM>();
+                    foreach(Order order in orders)
+                    {
+                        OrderVM orderVM = new OrderVM
+                        {
+                            PkId = order.PkId,
+                            FkUserId = order.FkUserId,
+                            OrderDate = order.OrderDate,
+                            TotalAmount = order.TotalAmount,
+                            Status = order.Status
+                        };
+                        orderVMs.Add(orderVM);
+                    }
+                    return View(orderVMs);
+                }
+            return View(null);
         }
 
         [HttpPost]
@@ -67,7 +81,7 @@ namespace GreenHiTech.Controllers
                 }
 
             }
-            return BadRequest(ModelState); 
+            return BadRequest(ModelState);
         }
     }
 }
