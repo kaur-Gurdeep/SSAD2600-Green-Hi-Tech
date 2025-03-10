@@ -27,12 +27,10 @@ namespace GreenHiTech.Controllers
                 OrderDate = o.OrderDate,
                 TotalAmount = o.TotalAmount,
                 Status = o.Status,
-                //OrderDetails = o.OrderDetails,
             }).ToList();
 
             return View(orderList);
         }
-
 
         [HttpPost]
         public IActionResult Create(string transactionId, string amount, string status, string payerEmail)
@@ -71,8 +69,6 @@ namespace GreenHiTech.Controllers
             }
             return BadRequest(ModelState); 
         }
-
-
     }
 }
 

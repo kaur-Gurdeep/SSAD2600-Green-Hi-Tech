@@ -11,12 +11,14 @@ namespace GreenHiTech.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ProductRepo _productReop;
         private readonly CategoryRepo _categoryRepo;
+        private readonly ProductImageRepo _productImageRepo;
 
-        public HomeController(ILogger<HomeController> logger, ProductRepo productReop, CategoryRepo categoryRepo)
+        public HomeController(ILogger<HomeController> logger, ProductRepo productReop, CategoryRepo categoryRepo, ProductImageRepo productImageRepo)
         {
             _logger = logger;
             _productReop = productReop;
             _categoryRepo = categoryRepo;
+            _productImageRepo = productImageRepo;
         }
 
         public IActionResult Index()
@@ -36,16 +38,21 @@ namespace GreenHiTech.Controllers
 
             foreach (Product product in productsInCategory)
             {
+                List<ProductImage> productImages = new List<ProductImage>();
                 List<ProductImageVM> productImageVMs = new List<ProductImageVM>();
-                foreach (ProductImage productImage in product.ProductImages)
+                ProductImage? firstProductImage = _productImageRepo.GetFirstForProductId(product.PkId);
+
+                if(firstProductImage != null)
                 {
+                    productImages.Add(firstProductImage);
+                
                     ProductImageVM productImageVM = new ProductImageVM
                     {
-                        PkId = productImage.PkId,
-                        AltText = productImage.AltText,
-                        FkProductId = productImage.FkProductId,
-                        ImageUrl = productImage.ImageUrl,
-                        CreateDate = productImage.CreateDate,
+                        PkId = productImages[0].PkId,
+                        AltText = productImages[0].AltText,
+                        FkProductId = productImages[0].FkProductId,
+                        ImageUrl = productImages[0].ImageUrl,
+                        CreateDate = productImages[0].CreateDate,
                     };
                     productImageVMs.Add(productImageVM);
                 }
