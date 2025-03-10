@@ -148,8 +148,9 @@ namespace GreenHiTech.Controllers
                 var user = _userRepo.GetById(userVM.PkUserId);
                 if (user == null)
                 {
-                    returnMessage = $"error, User could not be updated: (Email {userVM.Email})";
-                    return RedirectToAction("Index", new { message = returnMessage });
+                    returnMessage = $"error, User could not be updated Email {userVM.Email}";
+                    TempData["Message"] = returnMessage;
+                    return RedirectToAction("Index");
                 }
 
                 // If the current user is an Admin, allow the role change
@@ -168,8 +169,9 @@ namespace GreenHiTech.Controllers
                 string result = _userRepo.Update(user);
                 if (result.StartsWith("error"))
                 {
-                    returnMessage = $"error, Failed to update User: (Email {user.Email})";
-                    return RedirectToAction("Index", new { message = returnMessage });
+                    returnMessage = $"error, Failed to update User {user.Email}";
+                    TempData["Message"] = returnMessage;
+                    return RedirectToAction("Index");
                 }
 
                 // If the AddressDetail is provided, update the address
@@ -179,12 +181,12 @@ namespace GreenHiTech.Controllers
 
                     // Update address fields
                     address.Unit = userVM.AddressDetail.Unit;
-                    address.HouseNumber = userVM.AddressDetail.HouseNumber;
-                    address.Street = userVM.AddressDetail.Street;
-                    address.City = userVM.AddressDetail.City;
-                    address.Province = userVM.AddressDetail.Province;
-                    address.PostalCode = userVM.AddressDetail.PostalCode;
-                    address.Country = userVM.AddressDetail.Country;
+                    address.HouseNumber = userVM.AddressDetail.HouseNumber!;
+                    address.Street = userVM.AddressDetail.Street!;
+                    address.City = userVM.AddressDetail.City!;
+                    address.Province = userVM.AddressDetail.Province!;
+                    address.PostalCode = userVM.AddressDetail.PostalCode!;
+                    address.Country = userVM.AddressDetail.Country!;
 
                     // If address is new, add it; otherwise, update it
                     string addressResult = address.PkId == 0 ? _addressDetailRepo.Add(address) : _addressDetailRepo.Update(address);
@@ -193,7 +195,7 @@ namespace GreenHiTech.Controllers
                     user.FkAddressId = address.PkId;
                     _userRepo.Update(user);  // Update the user with new address
 
-                    returnMessage = $"success, Successfully updated User: (User Email {user.Email})";
+                    returnMessage = $"success, Successfully updated User: {user.Email}";
 
                     // Set success message in TempData
                     TempData["SuccessMessage"] = "Edited Successfully";
@@ -204,7 +206,9 @@ namespace GreenHiTech.Controllers
             if (User.IsInRole("Admin"))
             {
                 // Admin should be redirected to the Index page
-                return RedirectToAction("Index", new { message = returnMessage });
+                TempData["Message"] = returnMessage;
+                return RedirectToAction("Index");
+                //return RedirectToAction("Index", new { message = returnMessage });
             }
             else
             {
@@ -243,8 +247,6 @@ namespace GreenHiTech.Controllers
                 return RedirectToPage("/Account/Register");  
             }
         }
-
-
 
         private static UserVM GetUserView(User user, string? role = null)
         {
