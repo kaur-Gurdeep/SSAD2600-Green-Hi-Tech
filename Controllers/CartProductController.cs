@@ -85,13 +85,14 @@ namespace GreenHiTech.Controllers
                 orderId = int.Parse(match.Groups[1].Value);
             }
 
+            int paymentId = _paymentRepo.GetAll().Max(p => p.PkId) + 1;
 
             Payment payment = new Payment()
             {
                 FkOderId = orderId,
                 PaymentDate = DateOnly.FromDateTime(DateTime.Now),
                 Amount = _cartProductRepo.GetTotalAmount(userId),
-                TransactionId = 1 // change database to accept confirmationId
+                TransactionId = paymentId // change database to accept confirmationId
             };
             var newPayment = _paymentRepo.Add(payment);
 
@@ -118,7 +119,7 @@ namespace GreenHiTech.Controllers
             ViewBag.UserEmail = User.Identity.Name;
 
             //amout paid
-            ViewBag.AmountPaid = order.TotalAmount;
+            ViewBag.TotalAmount = order.TotalAmount;
             // payment type
             ViewBag.PaymentType = "PayPal";
 
