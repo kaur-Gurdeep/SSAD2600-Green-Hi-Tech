@@ -33,7 +33,6 @@
   <ItemGroup>
     <Folder Include="Repositories\" />
     <Folder Include="wwwroot\images\1\" />
-	<Folder Include="wwwroot\images\team\" />
     <Folder Include="wwwroot\images\NewFolder\" />
   </ItemGroup>
 
