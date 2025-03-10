@@ -28,22 +28,22 @@
         <div class="col-md-6">
             <h4>@Model.Name</h4>
             <p>@Model.Manufacturer</p>
-            <h5 class="text-secondary text-end pt-1">$@Model.Price</h5>
+            <h5 class="text-secondary text-start pt-1">$@Model.Price</h5>
             <h5>Description</h5>
             <p class="text-muted">@Model.Description </p>
             <div class="d-flex flex-column justify-content-center align-items-center">
 
-                <a class="btn text-white w-50" asp-controller="Product" asp-action="Index" style="background-color: #494949;">Back to List</a>
+                <a class="btn text-white w-50" asp-controller="Product" asp-action="Index" style="background-color: #494949; margin-bottom: 1rem;">Back to List</a>
                 @if (User.IsInRole("Admin")) {}
                 else if (User.IsInRole("Customer"))
                 {
                     <form  asp-controller="CartProduct" asp-action="AddToCart" method="post" asp-route-productId=@Model.PkId asp-route-quantity=1>
-                        <button class="btn text-white" style="background-color: #494949;">Add to Cart</button>
+                        <button class="btn text-white" style="background-color: #494949; margin-bottom: 1rem;">Add to Cart</button>
                     </form>
                 }
                 else if (User.IsInRole("Staff"))
                 {
-                    <a class="btn btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.PkId" >Edit Product</a>
+                    <a class="btn btn-primary" asp-controller="Product" asp-action="Edit" asp-route-id="@Model.PkId" style="margin-bottom: 1rem;">Edit Product</a>
                 }
 
             </div>  
