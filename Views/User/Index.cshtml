@@ -14,6 +14,9 @@
                         <th class="px-4 py-2">ID</th>
                         <th class="px-4 py-2">First Name</th>
                         <th class="px-4 py-2">Last Name</th>
+                        <th class="px-4 py-2">Email</th>
+                        <th class="px-4 py-2">Role</th>
+                        <th class="px-4 py-2">Phone</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -24,6 +27,9 @@
                             <td>@user.PkUserId</td>
                             <td>@user.FirstName</td>
                             <td>@user.LastName</td>
+                            <td>@user.Phone</td>
+                            <td>@user.Role</td>
+                            <td>@(user.Phone ?? "N/A")</td>
                             <td>
                                 <a asp-action="Detail" asp-route-id="@user.PkUserId"><i class="fa-solid fa-circle-info text-info"></i></a> |
                                 <a asp-action="Edit" asp-route-id="@user.PkUserId"><i class="fa-solid fa-pen-to-square text-warning"></i></a> |
