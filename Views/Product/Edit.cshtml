@@ -4,13 +4,6 @@
     ViewData["Title"] = "Edit";
 }
 <div class="container bg-white">
-    <div class="row">
-        <div class="col-12">
-            <a asp-action="Index" class="d-flex align-items-center gap-2  text-decoration-none ">
-                <i class="fa-solid fa-arrow-left-long"></i> Back
-            </a>
-        </div>
-    </div>
     <div class="row py-3 justify-content-center">
         <div class="col-10 col-md-8">
             <form asp-action="Edit" enctype="multipart/form-data" id="input-form">
@@ -42,7 +35,6 @@
                     <label asp-for="FkCategoryId" class="control-label ms-1 mb-1">Select Category</label>
                     <select asp-for="FkCategoryId" asp-items="ViewBag.CategorySelectList" class="form-select"
                         style="background-color:#F3F3F3; border-radius: 12px;">
-                        @* <option value="">-- Select Category --</option> *@
                     </select>
                     <span asp-validation-for="FkCategoryId" class="text-danger"></span>
                 </div><br />
@@ -68,7 +60,9 @@
                                     <img src="@productImageVM.ImageUrl" alt="Product Image"
                                         style="max-width: 100px; max-height: 100px;" />
                                     <button type="button" class="delete-icon"
-                                        onclick="removeImage(@productImageVM.PkId)">X</button>
+                                            onclick="removeImage(@productImageVM.PkId)">
+                                        ❌
+                                    </button>
                                 </div>
                             }
                         }
@@ -77,11 +71,9 @@
                             <div id="no-images">No images</div>
                         }
                     </div>
-
                     <span asp-validation-for="ProductImageVMs" class="text-danger"></span>
                 </div><br />
                 <div class="form-group text-center my-2">
-                    @* <input type="submit" value="Save Changes" class="btn btn-primary" /> *@
                     <input type="submit" value="Save Changes" class="btn text-white w-100 w-md-75 w-lg-50"
                         style="background-color:#4E9648;" onclick="sendFilesToController(event)" />
                 </div>
@@ -89,13 +81,15 @@
                     <input type="submit" value="Delete" class="btn text-white w-100 w-md-75 w-lg-50"
                         style="background-color:#AE0202">
                 </div>
+                <div>
+
+                    <a class="btn text-white w-100 w-md-75 w-lg-50 my-2" asp-controller="Product" asp-action="Index" style="background-color: #494949; margin-bottom: 1rem;">Back to List</a>
+                </div>
                 <input type="hidden" name="DeletedImageIds" id="DeletedImageIds" value="" />
             </form>
         </div>
     </div>
 </div>
-
-
 
 @section Scripts {
     @{

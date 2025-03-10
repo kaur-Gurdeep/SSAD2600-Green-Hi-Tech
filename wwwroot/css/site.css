@@ -47,14 +47,17 @@ html, body {
     padding: 15px;
     text-align: center;
     width: 100%;
+}
 
 .detail-image {
-    width: 5rem;
-    height: 5rem;
+    width: 15rem;
+    height: 15rem;
 }
+
 .thumbnails {
     display: flex;
-    }
+    margin-top: 1rem;
+}
 
 .delete-icon {
     position: relative;
@@ -62,5 +65,11 @@ html, body {
     top: -2rem;
     cursor: pointer;
     color: red;
-/*    font-size: 1.5rem;*/
+}
+
+.product-images {
+    display: flex;
+    max-width: 800px;
+    justify-content: space-around;
+    margin-bottom: 1rem;
 }
