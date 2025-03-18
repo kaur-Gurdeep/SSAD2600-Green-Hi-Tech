@@ -156,7 +156,7 @@ namespace GreenHiTech.Controllers
                 // If the current user is an Admin, allow the role change
                 if (User.IsInRole("Admin"))
                 {
-                    user.Role = userVM.Role;  // Allow Admin to change the Role
+                    user.Role = userVM.Role!;  // Allow Admin to change the Role
                 }
 
                 // Update user details
@@ -196,9 +196,6 @@ namespace GreenHiTech.Controllers
                     _userRepo.Update(user);  // Update the user with new address
 
                     returnMessage = $"success, Successfully updated User: {user.Email}";
-
-                    // Set success message in TempData
-                    TempData["SuccessMessage"] = "Edited Successfully";
                 }
             }
 
